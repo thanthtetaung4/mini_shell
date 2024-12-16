@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: tha <tha@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 16:23:27 by taung             #+#    #+#             */
-/*   Updated: 2024/12/16 18:07:03 by taung            ###   ########.fr       */
+/*   Updated: 2024/12/16 21:44:20 by tha              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/minishell.h"
 #include <readline/readline.h>
+#include <readline/history.h>
 
 int main()
 {
