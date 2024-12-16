@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 17:07:43 by taung             #+#    #+#             */
-/*   Updated: 2024/06/11 23:27:44 by taung            ###   ########.fr       */
+/*   Updated: 2024/12/16 18:06:43 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ static int	ft_uintlen(unsigned int n)
 	int	len;
 
 	len = 0;
-	if (n < 0)
-		len++;
 	if (n == 0)
 		return (1);
 	while (n != 0)
@@ -46,13 +44,13 @@ static char	*ft_uitoa(unsigned int n)
 	if (n == 0)
 		str[0] = '0';
 	str[len] = '\0';
-	if (n < 0)
-	{
-		str[0] = '-';
-		num = -n;
-	}
-	else
-		num = n;
+	// if (n < 0)
+	// {
+	// 	str[0] = '-';
+	// 	num = -n;
+	// }
+	// else
+	// 	num = n;
 	while (num != 0)
 	{
 		str[len - 1] = (num % 10) + '0';
