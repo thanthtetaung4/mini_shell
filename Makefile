@@ -20,8 +20,8 @@ OBJS = ${SRCS:.c=.o}
 
 all: ${NAME}
 
-${NAME}: ${OBJS} ${LIBFT} ${PRINTF}
-		${CC} ${CFLAGS} ${HEADER} -L${LIBFT_DIR} -lft -L${PRINTF_DIR} ${OBJS} ${PRINTF} ${LIBFT} -lreadline -o ${NAME}
+${NAME}: ${OBJS} ${LIBFT}
+		${CC} ${CFLAGS} ${HEADER} -L${LIBFT_DIR} -lft ${OBJS} ${LIBFT} -lreadline -o ${NAME}
 
 ${LIBFT}:
 		make -C ${LIBFT_DIR}
