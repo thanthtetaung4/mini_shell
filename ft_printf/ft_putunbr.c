@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putunbr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 17:07:43 by taung             #+#    #+#             */
-/*   Updated: 2024/12/16 18:06:43 by taung            ###   ########.fr       */
+/*   Updated: 2024/12/23 15:52:33 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static char	*ft_uitoa(unsigned int n)
 	// 	num = -n;
 	// }
 	// else
-	// 	num = n;
+	num = n;
 	while (num != 0)
 	{
 		str[len - 1] = (num % 10) + '0';
