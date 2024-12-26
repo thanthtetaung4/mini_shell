@@ -13,8 +13,8 @@ LIBFT_DIR = ./libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 SRCS_PATH = ./src
-
-SRCS = $(SRCS_PATH)/main.c
+TREE_PATH = ./src/tree
+SRCS = $(SRCS_PATH)/main.c $(TREE_PATH)/create_tree.c
 
 OBJS = ${SRCS:.c=.o}
 

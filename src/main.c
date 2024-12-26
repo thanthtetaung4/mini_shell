@@ -12,10 +12,51 @@
 
 #include "../header/minishell.h"
 #include <readline/readline.h>
+#include "../header/ast.h"
+#include <stdio.h>
 
 int main()
 {
 	// printf("hello world\n");
+<<<<<<< HEAD
 	char *line = readline("Enter a line >>");
 	printf("%s\n", line);
+=======
+	char *line = readline("Enter a line >>");
+	printf("%s\n", line);
+
+	t_ast_node *node = create_node(PIPE, NULL);
+	t_ast_node *end_node = create_node(COMMAND, "sort");
+	t_ast_node *left_upper_node = create_node(PIPE, NULL);
+	t_ast_node *left_node = create_node(COMMAND, "ls -l");
+	t_ast_node *right_node = create_node(COMMAND, "grep .txt");
+
+	add_right_node(&node, end_node);
+	add_left_node(&node, left_upper_node);
+	add_left_node((&left_upper_node), left_node);
+	add_right_node((&left_upper_node), right_node);
+	t_ast_node *temp = node;
+	while (temp)
+	{
+		if (temp->type == PIPE)
+		{
+			printf("|\n");
+		}
+		if (temp->right)
+		{
+			printf("%s", temp->right->command);
+		}
+		if (temp->left)
+		{
+			if (temp->left->type == COMMAND)
+			{
+				printf("%s", temp->left->command);
+				temp = NULL;
+			}
+			else
+				temp = temp->left;
+		}
+		printf("\n");
+	}
+>>>>>>> 704b7bf (added ast_tree utils)
 }
