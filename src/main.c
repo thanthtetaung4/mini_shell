@@ -18,12 +18,8 @@
 int main()
 {
 	// printf("hello world\n");
-<<<<<<< HEAD
-	char *line = readline("Enter a line >>");
-	printf("%s\n", line);
-=======
-	char *line = readline("Enter a line >>");
-	printf("%s\n", line);
+	// char *line = readline("Enter a line >>");
+	// printf("%s\n", line);
 
 	t_ast_node *node = create_node(PIPE, NULL);
 	t_ast_node *end_node = create_node(COMMAND, "sort");
@@ -58,5 +54,4 @@ int main()
 		}
 		printf("\n");
 	}
->>>>>>> 704b7bf (added ast_tree utils)
 }
