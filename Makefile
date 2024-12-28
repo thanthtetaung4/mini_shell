@@ -2,7 +2,8 @@ NAME = minishell
 
 CC = cc
 
-CFLAGS = -g -Wall -Wextra -Werror
+# CFLAGS = -g -Wall -Wextra -Werror
+CFLAGS=
 
 HEADER = -I ft_printf -I libft
 
@@ -14,7 +15,9 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 SRCS_PATH = ./src
 
-SRCS = $(SRCS_PATH)/main.c
+ENV_PATH = /env
+
+SRCS = $(SRCS_PATH)/main.c $(SRCS_PATH)$(ENV_PATH)/env.c $(SRCS_PATH)$(ENV_PATH)/env_utils.c
 
 OBJS = ${SRCS:.c=.o}
 
