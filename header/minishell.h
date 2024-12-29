@@ -30,4 +30,12 @@ void	ft_envadd_back(t_env **alst, t_env *new);
 void	ft_envdelone(t_env *lst, void (*del)(void*));
 void	ft_envclear(t_env **lst, void (*del)(void*));
 
+//exec functions
+int	ft_exec(char *cmd, t_env **env);
+
+//builtins functions
+void ft_env(t_env **env);
+
+//free functions
+void	free_all(t_env **env);
 # endif

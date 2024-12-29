@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 16:23:27 by taung             #+#    #+#             */
-/*   Updated: 2024/12/29 15:14:21 by taung            ###   ########.fr       */
+/*   Updated: 2024/12/29 15:39:04 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,8 +300,13 @@ int main()
 int	main(int argc, char **argv, char **envp)
 {
 	t_env	*env;
+	char	*cmd;
 
 	env = load_env(envp);
-	print_env(&env);
-	ft_envclear(&env, free);
+	while(1)
+	{
+		cmd = readline("minishell$ ");
+		ft_exec(cmd, &env);
+	}
+	free_all(&env);
 }

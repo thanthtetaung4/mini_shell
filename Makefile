@@ -19,7 +19,13 @@ ENV_PATH = /env
 
 UTIL_PATH = /utils
 
-SRCS = $(SRCS_PATH)/main.c $(SRCS_PATH)$(ENV_PATH)/env.c $(SRCS_PATH)$(ENV_PATH)/init.c $(SRCS_PATH)$(ENV_PATH)/env_utils.c $(SRCS_PATH)$(UTIL_PATH)/ft_strncpy.c
+FREE_PATH = /free
+
+EXEC_PATH = /exec
+
+SRCS = $(SRCS_PATH)/main.c $(SRCS_PATH)$(ENV_PATH)/env.c $(SRCS_PATH)$(ENV_PATH)/init.c \
+		$(SRCS_PATH)$(ENV_PATH)/env_utils.c $(SRCS_PATH)$(UTIL_PATH)/ft_strncpy.c \
+		$(SRCS_PATH)$(FREE_PATH)/free_all.c $(SRCS_PATH)$(EXEC_PATH)/exec.c \
 
 OBJS = ${SRCS:.c=.o}
 
