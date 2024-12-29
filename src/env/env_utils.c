@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 19:34:14 by taung             #+#    #+#             */
-/*   Updated: 2024/12/29 15:12:40 by taung            ###   ########.fr       */
+/*   Updated: 2024/12/29 15:23:25 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,25 +29,13 @@ int	count_env(char **env)
 	return (n);
 }
 
-char **env_split(char *entry, char c)
+char **allocate_and_copy(char *entry, char *ptr, int len)
 {
 	char **strs;
-	int i;
-	int len;
-	char *ptr;
 
-	if (!entry)
-		return (NULL);
 	strs = malloc(sizeof(char *) * 2);
 	if (!strs)
 		return (NULL);
-	ptr = ft_strchr(entry, c);
-	if (!ptr)
-	{
-		free(strs);
-		return (NULL);
-	}
-	len = ptr - entry;
 	strs[0] = malloc(len + 1);
 	if (!strs[0])
 	{
@@ -66,6 +54,20 @@ char **env_split(char *entry, char c)
 		return (NULL);
 	}
 	return (strs);
+}
+
+char **env_split(char *entry, char c)
+{
+	char *ptr;
+	int len;
+
+	if (!entry)
+		return (NULL);
+	ptr = ft_strchr(entry, c);
+	if (!ptr)
+		return (NULL);
+	len = ptr - entry;
+	return allocate_and_copy(entry, ptr, len);
 }
 
 void	print_env(t_env **env)
