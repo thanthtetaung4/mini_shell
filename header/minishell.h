@@ -20,7 +20,14 @@ t_env	*load_env(char **envp);
 void	print_env(t_env **env);
 void	free_env(t_env **env);
 void	ft_envclear(t_env **lst, void (*del)(void*));
-char **env_split(char *entry, char c);
+char	**env_split(char *entry, char c);
+char	*ft_strncpy(char *dst, const char *src, size_t len);
 
+//env struct functions
+t_env	*ft_envnew(char *key, char *value);
+t_env	*ft_envlast(t_env *lst);
+void	ft_envadd_back(t_env **alst, t_env *new);
+void	ft_envdelone(t_env *lst, void (*del)(void*));
+void	ft_envclear(t_env **lst, void (*del)(void*));
 
 # endif

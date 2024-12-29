@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 19:34:14 by taung             #+#    #+#             */
-/*   Updated: 2024/12/28 22:20:57 by taung            ###   ########.fr       */
+/*   Updated: 2024/12/29 15:12:40 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,20 +28,6 @@ int	count_env(char **env)
 	}
 	return (n);
 }
-// return the index of the first occurrence of char | -1
-// int	strnchr(char *str, char c)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while(str[i])
-// 	{
-// 		if (str[i] == c)
-// 			return i;
-// 		i++;
-// 	}
-// 	return (-1);
-// }
 
 char **env_split(char *entry, char c)
 {
@@ -68,33 +54,19 @@ char **env_split(char *entry, char c)
 		free(strs);
 		return (NULL);
 	}
-	strncpy(strs[0], entry, len);
+	ft_strncpy(strs[0], entry, len);
 	strs[0][len] = '\0';
 	ptr++;
 	len = ft_strlen(ptr);
-	strs[1] = malloc(len + 1);
+	strs[1] = ft_strdup(ptr);
 	if (!strs[1])
 	{
 		free(strs[0]);
 		free(strs);
 		return (NULL);
 	}
-	// strcpy(strs[1], ptr);
-	strs[1] = ft_strdup(ptr);
 	return (strs);
 }
-
-// void	map(char *entry, char **key, char **value)
-// {
-// 	char **entry_pair;
-
-// 	entry_pair = env_split(entry, '=');
-// 	*key = ft_strdup(entry_pair[0]);
-// 	*value = ft_strdup(entry_pair[1]);
-// 	free (entry_pair[0]);
-// 	free (entry_pair[1]);
-// 	free (entry_pair);
-// }
 
 void	print_env(t_env **env)
 {

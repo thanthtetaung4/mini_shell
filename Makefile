@@ -17,7 +17,9 @@ SRCS_PATH = ./src
 
 ENV_PATH = /env
 
-SRCS = $(SRCS_PATH)/main.c $(SRCS_PATH)$(ENV_PATH)/env.c $(SRCS_PATH)$(ENV_PATH)/env_utils.c
+UTIL_PATH = /utils
+
+SRCS = $(SRCS_PATH)/main.c $(SRCS_PATH)$(ENV_PATH)/env.c $(SRCS_PATH)$(ENV_PATH)/init.c $(SRCS_PATH)$(ENV_PATH)/env_utils.c $(SRCS_PATH)$(UTIL_PATH)/ft_strncpy.c
 
 OBJS = ${SRCS:.c=.o}
 
