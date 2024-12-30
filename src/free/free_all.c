@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   free_all.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/29 15:31:26 by taung             #+#    #+#             */
-/*   Updated: 2024/12/29 15:35:08 by taung            ###   ########.fr       */
+/*   Updated: 2024/12/30 22:08:52 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-void	free_all(t_env **env)
+void	free_all(t_list **env)
 {
-	ft_envclear(env, free);
+	ft_lstclear(env, free_env);
 }

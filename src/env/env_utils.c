@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 19:34:14 by taung             #+#    #+#             */
-/*   Updated: 2024/12/29 15:23:25 by taung            ###   ########.fr       */
+/*   Updated: 2024/12/30 21:50:07 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,14 @@ char **env_split(char *entry, char c)
 	return allocate_and_copy(entry, ptr, len);
 }
 
-void	print_env(t_env **env)
+void	print_env(t_list **env)
 {
-	t_env	*current;
+	t_list	*current;
 
 	current = *env;
 	while(current)
 	{
-		printf("%s=%s\n", current->key, current->value);
+		printf("%s=%s\n", ((t_env*)current->content)->key, ((t_env*)current->content)->value);
 		current = current->next;
 	}
 	return;

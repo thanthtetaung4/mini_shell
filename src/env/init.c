@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/29 15:16:34 by taung             #+#    #+#             */
-/*   Updated: 2024/12/29 15:16:43 by taung            ###   ########.fr       */
+/*   Updated: 2024/12/30 21:42:52 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-t_env	*load_env(char **envp)
+t_list	*load_env(char **envp)
 {
-	t_env	*env;
+	t_list	*env;
 	int		i;
 	int		len;
 	char	**env_pair;
@@ -25,7 +25,7 @@ t_env	*load_env(char **envp)
 	while (i < len)
 	{
 		env_pair = env_split(envp[i], '=');
-		ft_envadd_back(&env, ft_envnew(env_pair[0], env_pair[1]));
+		ft_lstadd_back(&env, ft_envnew(env_pair[0], env_pair[1]));
 		free(env_pair[0]);
 		free(env_pair[1]);
 		free(env_pair);

@@ -1,25 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstdelone.c                                     :+:      :+:    :+:   */
+/*   env_free.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/05 11:31:19 by taung             #+#    #+#             */
-/*   Updated: 2024/12/30 22:02:56 by taung            ###   ########.fr       */
+/*   Created: 2024/12/30 21:58:40 by taung             #+#    #+#             */
+/*   Updated: 2024/12/30 22:21:52 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../header/minishell.h"
 
-void
-	ft_lstdelone(t_list *lst, void (*del)(void*))
+void	free_env(void *env)
 {
-	if (!del)
-		return ;
-	if (lst)
-	{
-		(*del)(lst->content);
-		free(lst);
-	}
+	free(((t_env *)env)->key);
+	free(((t_env *)env)->value);
+	free(env);
 }
