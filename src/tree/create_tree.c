@@ -72,7 +72,7 @@ void handle_single_command(t_ast_node **head, char *input, int end, t_ast_node *
 	t_ast_node *temp;
 	char *temp_input;
 
-	if (!head)
+	if (!(*(head)))
 		*head = create_node(COMMAND, ft_strdup(input));
 	else
 	{

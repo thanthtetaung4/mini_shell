@@ -14,12 +14,15 @@
 #include <readline/readline.h>
 #include "../header/ast.h"
 
-int main()
+int main(int argc, char **argv)
 {
-	char input[] = "ls | grep txt | wc";
-	t_ast_node *root = create_tree(input);
+	if (argc == 2)
+	{
+		char *input = argv[1];
+		t_ast_node *root = create_tree(input);
 
-	printf("Visualizing the AST for input: %s\n", input);
-	visualize_tree(root);
+		printf("Visualizing the AST for input: %s\n", input);
+		visualize_tree(root);
+	}
 	return 0;
 }
