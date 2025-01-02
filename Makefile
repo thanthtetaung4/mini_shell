@@ -23,9 +23,12 @@ FREE_PATH = /free
 
 EXEC_PATH = /exec
 
+BUILTINS_PATH = /builtins
+
 SRCS = $(SRCS_PATH)/main.c $(SRCS_PATH)$(ENV_PATH)/env.c $(SRCS_PATH)$(ENV_PATH)/init.c \
 		$(SRCS_PATH)$(ENV_PATH)/env_utils.c $(SRCS_PATH)$(UTIL_PATH)/ft_strncpy.c \
 		$(SRCS_PATH)$(FREE_PATH)/free_all.c $(SRCS_PATH)$(FREE_PATH)/env_free.c $(SRCS_PATH)$(EXEC_PATH)/exec.c \
+		$(SRCS_PATH)$(BUILTINS_PATH)/export/export_utils.c
 
 OBJS = ${SRCS:.c=.o}
 

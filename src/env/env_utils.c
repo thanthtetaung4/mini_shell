@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 19:34:14 by taung             #+#    #+#             */
-/*   Updated: 2024/12/30 21:50:07 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/02 08:31:02 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ int	count_env(char **env)
 	return (n);
 }
 
-char **allocate_and_copy(char *entry, char *ptr, int len)
+char	**allocate_and_copy(char *entry, char *ptr, int len)
 {
-	char **strs;
+	char	**strs;
 
 	strs = malloc(sizeof(char *) * 2);
 	if (!strs)
@@ -56,10 +56,10 @@ char **allocate_and_copy(char *entry, char *ptr, int len)
 	return (strs);
 }
 
-char **env_split(char *entry, char c)
+char	**env_split(char *entry, char c)
 {
-	char *ptr;
-	int len;
+	char	*ptr;
+	int		len;
 
 	if (!entry)
 		return (NULL);

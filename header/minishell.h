@@ -13,6 +13,12 @@ typedef struct s_env
 	char *value;
 } t_env;
 
+typedef struct s_minishell
+{
+	t_list	*env;
+	t_list	*export;
+} t_minishell;
+
 //env loading functions
 t_list	*load_env(char **envp);
 char	**env_split(char *entry, char c);
@@ -24,8 +30,12 @@ void	free_env(void *env);
 //env struct functions
 t_list	*ft_envnew(char *key, char *value);
 
+//export functions
+void	load_export_vars(t_minishell *data);
+void	print_export_vars(t_list **export);
+
 //exec functions
-int	ft_exec(char *cmd, t_list **env);
+int	ft_exec(char *cmd, t_minishell *data);
 
 //builtins functions
 void ft_env(t_env **env);

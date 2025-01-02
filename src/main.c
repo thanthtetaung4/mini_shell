@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 16:23:27 by taung             #+#    #+#             */
-/*   Updated: 2024/12/30 22:14:15 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/02 14:35:12 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,15 +299,16 @@ int main()
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_list	*env;
 	char	*cmd;
-
-	env = load_env(envp);
-	// while(1)
-	// {
-	// 	cmd = readline("minishell$ ");
-	// 	ft_exec(cmd, &env);
-	// }
-	print_env(&env);
-	free_all(&env);
+	t_minishell	data;
+	data.env = NULL;
+	data.export = NULL;
+	data.env = (load_env(envp));
+	load_export_vars(&data);
+	while(1)
+	{
+		cmd = readline("minishell$ ");
+		ft_exec(cmd, &(data));
+	}
+	free_all(&(data.env));
 }
