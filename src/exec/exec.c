@@ -6,17 +6,17 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/29 15:27:47 by taung             #+#    #+#             */
-/*   Updated: 2025/01/02 14:38:32 by codespace        ###   ########.fr       */
+/*   Updated: 2025/01/03 06:01:59 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-int	ft_exec(char *cmd, t_minishell *data)
+int	ft_exec(char **cmd, t_minishell *data)
 {
-	if (ft_strncmp(cmd, "env", ft_strlen("cmd")) == 0)
+	if (ft_strncmp(cmd[0], "env", ft_strlen("cmd")) == 0)
 		print_env(&data->env);
-	if (ft_strncmp(cmd, "export", ft_strlen("cmd")) == 0)
-		print_export_vars(&data->export);
+	if (ft_strncmp(cmd[0], "export", ft_strlen("cmd")) == 0)
+		ft_export(data, cmd);
 	return (0);
 }

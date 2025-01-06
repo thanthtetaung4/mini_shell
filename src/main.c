@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 16:23:27 by taung             #+#    #+#             */
-/*   Updated: 2025/01/02 14:35:12 by codespace        ###   ########.fr       */
+/*   Updated: 2025/01/04 06:46:42 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,6 @@ int main()
 	return 0;
 }
 */
-
 
 // #include <stdio.h>
 // #include <stdlib.h>
@@ -294,20 +293,19 @@ int main()
 // 	return 0;
 // }
 
-
 #include "../header/minishell.h"
 
-int	main(int argc, char **argv, char **envp)
+int main(int argc, char **argv, char **envp)
 {
-	char	*cmd;
-	t_minishell	data;
+	char **cmd;
+	t_minishell data;
 	data.env = NULL;
 	data.export = NULL;
 	data.env = (load_env(envp));
 	load_export_vars(&data);
-	while(1)
+	while (1)
 	{
-		cmd = readline("minishell$ ");
+		cmd = ft_split(readline("minishell$ "), ' ');
 		ft_exec(cmd, &(data));
 	}
 	free_all(&(data.env));

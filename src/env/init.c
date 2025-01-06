@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/29 15:16:34 by taung             #+#    #+#             */
-/*   Updated: 2024/12/30 21:42:52 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/03 05:53:01 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_list	*load_env(char **envp)
 	env = NULL;
 	while (i < len)
 	{
-		env_pair = env_split(envp[i], '=');
+		env_pair = key_value_splitter(envp[i], '=');
 		ft_lstadd_back(&env, ft_envnew(env_pair[0], env_pair[1]));
 		free(env_pair[0]);
 		free(env_pair[1]);

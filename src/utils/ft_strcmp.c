@@ -1,20 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_free.c                                         :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/30 21:58:40 by taung             #+#    #+#             */
-/*   Updated: 2025/01/04 07:07:19 by taung            ###   ########.fr       */
+/*   Created: 2025/01/06 07:10:36 by taung             #+#    #+#             */
+/*   Updated: 2025/01/06 07:10:54 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../header/minishell.h"
-
-void	env_free(void *env)
+int	ft_strcmp(const char *s1, const char *s2)
 {
-	free(((t_env *)env)->key);
-	free(((t_env *)env)->value);
-	free(env);
+	while (*s1 && *s2 && *s1 == *s2)
+	{
+		s1++;
+		s2++;
+	}
+	return (*(unsigned char *)s1 - *(unsigned char *)s2);
 }
