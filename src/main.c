@@ -23,6 +23,7 @@ int main(int argc, char **argv)
 
 		printf("Visualizing the AST for input: %s\n", input);
 		visualize_tree(root);
+		tree_execution(root);
 	}
 	return 0;
 }

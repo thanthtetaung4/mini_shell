@@ -23,5 +23,6 @@ void add_right_node(t_ast_node **parent_node, t_ast_node *node);
 void add_left_node(t_ast_node **parent_node, t_ast_node *node);
 t_ast_node *create_tree(char *input);
 void visualize_tree(t_ast_node *lowest_node);
+void tree_execution(t_ast_node *lowest_node);
 
 #endif

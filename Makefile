@@ -14,7 +14,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 SRCS_PATH = ./src
 TREE_PATH = ./src/tree
-SRCS = $(SRCS_PATH)/main.c $(TREE_PATH)/create_tree.c $(TREE_PATH)/visualizer.c $(TREE_PATH)/ast_utils.c $(TREE_PATH)/redirection.c
+SRCS = $(SRCS_PATH)/main.c $(TREE_PATH)/create_tree.c $(TREE_PATH)/visualizer.c $(TREE_PATH)/ast_utils.c $(TREE_PATH)/tree_execution.c
 
 OBJS = ${SRCS:.c=.o}
 
