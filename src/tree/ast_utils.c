@@ -1,7 +1,7 @@
 #include "../../header/ast.h"
 #include "../../header/minishell.h"
 
-t_ast_node *create_node(int type, char *command)
+t_ast_node *create_node(int type, char **command)
 {
 	t_ast_node *node;
 

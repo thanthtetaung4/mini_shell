@@ -3,6 +3,9 @@
 
 void print_branch(t_ast_node *node, int depth, const char *direction)
 {
+	int i;
+
+	i = 0;
 	if (!node)
 		return;
 
@@ -12,7 +15,15 @@ void print_branch(t_ast_node *node, int depth, const char *direction)
 	printf("%s", direction);
 
 	if (node->type == COMMAND)
-		printf("COMMAND: %s\n", node->command);
+	{
+		printf("COMMAND: ");
+		while (node->command[i])
+		{
+			printf("%s ", node->command[i]);
+			i++;
+		}
+		printf("\n");
+	}
 	else if (node->type == PIPE)
 		printf("PIPE\n");
 
