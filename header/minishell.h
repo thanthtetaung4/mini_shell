@@ -29,6 +29,8 @@ void		print_env(t_list **env);
 void		env_free(void *env);
 void		ft_add_env(t_list **env, t_list *new_node);
 void		ft_update_env(t_list **env, t_list *new_node);
+char		**get_env_strings(t_list *env);
+
 
 // env struct functions
 t_list		*ft_envnew(char *key, char *value);
@@ -41,7 +43,7 @@ void		export_add_var(t_minishell *data, t_list *new_node);
 void		update_export_var(t_minishell *data, char *value, int index);
 void		add_var(t_minishell *data, t_list *new_node);
 int			is_valid_var(char *key);
-
+void		remove_quotes(char **str);
 
 // exec functions
 int			ft_exec(char **cmd, t_minishell *data);
@@ -51,8 +53,9 @@ void		ft_env(t_env **env);
 void		ft_export(t_minishell *data, char **args);
 
 // free functions
-void		free_all(t_list **env);
+void		free_all(t_minishell *env);
 
 // utils functions
-int	ft_strcmp(const char *s1, const char *s2);
+int			ft_strcmp(const char *s1, const char *s2);
+char		**ft_split_quoted(char const *s, char c);
 #endif

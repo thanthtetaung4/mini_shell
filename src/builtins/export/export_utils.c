@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 06:42:51 by codespace         #+#    #+#             */
-/*   Updated: 2025/01/06 07:19:58 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/08 06:23:38 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,12 +127,12 @@ int is_valid_var(char *key)
 
 	i = 0;
 	printf("Checking if valid var: %s\n", key);
-	if (ft_isalpha(key[i]) || key[i] == '_')
+	if (ft_isalpha(key[i]) || key[i] == '_' || key[i] == 34 || key[i] == 39)
 	{
 		i++;
 		while (key[i])
 		{
-			if (ft_isalnum(key[i]) || key[i] == '_')
+			if (ft_isalnum(key[i]) || key[i] == '_' || key[i] == 34 || key[i] == 39)
 				i++;
 			else
 				return (0);
@@ -140,4 +140,27 @@ int is_valid_var(char *key)
 		return (1);
 	}
 	return (0);
+}
+
+void	remove_quotes(char **str)
+{
+	int i;
+	int j;
+	char *new_str;
+
+	i = 0;
+	j = 0;
+	new_str = malloc(sizeof(char) * (ft_strlen(*str) + 1));
+	while ((*str)[i])
+	{
+		if ((*str)[i] != '\"' && (*str)[i] != '\'')
+		{
+			new_str[j] = (*str)[i];
+			j++;
+		}
+		i++;
+	}
+	new_str[j] = '\0';
+	free(*str);
+	*str = new_str;
 }

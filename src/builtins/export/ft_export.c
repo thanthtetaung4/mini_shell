@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 06:42:35 by codespace         #+#    #+#             */
-/*   Updated: 2025/01/06 07:16:11 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/08 06:21:48 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void	ft_export(t_minishell *data, char **args)
 	}
 	while (args[++i])
 	{
+		remove_quotes(&args[i]);
 		key_value = key_value_splitter(args[i], '=');
 		if (is_valid_var(key_value[0]) == 0)
 		{

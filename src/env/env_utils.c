@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 19:34:14 by taung             #+#    #+#             */
-/*   Updated: 2025/01/06 06:26:07 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/08 04:53:20 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ char **key_value_splitter(char *entry, char c)
 	return allocate_and_copy(entry, ptr, len);
 }
 
-void print_env(t_list **env)
+void	print_env(t_list **env)
 {
 	t_list *current;
 
@@ -89,6 +89,28 @@ void print_env(t_list **env)
 		current = current->next;
 	}
 	return;
+}
+
+char	**get_env_strings(t_list *env)
+{
+	char	**env_strings;
+	t_list	*current;
+	int		i;
+
+	i = 0;
+	current = env;
+	env_strings = malloc(sizeof(char *) * (ft_lstsize(env) + 1));
+	if (!env_strings)
+		return (NULL);
+	while (current)
+	{
+		env_strings[i] = ft_strjoin(((t_env *)current->content)->key, "=");
+		env_strings[i] = ft_strjoin(env_strings[i], ((t_env *)current->content)->value);
+		current = current->next;
+		i++;
+	}
+	env_strings[i] = NULL;
+	return (env_strings);
 }
 
 // int	main(int argc, char **argv, char **envp)
