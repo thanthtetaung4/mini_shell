@@ -32,7 +32,7 @@ SRCS = $(SRCS_PATH)/main.c $(SRCS_PATH)$(ENV_PATH)/env.c $(SRCS_PATH)$(ENV_PATH)
 		$(SRCS_PATH)$(FREE_PATH)/free_all.c $(SRCS_PATH)$(FREE_PATH)/env_free.c $(SRCS_PATH)$(EXEC_PATH)/exec.c \
 		$(SRCS_PATH)$(BUILTINS_PATH)$(EXPORT_PATH)/export_utils.c $(SRCS_PATH)$(BUILTINS_PATH)$(EXPORT_PATH)/ft_export.c \
 		$(SRCS_PATH)$(BUILTINS_PATH)$(EXPORT_PATH)/export_add_utils.c $(SRCS_PATH)$(UTIL_PATH)/ft_strcmp.c \
-		$(SRCS_PATH)$(UTIL_PATH)/ft_split_quoted.c
+		$(SRCS_PATH)$(UTIL_PATH)/ft_split_quoted.c $(SRCS_PATH)$(FREE_PATH)/cmd_free.c
 
 
 

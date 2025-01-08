@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 16:23:27 by taung             #+#    #+#             */
-/*   Updated: 2025/01/08 06:19:43 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/08 06:38:59 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,62 +29,55 @@
 /*
 // Testing execution
 // executing OK no piping
+#include <readline/history.h>
+#include <readline/readline.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <readline/history.h>
+#include <unistd.h>
 
-int main()
+int	main(void)
 {
-	char *input;
+	char	*input;
+	pid_t	pid;
+			char *args[256];
+	char	*token;
+	int		i;
 
 	while (1) {
 		// Prompt for input
 		input = readline("Enter a command (or 'exit' to quit): ");
-
 		if (input == NULL) {
 			printf("Error reading input. Exiting.\n");
-			break;
+			break ;
 		}
-
 		// Add to readline history
 		add_history(input);
-
 		// Exit condition
 		if (strcmp(input, "exit") == 0) {
 			free(input);
-			break;
+			break ;
 		}
-
 		// Fork a child process
-		pid_t pid = fork();
-
+		pid = fork();
 		if (pid < 0) {
 			perror("fork");
 			free(input);
-			continue;
+			continue ;
 		}
-
 		if (pid == 0) {
 			// Child process
 			printf("Child process (PID: %d) executing: %s\n", getpid(), input);
-
 			// Split the input into command and arguments
-			char *args[256];
-			char *token = strtok(input, " ");
-			int i = 0;
-
+			token = strtok(input, " ");
+			i = 0;
 			while (token != NULL) {
 				args[i++] = token;
 				token = strtok(NULL, " ");
 			}
 			args[i] = NULL; // Null-terminate the argument list
-
 			// Execute the command
 			if (execve(args[0], args, NULL) == -1) {
 				perror("execve");
@@ -92,19 +85,17 @@ int main()
 			}
 		} else {
 			// Parent process
-			printf("Parent process (PID: %d) waiting for child (PID: %d).\n", getpid(), pid);
-
+			printf("Parent process (PID: %d) waiting for child (PID: %d).\n",
+				getpid(), pid);
 			// Wait for the child to finish
 			wait(NULL);
 			printf("Child process finished.\n");
 		}
-
 		// Free the input buffer
 		free(input);
 	}
-
 	printf("Exiting program.\n");
-	return 0;
+	return (0);
 }
 */
 
@@ -133,13 +124,13 @@ int main()
 
 // 	new_node = (t_env *)malloc(sizeof(t_env));
 // 	if (!new_node)
-// 		return NULL;
+// 		return (NULL);
 
 // 	equals_pos = strchr(env_str, '=');
 // 	if (!equals_pos)
 // 	{
 // 		free(new_node);
-// 		return NULL;
+// 		return (NULL);
 // 	}
 
 // 	// Calculate lengths for key and value
@@ -151,7 +142,7 @@ int main()
 // 	if (!new_node->key)
 // 	{
 // 		free(new_node);
-// 		return NULL;
+// 		return (NULL);
 // 	}
 // 	strncpy(new_node->key, env_str, key_len);
 // 	new_node->key[key_len] = '\0';
@@ -162,12 +153,12 @@ int main()
 // 	{
 // 		free(new_node->key);
 // 		free(new_node);
-// 		return NULL;
+// 		return (NULL);
 // 	}
 // 	strcpy(new_node->value, equals_pos + 1);
 
 // 	new_node->next = NULL;
-// 	return new_node;
+// 	return (new_node);
 // }
 
 // // Function to add node to the end of the list
@@ -178,7 +169,7 @@ int main()
 // 	if (!*head)
 // 	{
 // 		*head = new_node;
-// 		return;
+// 		return ;
 // 	}
 
 // 	current = *head;
@@ -202,7 +193,7 @@ int main()
 // 			add_env_node(&env_list, new_node);
 // 		i++;
 // 	}
-// 	return env_list;
+// 	return (env_list);
 // }
 
 // // Function to get environment variable value
@@ -213,10 +204,10 @@ int main()
 // 	while (current)
 // 	{
 // 		if (strcmp(current->key, key) == 0)
-// 			return current->value;
+// 			return (current->value);
 // 		current = current->next;
 // 	}
-// 	return NULL;
+// 	return (NULL);
 // }
 
 // // Function to free the entire environment list
@@ -262,7 +253,7 @@ int main()
 // 		// Use readline for input
 // 		input = readline("minishell> ");
 // 		if (!input)
-// 			break;
+// 			break ;
 
 // 		// Add to history if not empty
 // 		if (*input)
@@ -280,7 +271,7 @@ int main()
 // 		else if (strcmp(input, "exit") == 0)
 // 		{
 // 			free(input);
-// 			break;
+// 			break ;
 // 		}
 
 // 		free(input);
@@ -290,23 +281,30 @@ int main()
 // 	// Clean up
 // 	rl_clear_history();
 // 	free_env_list(env_list);
-// 	return 0;
+// 	return (0);
 // }
 
 #include "../header/minishell.h"
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	char **cmd;
-	t_minishell data;
+	char		**cmd;
+	t_minishell	data;
+	char		*input;
+
 	data.env = NULL;
 	data.export = NULL;
 	data.env = (load_env(envp));
 	load_export_vars(&data);
 	while (1)
 	{
-		cmd = ft_split_quoted(readline("minishell$ "), ' ');
-		ft_exec(cmd, &(data));
+		input = readline("minishell$ ");
+		if (input && *input)
+		{
+			add_history(input);
+			cmd = ft_split_quoted(input, ' ');
+			ft_exec(cmd, &data);
+		}
 	}
 	// printf("=================================\n");
 	// ft_export(&data, argv);
@@ -314,5 +312,6 @@ int main(int argc, char **argv, char **envp)
 	// printf("=================================\n");
 	// print_env(&(data.env));
 	// printf("=================================\n");
-	free_all(&data);
+	free_all(&data, cmd);
+	free(input);
 }

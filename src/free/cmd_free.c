@@ -1,20 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_all.c                                         :+:      :+:    :+:   */
+/*   cmd_free.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/29 15:31:26 by taung             #+#    #+#             */
-/*   Updated: 2025/01/08 06:36:01 by taung            ###   ########.fr       */
+/*   Created: 2025/01/08 06:32:07 by taung             #+#    #+#             */
+/*   Updated: 2025/01/08 06:33:38 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-void	free_all(t_minishell *data, char **cmd)
+void	free_cmd(char **cmd)
 {
-	ft_lstclear(&data->env, env_free);
-	ft_lstclear(&data->export, env_free);
-	free_cmd(cmd);
+	int i;
+
+	i = 0;
+	while (cmd[i])
+	{
+		free(cmd[i]);
+		i++;
+	}
+	free(cmd);
 }

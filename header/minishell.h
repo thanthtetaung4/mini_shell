@@ -26,7 +26,6 @@ char		**key_value_splitter(char *entry, char c);
 char		*ft_strncpy(char *dst, const char *src, size_t len);
 int			count_env(char **env);
 void		print_env(t_list **env);
-void		env_free(void *env);
 void		ft_add_env(t_list **env, t_list *new_node);
 void		ft_update_env(t_list **env, t_list *new_node);
 char		**get_env_strings(t_list *env);
@@ -53,7 +52,9 @@ void		ft_env(t_env **env);
 void		ft_export(t_minishell *data, char **args);
 
 // free functions
-void		free_all(t_minishell *env);
+void		free_all(t_minishell *env, char **cmd);
+void		free_cmd(char **cmd);
+void		env_free(void *env);
 
 // utils functions
 int			ft_strcmp(const char *s1, const char *s2);
