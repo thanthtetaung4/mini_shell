@@ -6,6 +6,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include "./ast.h"
 
 typedef struct s_env
 {
