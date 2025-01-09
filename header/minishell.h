@@ -30,15 +30,14 @@ void		ft_add_env(t_list **env, t_list *new_node);
 void		ft_update_env(t_list **env, t_list *new_node);
 char		**get_env_strings(t_list *env);
 
-
 // env struct functions
 t_list		*ft_envnew(char *key, char *value);
 
 // export functions
 void		load_export_vars(t_minishell *data);
 void		print_export_vars(t_list **export);
-int			find_export_var(t_minishell *data, char *key);
-void		export_add_var(t_minishell *data, t_list *new_node);
+int			find_var(t_list **list, char *key);
+void		export_add_var(t_minishell *data, char *key, char *value);
 void		update_export_var(t_minishell *data, char *value, int index);
 void		add_var(t_minishell *data, t_list *new_node);
 int			is_valid_var(char *key);
@@ -50,6 +49,7 @@ int			ft_exec(char **cmd, t_minishell *data);
 // builtins functions
 void		ft_env(t_env **env);
 void		ft_export(t_minishell *data, char **args);
+void		ft_unset(t_minishell *data, char **args);
 
 // free functions
 void		free_all(t_minishell *env, char **cmd);

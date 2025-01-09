@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 19:31:04 by taung             #+#    #+#             */
-/*   Updated: 2025/01/06 07:14:36 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/09 06:58:56 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ t_list	*ft_envnew(char *key, char *value)
 
 void	ft_add_env(t_list **env, t_list *new_node)
 {
-	if (ft_strlen(((t_env*)new_node->content)->value) > 0)
+	if (new_node && ft_strlen(((t_env*)new_node->content)->value) > 0)
 		ft_lstadd_back(env, new_node);
 }
 

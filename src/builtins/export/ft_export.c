@@ -3,34 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 06:42:35 by codespace         #+#    #+#             */
-/*   Updated: 2025/01/08 06:21:48 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/09 06:57:32 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../header/minishell.h"
 
-void	export_add_var(t_minishell *data, t_list *new_node)
+void	export_add_var(t_minishell *data, char *key, char *value)
 {
 	t_list	*current_export;
 
 	if (!data->export)
 	{
-		data->export = new_node;
+		data->export = ft_envnew(key, value);
 		return;
 	}
-	if (find_export_var(data, ((t_env *)new_node->content)->key) != -1)
+	if (find_var(&data->export, key) != -1)
 	{
-		update_export_var(data, ((t_env *)new_node->content)->value, find_export_var(data, ((t_env *)new_node->content)->key));
-		ft_update_env(&(data->env), new_node);
+		update_export_var(data, value, find_var(&data->export, key));
+		ft_update_env(&(data->env), ft_envnew(key, value));
 		return;
 	}
 	else
 	{
-		add_var(data, new_node);
-		ft_add_env(&(data->env),new_node);
+		add_var(data, ft_envnew(key, value));
+		ft_add_env(&(data->env), ft_envnew(key, value));
 		return;
 	}
 }
@@ -61,8 +61,8 @@ void	ft_export(t_minishell *data, char **args)
 			free(key_value);
 			continue;
 		}
-		new_node = ft_envnew(key_value[0], key_value[1]);
-		export_add_var(data, new_node);
+		// new_node = ft_envnew(key_value[0], key_value[1]);
+		export_add_var(data, key_value[0], key_value[1]);
 
 		free(key_value);
 	}

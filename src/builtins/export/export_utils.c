@@ -6,16 +6,16 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 06:42:51 by codespace         #+#    #+#             */
-/*   Updated: 2025/01/08 06:23:38 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/08 07:52:29 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../header/minishell.h"
 
-int count_export(t_list *env)
+int	count_export(t_list *env)
 {
-	int n;
-	t_list *current;
+	int		n;
+	t_list	*current;
 
 	n = 0;
 	current = env;
@@ -28,43 +28,44 @@ int count_export(t_list *env)
 	return (n);
 }
 
-void insert_at_beginning(t_minishell *data, t_list *new_node)
+void	insert_at_beginning(t_minishell *data, t_list *new_node)
 {
 	new_node->next = data->export;
 	data->export = new_node;
 }
 
-void insert_in_middle_or_end(t_list *current_export, t_list *new_node)
+void	insert_in_middle_or_end(t_list *current_export, t_list *new_node)
 {
 	while (current_export->next)
 	{
 		if (ft_strncmp(((t_env *)new_node->content)->key,
-					   ((t_env *)current_export->next->content)->key, ft_strlen(((t_env *)new_node->content)->key)) < 0)
+				((t_env *)current_export->next->content)->key,
+				ft_strlen(((t_env *)new_node->content)->key)) < 0)
 		{
 			new_node->next = current_export->next;
 			current_export->next = new_node;
-			return;
+			return ;
 		}
 		current_export = current_export->next;
 	}
 	current_export->next = new_node;
 }
 
-void add_var(t_minishell *data, t_list *new_node)
+void	add_var(t_minishell *data, t_list *new_node)
 {
-	t_list *current_export;
-	t_list *prev_export;
+	t_list	*current_export;
+	t_list	*prev_export;
 
 	if (!data->export || ft_strcmp(((t_env *)data->export->content)->key,
-		((t_env *)new_node->content)->key) > 0)
+			((t_env *)new_node->content)->key) > 0)
 	{
 		insert_at_beginning(data, new_node);
-		return;
+		return ;
 	}
 	current_export = data->export;
 	prev_export = NULL;
 	while (current_export && ft_strcmp(((t_env *)current_export->content)->key,
-	((t_env *)new_node->content)->key) < 0)
+			((t_env *)new_node->content)->key) < 0)
 	{
 		prev_export = current_export;
 		current_export = current_export->next;
@@ -74,56 +75,60 @@ void add_var(t_minishell *data, t_list *new_node)
 	new_node->next = current_export;
 }
 
-void load_export_vars(t_minishell *data)
+void	load_export_vars(t_minishell *data)
 {
-	t_list *current;
+	t_list	*current;
 
 	current = data->env;
 	printf("Loading export vars\n");
 	while (current)
 	{
 		if (((t_env *)current->content)->key[0] != '_')
-			add_var(data, ft_envnew(((t_env *)current->content)->key, ((t_env *)current->content)->value));
+			add_var(data, ft_envnew(((t_env *)current->content)->key,
+					((t_env *)current->content)->value));
 		current = current->next;
 	}
-	return;
+	return ;
 }
 
-void print_export_vars(t_list **export)
+void	print_export_vars(t_list **export)
 {
-	t_list *current;
+	t_list	*current;
 
 	current = *export;
 	while (current)
 	{
-		printf("%s=\"%s\"\n", ((t_env *)current->content)->key, ((t_env *)current->content)->value);
+		printf("%s=\"%s\"\n", ((t_env *)current->content)->key,
+			((t_env *)current->content)->value);
 		current = current->next;
 	}
-	return;
+	return ;
 }
 
-int find_export_var(t_minishell *data, char *key)
+int	find_var(t_list **list, char *key)
 {
-	t_list *current;
-	int i;
+	t_list	*current;
+	int		i;
 
 	i = 0;
-	current = data->export;
-	while (current)
+	current = *list;
+	while (current && current->content)
 	{
 		if (ft_strcmp(key, ((t_env *)current->content)->key) == 0)
 		{
+			printf("found key: %s\n", ((t_env *)current->content)->key);
 			return (i);
 		}
+		// printf("%d\n", i);
 		current = current->next;
 		i++;
 	}
 	return (-1);
 }
 
-int is_valid_var(char *key)
+int	is_valid_var(char *key)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	printf("Checking if valid var: %s\n", key);
@@ -132,7 +137,8 @@ int is_valid_var(char *key)
 		i++;
 		while (key[i])
 		{
-			if (ft_isalnum(key[i]) || key[i] == '_' || key[i] == 34 || key[i] == 39)
+			if (ft_isalnum(key[i]) || key[i] == '_' || key[i] == 34
+				|| key[i] == 39)
 				i++;
 			else
 				return (0);
@@ -144,9 +150,9 @@ int is_valid_var(char *key)
 
 void	remove_quotes(char **str)
 {
-	int i;
-	int j;
-	char *new_str;
+	int		i;
+	int		j;
+	char	*new_str;
 
 	i = 0;
 	j = 0;

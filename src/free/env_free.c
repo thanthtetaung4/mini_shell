@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/30 21:58:40 by taung             #+#    #+#             */
-/*   Updated: 2025/01/04 07:07:19 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/08 07:36:05 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 void	env_free(void *env)
 {
-	free(((t_env *)env)->key);
-	free(((t_env *)env)->value);
+	if (((t_env *)env)->key)
+		free(((t_env *)env)->key);
+	if (((t_env *)env)->value)
+		free(((t_env *)env)->value);
 	free(env);
 }
