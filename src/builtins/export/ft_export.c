@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 07:15:04 by taung             #+#    #+#             */
-/*   Updated: 2025/01/09 09:20:48 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/09 09:31:35 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ void	ft_export(t_minishell *data, char **args)
 			continue;
 		}
 		export_add_var(data, key_value[0], key_value[1]);
-
 		free(key_value);
 	}
 }

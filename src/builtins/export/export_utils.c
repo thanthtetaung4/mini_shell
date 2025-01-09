@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 06:42:51 by codespace         #+#    #+#             */
-/*   Updated: 2025/01/09 09:24:52 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/09 09:30:32 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,6 @@ int	is_valid_var(char *key)
 	int	i;
 
 	i = 0;
-	printf("Checking if valid var: %s\n", key);
 	if (ft_isalpha(key[i]) || key[i] == '_' || key[i] == 34 || key[i] == 39)
 	{
 		i++;
