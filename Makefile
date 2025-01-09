@@ -42,7 +42,7 @@ OBJS = ${SRCS:.c=.o}
 all: ${NAME}
 
 ${NAME}: ${OBJS} ${LIBFT}
-		${CC} ${CFLAGS} ${HEADER} -L${LIBFT_DIR} -lft -lreadline ${OBJS} ${LIBFT} -o ${NAME}
+		${CC} ${CFLAGS} ${HEADER} -L${LIBFT_DIR} -lft ${OBJS} ${LIBFT} -lreadline -o ${NAME}
 
 ${LIBFT}:
 		make -C ${LIBFT_DIR}
