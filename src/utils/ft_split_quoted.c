@@ -1,34 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split.c                                         :+:      :+:    :+:   */
+/*   ft_split_quoted.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/04 20:33:48 by taung             #+#    #+#             */
-/*   Updated: 2024/12/28 20:19:27 by taung            ###   ########.fr       */
+/*   Created: 2025/01/08 06:18:12 by taung             #+#    #+#             */
+/*   Updated: 2025/01/08 06:18:34 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../header/minishell.h"
 
 static size_t	ft_word_count(char *s, char c)
 {
 	size_t	i;
 	size_t	count;
+	int		in_quotes;
 
 	i = 0;
 	count = 0;
+	in_quotes = 0;
 	while (s[i])
 	{
-		if (s[i] == c)
+		if (s[i] == '\'' || s[i] == '\"')
+			in_quotes = !in_quotes;
+		if (s[i] == c && !in_quotes)
 			i++;
 		else
 		{
-			while (s[i + 1] != c && s[i + 1])
+			while (s[i] && (s[i] != c || in_quotes))
+			{
+				if (s[i] == '\'' || s[i] == '\"')
+					in_quotes = !in_quotes;
 				i++;
+			}
 			count++;
-			i++;
 		}
 	}
 	return (count);
@@ -52,18 +59,24 @@ static void	*ft_make_word(char *s, char c, size_t *j)
 {
 	size_t	start;
 	size_t	end;
+	int		in_quotes;
 
 	start = 0;
 	end = 0;
+	in_quotes = 0;
 	while (s[*j])
 	{
-		if (s[*j] == c)
+		if (s[*j] == c && !in_quotes)
 			(*j)++;
 		else
 		{
 			start = *j;
-			while (s[*j] && s[*j] != c)
+			while (s[*j] && (s[*j] != c || in_quotes))
+			{
+				if (s[*j] == '\'' || s[*j] == '\"')
+					in_quotes = !in_quotes;
 				(*j)++;
+			}
 			end = *j;
 			return (ft_add_word(0, end - start, s + start));
 		}
@@ -81,7 +94,7 @@ static void	ft_free(char **res, size_t i)
 	free(res);
 }
 
-char	**ft_split(char const *s, char c)
+char	**ft_split_quoted(char const *s, char c)
 {
 	char	**res;
 	size_t	size;
