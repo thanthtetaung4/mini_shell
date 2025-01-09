@@ -10,6 +10,7 @@ HEADER = -I ft_printf -I libft
 RM = rm -rf
 
 LIBFT_DIR = ./libft
+LIBFT_DIR = ./libft
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
