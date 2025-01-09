@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 06:42:51 by codespace         #+#    #+#             */
-/*   Updated: 2025/01/08 07:52:29 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/09 09:22:07 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ void	load_export_vars(t_minishell *data)
 	t_list	*current;
 
 	current = data->env;
-	printf("Loading export vars\n");
 	while (current)
 	{
 		if (((t_env *)current->content)->key[0] != '_')
@@ -116,10 +115,8 @@ int	find_var(t_list **list, char *key)
 	{
 		if (ft_strcmp(key, ((t_env *)current->content)->key) == 0)
 		{
-			printf("found key: %s\n", ((t_env *)current->content)->key);
 			return (i);
 		}
-		// printf("%d\n", i);
 		current = current->next;
 		i++;
 	}

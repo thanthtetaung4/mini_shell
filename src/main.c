@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 16:23:27 by taung             #+#    #+#             */
-/*   Updated: 2025/01/08 17:10:19 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/09 08:36:00 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,15 +295,20 @@ int	main(int argc, char **argv, char **envp)
 	data.env = NULL;
 	data.export = NULL;
 	data.env = (load_env(envp));
+	data.status = 0;
 	load_export_vars(&data);
 	while (1)
 	{
-		input = readline("minishell$ ");
+		if (!data.status)
+			input = readline("minishell$ ");
+		else
+			input = readline("\033[31m✘\033[0m minishell$ ");
 		if (input && *input)
 		{
 			add_history(input);
 			cmd = ft_split_quoted(input, ' ');
-			ft_exec(cmd, &data);
+			free(input);
+			data.status = ft_exec(cmd, &data);
 		}
 	}
 	// printf("=================================\n");
@@ -316,5 +321,4 @@ int	main(int argc, char **argv, char **envp)
 	// printf("%d\n",find_var(&data.env, "_"));
 	// printf("=================================\n");
 	free_all(&data, cmd);
-	free(input);
 }

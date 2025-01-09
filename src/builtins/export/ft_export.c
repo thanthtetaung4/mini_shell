@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/02 06:42:35 by codespace         #+#    #+#             */
-/*   Updated: 2025/01/09 06:57:32 by codespace        ###   ########.fr       */
+/*   Created: 2025/01/09 07:15:04 by taung             #+#    #+#             */
+/*   Updated: 2025/01/09 09:20:48 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ void	ft_export(t_minishell *data, char **args)
 			free(key_value);
 			continue;
 		}
-		// new_node = ft_envnew(key_value[0], key_value[1]);
 		export_add_var(data, key_value[0], key_value[1]);
 
 		free(key_value);
