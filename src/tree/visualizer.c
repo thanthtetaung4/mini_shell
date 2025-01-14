@@ -1,5 +1,4 @@
 #include "../header/minishell.h"
-#include "../header/ast.h"
 
 void print_branch(t_ast_node *node, int depth, const char *direction)
 {

@@ -1,4 +1,3 @@
-#include "../../header/ast.h"
 #include "../../header/minishell.h"
 
 char *copy_substring(const char *input, int start, int length)
@@ -20,7 +19,7 @@ void handle_pipe_node(t_ast_node **head, char *input, int len, int end)
 	{
 		*head = create_node(PIPE, NULL);
 		temp_input = ft_strdup(input + len + 1);
-		temp = create_node(COMMAND, ft_split(temp_input, ' '));
+		temp = create_node(COMMAND, ft_split_quoted(temp_input, ' '));
 		add_right_node(head, temp);
 		free(temp_input);
 	}
@@ -29,7 +28,7 @@ void handle_pipe_node(t_ast_node **head, char *input, int len, int end)
 		temp_head = create_node(PIPE, NULL);
 		temp_head->depth_level = (*head)->depth_level + 1;
 		temp_input = copy_substring(input, len + 1, end - len);
-		temp = create_node(COMMAND, ft_split(temp_input, ' '));
+		temp = create_node(COMMAND, ft_split_quoted(temp_input, ' '));
 		add_left_node(head, temp_head);
 		*head = temp_head;
 		add_right_node(head, temp);
@@ -43,11 +42,11 @@ void handle_single_command(t_ast_node **head, char *input, int end, t_ast_node *
 	char *temp_input;
 
 	if (!(*(head)))
-		*head = create_node(COMMAND, ft_split(input, ' '));
+		*head = create_node(COMMAND, ft_split_quoted(input, ' '));
 	else
 	{
 		temp_input = copy_substring(input, 0, end);
-		temp = create_node(COMMAND, ft_split(temp_input, ' '));
+		temp = create_node(COMMAND, ft_split_quoted(temp_input, ' '));
 		add_left_node(head, temp);
 		*lowest_node = temp;
 		free(temp_input);

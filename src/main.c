@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 // #include "../header/minishell.h"
 // #include <readline/readline.h>
 // #include <readline/history.h>
@@ -287,16 +286,18 @@ int	main(void)
 
 #include "../header/minishell.h"
 
-int	main(int argc, char **argv, char **envp)
+int main(int argc, char **argv, char **envp)
 {
-	char		**cmd;
-	t_minishell	data;
-	char		*input;
+	char **cmd;
+	t_minishell data;
+	char *input;
+	t_ast_node *node;
 
 	data.env = NULL;
 	data.export = NULL;
 	data.env = (load_env(envp));
 	data.status = 0;
+	node = NULL;
 	load_export_vars(&data);
 	while (1)
 	{
@@ -307,9 +308,10 @@ int	main(int argc, char **argv, char **envp)
 		if (input && *input)
 		{
 			add_history(input);
-			cmd = ft_split_quoted(input, ' ');
+			node = create_tree(input);
+			// cmd = ft_split_quoted(input, ' ');
 			free(input);
-			data.status = ft_exec(cmd, &data);
+			data.status = tree_execution(node, &data);
 		}
 	}
 	// printf("=================================\n");

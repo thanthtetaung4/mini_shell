@@ -1,7 +1,6 @@
-#include "../../header/ast.h"
 #include "../../header/minishell.h"
 
-void tree_execution(t_ast_node *lowest_node)
+int tree_execution(t_ast_node *lowest_node, t_minishell *data)
 {
 	t_ast_node *node;
 	t_ast_node *temp_node;
@@ -17,12 +16,13 @@ void tree_execution(t_ast_node *lowest_node)
 		{
 			node->executed = 1;
 			//
-			while (node->command[i])
-			{
-				printf("%s ", node->command[i]);
-				i++;
-			}
-			printf("is executed.\n");
+			ft_exec(node->command, data);
+			// while (node->command[i])
+			// {
+			// 	printf("%s ", node->command[i]);
+			// 	i++;
+			// }
+			// printf("is executed.\n");
 			//
 			node = node->parent;
 		}
@@ -47,4 +47,5 @@ void tree_execution(t_ast_node *lowest_node)
 				node = node->parent;
 		}
 	}
+	return (0);
 }
