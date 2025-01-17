@@ -61,6 +61,7 @@ void add_var(t_minishell *data, t_list *new_node);
 int is_valid_var(char *key);
 void remove_quotes(char **str);
 void replace_with_env_value(t_minishell *data, char **value);
+void replace_with_env_value(t_minishell *data, char **value);
 
 // exec functions
 int ft_exec(char **cmd, t_minishell *data);
