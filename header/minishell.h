@@ -30,7 +30,6 @@ typedef struct s_ast
 	struct s_ast *left;
 	struct s_ast *right;
 	char **command;
-	int depth_level;
 	int executed;
 } t_ast_node;
 
@@ -47,7 +46,7 @@ typedef struct s_minishell
 	char **cmd;
 	pid_t *pids;
 	int **pipes;
-	int pipe_count;
+	int operator_count;
 	int status;
 } t_minishell;
 

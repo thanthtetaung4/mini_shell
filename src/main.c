@@ -297,7 +297,7 @@ int main(int argc, char **argv, char **envp)
 	data.export = NULL;
 	data.env = (load_env(envp));
 	data.status = 0;
-	data.pipe_count = 0;
+	data.operator_count = 0;
 	data.pids = NULL;
 	data.pipes = NULL;
 	node = NULL;

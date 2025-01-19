@@ -56,36 +56,26 @@ void handle_single_command(t_ast_node **head, char *input, int end, t_ast_node *
 }
 void handle_special_command(char *input, t_substring *substring_data, t_minishell *data, t_ast_node **head)
 {
+	int type;
+	int index;
+
+	type = 0;
+	index = 1;
 	if (input[substring_data->start] == '|')
-	{
-		handle_special_node(head, input, substring_data, PIPE);
-		data->pipe_count++;
-		substring_data->end = substring_data->start - 1;
-	}
+		type = PIPE;
 	else if (input[substring_data->start] == '>' && input[substring_data->start - 1] == '>')
-	{
-		// append
-		handle_special_node(head, input, substring_data, APPEND);
-		substring_data->end = substring_data->start - 2;
-	}
+		type = APPEND;
 	else if (input[substring_data->start] == '<' && input[substring_data->start - 1] == '<')
-	{
-		// heredoc
-		handle_special_node(head, input, substring_data, HEREDOC);
-		substring_data->end = substring_data->start - 2;
-	}
+		type = HEREDOC;
 	else if (input[substring_data->start] == '>' && input[substring_data->start - 1] != '>' && input[substring_data->start + 1] != '>')
-	{
-		// output
-		handle_special_node(head, input, substring_data, OUTPUT);
-		substring_data->end = substring_data->start - 1;
-	}
+		type = OUTPUT;
 	else if (input[substring_data->start] == '<' && input[substring_data->start - 1] != '<' && input[substring_data->start + 1] != '<')
-	{
-		// input
-		handle_special_node(head, input, substring_data, INPUT);
-		substring_data->end = substring_data->start - 1;
-	}
+		type = INPUT;
+	if (type == HEREDOC || type == APPEND)
+		index = 2;
+	handle_special_node(head, input, substring_data, type);
+	substring_data->end = substring_data->start - index;
+	data->operator_count++;
 }
 t_ast_node *create_tree(char *input, t_minishell *data)
 {
