@@ -297,9 +297,12 @@ int main(int argc, char **argv, char **envp)
 	data.export = NULL;
 	data.env = (load_env(envp));
 	data.status = 0;
-	data.operator_count = 0;
-	data.pids = NULL;
-	data.pipes = NULL;
+	data.forking = malloc(sizeof(t_forking));
+	data.forking->pids = NULL;
+	data.forking->pipe_count = 0;
+	data.forking->pipe_fds = NULL;
+	data.forking->redirection_count = 0;
+	data.forking->redirection_fds = NULL;
 	node = NULL;
 	load_export_vars(&data);
 	//////

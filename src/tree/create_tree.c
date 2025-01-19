@@ -14,22 +14,18 @@ void handle_special_node(t_ast_node **head, char *input, t_substring *substring_
 	t_ast_node *temp;
 	t_ast_node *temp_head;
 	char *temp_input;
-	int index;
 
-	index = 1;
-	if (type == HEREDOC || type == APPEND)
-		index = 2;
 	if (!(*head))
 	{
 		*head = create_node(type, NULL);
-		temp_input = ft_strdup(input + substring_data->start + index);
+		temp_input = ft_strdup(input + substring_data->start + 1);
 		temp = create_node(COMMAND, ft_split_quoted(temp_input, ' '));
 		add_right_node(head, temp);
 		free(temp_input);
 		return;
 	}
 	temp_head = create_node(type, NULL);
-	temp_input = copy_substring(input, substring_data->start + index,
+	temp_input = copy_substring(input, substring_data->start + 1,
 								substring_data->end - substring_data->start);
 	temp = create_node(COMMAND, ft_split_quoted(temp_input, ' '));
 	add_left_node(head, temp_head);
@@ -57,25 +53,25 @@ void handle_single_command(t_ast_node **head, char *input, int end, t_ast_node *
 void handle_special_command(char *input, t_substring *substring_data, t_minishell *data, t_ast_node **head)
 {
 	int type;
-	int index;
 
-	type = 0;
-	index = 1;
 	if (input[substring_data->start] == '|')
 		type = PIPE;
-	else if (input[substring_data->start] == '>' && input[substring_data->start - 1] == '>')
+	else if (input[substring_data->start] == '>' && input[substring_data->start - 1] == '>' && input[substring_data->start + 1] != '>')
 		type = APPEND;
-	else if (input[substring_data->start] == '<' && input[substring_data->start - 1] == '<')
+	else if (input[substring_data->start] == '<' && input[substring_data->start - 1] == '<' && input[substring_data->start + 1] != '<')
 		type = HEREDOC;
 	else if (input[substring_data->start] == '>' && input[substring_data->start - 1] != '>' && input[substring_data->start + 1] != '>')
 		type = OUTPUT;
 	else if (input[substring_data->start] == '<' && input[substring_data->start - 1] != '<' && input[substring_data->start + 1] != '<')
 		type = INPUT;
-	if (type == HEREDOC || type == APPEND)
-		index = 2;
+	if (type == PIPE)
+		data->forking->pipe_count++;
+	else
+		data->forking->redirection_count++;
 	handle_special_node(head, input, substring_data, type);
-	substring_data->end = substring_data->start - index;
-	data->operator_count++;
+	if (type == HEREDOC || type == APPEND)
+		substring_data->start--;
+	substring_data->end = substring_data->start - 1;
 }
 t_ast_node *create_tree(char *input, t_minishell *data)
 {
@@ -102,6 +98,8 @@ t_ast_node *create_tree(char *input, t_minishell *data)
 			lowest_node = head;
 		substring_data->start--;
 	}
+	printf("r%d\n", data->forking->redirection_count);
+	printf("p%d\n", data->forking->pipe_count);
 	free(substring_data);
 	return lowest_node;
 }

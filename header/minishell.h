@@ -39,15 +39,21 @@ typedef struct s_env
 	char *value;
 } t_env;
 
+typedef struct s_forking
+{
+	pid_t *pids;
+	int **pipe_fds;
+	int *redirection_fds;
+	int pipe_count;
+	int redirection_count;
+} t_forking;
 typedef struct s_minishell
 {
 	t_list *env;
 	t_list *export;
 	char **cmd;
-	pid_t *pids;
-	int **pipes;
-	int operator_count;
 	int status;
+	t_forking *forking;
 } t_minishell;
 
 // env functions
