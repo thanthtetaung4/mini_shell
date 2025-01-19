@@ -6,13 +6,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/types.h>
 
 typedef enum
 {
 	PIPE,
+	HEREDOC,
+	APPEND,
+	INPUT,
+	OUTPUT,
 	COMMAND,
 } t_node_type;
 
+typedef struct s_substring
+{
+	int start;
+	int end;
+} t_substring;
 typedef struct s_ast
 {
 	int type;
@@ -35,6 +45,9 @@ typedef struct s_minishell
 	t_list *env;
 	t_list *export;
 	char **cmd;
+	pid_t *pids;
+	int **pipes;
+	int pipe_count;
 	int status;
 } t_minishell;
 
@@ -85,7 +98,7 @@ char **ft_split_quoted(char const *s, char c);
 t_ast_node *create_node(int type, char **command);
 void add_right_node(t_ast_node **parent_node, t_ast_node *node);
 void add_left_node(t_ast_node **parent_node, t_ast_node *node);
-t_ast_node *create_tree(char *input);
+t_ast_node *create_tree(char *input, t_minishell *data);
 void visualize_tree(t_ast_node *lowest_node);
 int tree_execution(t_ast_node *lowest_node, t_minishell *data);
 #endif

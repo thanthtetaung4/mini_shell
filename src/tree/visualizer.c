@@ -16,16 +16,26 @@ void print_branch(t_ast_node *node, int depth, const char *direction)
 	if (node->type == COMMAND)
 	{
 		printf("COMMAND: ");
-		while (node->command[i])
+		if (node->command)
 		{
-			printf("%s ", node->command[i]);
-			i++;
+			while (node->command[i])
+			{
+				printf("%s ", node->command[i]);
+				i++;
+			}
 		}
 		printf("\n");
 	}
 	else if (node->type == PIPE)
 		printf("PIPE\n");
-
+	else if (node->type == HEREDOC)
+		printf("HEREDOC\n");
+	else if (node->type == APPEND)
+		printf("APPEND\n");
+	else if (node->type == INPUT)
+		printf("INPUT\n");
+	else if (node->type == OUTPUT)
+		printf("OUTPUT\n");
 	print_branch(node->left, depth + 1, "L-");
 	print_branch(node->right, depth + 1, "R-");
 }

@@ -297,8 +297,16 @@ int main(int argc, char **argv, char **envp)
 	data.export = NULL;
 	data.env = (load_env(envp));
 	data.status = 0;
+	data.pipe_count = 0;
+	data.pids = NULL;
+	data.pipes = NULL;
 	node = NULL;
 	load_export_vars(&data);
+	//////
+	// input = "ls -l < grep";
+	// node = create_tree(input, &data);
+	// visualize_tree(node);
+	////////
 	while (1)
 	{
 		if (!data.status)
@@ -308,12 +316,14 @@ int main(int argc, char **argv, char **envp)
 		if (input && *input)
 		{
 			add_history(input);
-			node = create_tree(input);
+			node = create_tree(input, &data);
 			// cmd = ft_split_quoted(input, ' ');
 			free(input);
-			data.status = tree_execution(node, &data);
+			visualize_tree(node);
+			// data.status = tree_execution(node, &data);
 		}
 	}
+	/////////
 	// printf("=================================\n");
 	// ft_export(&data, argv);
 	// printf("=================================\n");
