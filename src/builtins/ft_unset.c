@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 06:46:44 by taung             #+#    #+#             */
-/*   Updated: 2025/01/09 09:32:45 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/18 08:00:56 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,20 +37,20 @@ void	ft_lstremove(t_list **lst, int index)
 	}
 }
 
-void	ft_unset(t_minishell *data, char **args)
+void	ft_unset(t_minishell *data)
 {
 	int i;
 	int index;
 
 	i = 0;
-	while (args[++i])
+	while (data->args[++i])
 	{
-		index = find_var(&(data->export), args[i]);
+		index = find_var(&(data->export), data->args[i]);
 		if (index != -1)
 		{
 			ft_lstremove(&(data->export), index);
 		}
-		index = find_var(&(data->env), args[i]);
+		index = find_var(&(data->env), data->args[i]);
 		if (index != -1)
 		{
 			ft_lstremove(&(data->env), index);

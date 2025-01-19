@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/01/09 09:43:06 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/19 04:56:12 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,7 +289,6 @@ int	main(void)
 
 int	main(int argc, char **argv, char **envp)
 {
-	char		**cmd;
 	t_minishell	data;
 	char		*input;
 
@@ -307,19 +306,12 @@ int	main(int argc, char **argv, char **envp)
 		if (input && *input)
 		{
 			add_history(input);
-			cmd = ft_split_quoted(input, ' ');
-			free(input);
-			data.status = ft_exec(cmd, &data);
+			data.args = ft_split_quoted(input, ' ');
+			data.args_count = ft_count_tds(data.args);
+			data.status = ft_exec(&data);
+			free_cmd(data.args);
 		}
+		free(input);
 	}
-	// printf("=================================\n");
-	// ft_export(&data, argv);
-	// printf("=================================\n");
-	// printf("=================================\n");
-	// print_env(&(data.env));
-	// printf("=================================\n");
-	// printf("=================================\n");
-	// printf("%d\n",find_var(&data.env, "_"));
-	// printf("=================================\n");
-	free_all(&data, cmd);
+	free_all(&data);
 }
