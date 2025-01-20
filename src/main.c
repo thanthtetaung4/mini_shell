@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/01/20 09:14:21 by taung            ###   ########.fr       */
+/*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
+/*   Updated: 2025/01/20 10:01:57 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,23 +286,30 @@ int	main(void)
 
 #include "../header/minishell.h"
 
-int main(int argc, char **argv, char **envp)
+int	init_data(t_minishell *data, char **envp)
+{
+	data->env = NULL;
+	data->export = NULL;
+	data->env = (load_env(envp));
+	data->status = 0;
+	data->forking = malloc(sizeof(t_forking));
+	data->forking->pids = NULL;
+	data->forking->pipe_count = 0;
+	data->forking->pipe_fds = NULL;
+	data->forking->redirection_count = 0;
+	data->forking->redirection_fds = NULL;
+	load_export_vars(data);
+	return (1);
+}
+
+int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	data;
 	char		*input;
+	t_ast_node	*node;
 
-	data.env = NULL;
-	data.export = NULL;
-	data.env = (load_env(envp));
-	data.status = 0;
-	data.forking = malloc(sizeof(t_forking));
-	data.forking->pids = NULL;
-	data.forking->pipe_count = 0;
-	data.forking->pipe_fds = NULL;
-	data.forking->redirection_count = 0;
-	data.forking->redirection_fds = NULL;
+	init_data(&data, envp);
 	node = NULL;
-	load_export_vars(&data);
 	//////
 	// input = "ls -l < grep";
 	// node = create_tree(input, &data);
@@ -321,6 +328,8 @@ int main(int argc, char **argv, char **envp)
 			data.args_count = ft_count_tds(data.args);
 			data.status = ft_exec(&data);
 			free_cmd(data.args);
+			// this bloack needs to be changed
+			// change to create tree and then exe from tree
 		}
 		free(input);
 	}

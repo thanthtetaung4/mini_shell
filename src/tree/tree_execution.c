@@ -16,7 +16,7 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
 		{
 			node->executed = 1;
 			//
-			ft_exec(node->command, data);
+			ft_exec(data);
 			// while (node->command[i])
 			// {
 			// 	printf("%s ", node->command[i]);
