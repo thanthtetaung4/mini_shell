@@ -1,20 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_all.c                                         :+:      :+:    :+:   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/29 15:31:26 by taung             #+#    #+#             */
-/*   Updated: 2025/01/18 08:02:08 by taung            ###   ########.fr       */
+/*   Created: 2025/01/19 04:15:51 by taung             #+#    #+#             */
+/*   Updated: 2025/01/19 04:23:27 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-void	free_all(t_minishell *data)
+char	*ft_strrchr(const char *s, int c)
 {
-	ft_lstclear(&data->env, env_free);
-	ft_lstclear(&data->export, env_free);
-	free_cmd(data->args);
+	size_t	i;
+
+	s = (char *)s;
+	i = ft_strlen(s);
+	while (i >= 0)
+	{
+		if (s[i] == c)
+			return (((char*)&s[i]));
+		i--;
+	}
+	return (0);
 }
+// int	main()
+// {
+// 	char str[] = "hello/world/hi";
+
+// 	printf("%s\n",ft_strrchr(str, '/'));
+// }

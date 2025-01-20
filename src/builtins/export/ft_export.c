@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 07:15:04 by taung             #+#    #+#             */
-/*   Updated: 2025/01/17 09:14:16 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/18 08:00:40 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	export_add_var(t_minishell *data, char *key, char *value)
 	}
 }
 
-void	ft_export(t_minishell *data, char **args)
+void	ft_export(t_minishell *data)
 {
 	int		i;
 	t_list	*new_node;
@@ -45,15 +45,15 @@ void	ft_export(t_minishell *data, char **args)
 
 	is_print = 0;
 	i = 0;
-	if (!args[1])
+	if (!data->args[1])
 	{
 		print_export_vars(&data->export);
 		return;
 	}
-	while (args[++i])
+	while (data->args[++i])
 	{
 		// remove_quotes(&args[i]);
-		key_value = key_value_splitter(args[i], '=');
+		key_value = key_value_splitter(data->args[i], '=');
 		if (is_valid_var(key_value[0]) == 0)
 		{
 			if (is_print == 0)
