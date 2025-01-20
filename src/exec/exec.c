@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/29 15:27:47 by taung             #+#    #+#             */
-/*   Updated: 2025/01/18 08:54:08 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/19 08:53:18 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,7 @@ int	ft_exec(t_minishell *data)
 		ft_pwd();
 	if (ft_strncmp(data->args[0], "cd", ft_strlen(data->args[0])) == 0)
 		ft_cd(data);
+	if (ft_strncmp(data->args[0], "echo", ft_strlen(data->args[0])) == 0)
+		ft_echo(data);
 	return (0);
 }

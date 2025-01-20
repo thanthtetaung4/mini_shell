@@ -34,7 +34,7 @@ SRCS = $(SRCS_PATH)/main.c $(TREE_PATH)/create_tree.c $(TREE_PATH)/visualizer.c 
 		$(SRCS_PATH)$(BUILTINS_PATH)$(EXPORT_PATH)/export_add_utils.c $(SRCS_PATH)$(UTIL_PATH)/ft_strcmp.c \
 		$(SRCS_PATH)$(UTIL_PATH)/ft_split_quoted.c $(SRCS_PATH)$(FREE_PATH)/cmd_free.c $(SRCS_PATH)$(BUILTINS_PATH)/ft_unset.c \
 		$(SRCS_PATH)$(BUILTINS_PATH)/ft_exit.c $(SRCS_PATH)$(BUILTINS_PATH)/ft_pwd.c $(SRCS_PATH)$(UTIL_PATH)/count_tds.c \
-		$(SRCS_PATH)$(BUILTINS_PATH)/ft_cd.c $(SRCS_PATH)$(UTIL_PATH)/ft_strrchr.c
+		$(SRCS_PATH)$(BUILTINS_PATH)/ft_cd.c $(SRCS_PATH)$(UTIL_PATH)/ft_strrchr.c $(SRCS_PATH)$(BUILTINS_PATH)/ft_echo.c \
 
 
 

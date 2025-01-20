@@ -59,6 +59,7 @@ void		ft_unset(t_minishell *data);
 void		ft_exit(t_minishell *data);
 int			ft_pwd(void);
 int			ft_cd(t_minishell *data);
+int			ft_echo(t_minishell *data);
 
 // free functions
 void		free_all(t_minishell *data);
