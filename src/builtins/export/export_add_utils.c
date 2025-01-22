@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 07:14:05 by taung             #+#    #+#             */
-/*   Updated: 2025/01/17 09:22:03 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/22 05:55:26 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,18 +40,6 @@ char	*extract_key(char *str)
 	return (ft_strdup(replace_str + 1));
 }
 
-char *get_value_before_dollar(char *str)
-{
-	char	*replace_str;
-	char	*value;
-
-	replace_str = ft_strchr(str, '$');
-	if (!replace_str)
-		return (ft_strdup(str));
-	value = ft_substr(str, 0, replace_str - str);
-	return (value);
-}
-
 char *get_env_value(t_list *env, char *key)
 {
 	t_list	*current;
@@ -63,27 +51,5 @@ char *get_env_value(t_list *env, char *key)
 			return (ft_strdup(((t_env *)current->content)->value));
 		current = current->next;
 	}
-	return (NULL);
+	return (ft_strdup(""));
 }
-
-void	replace_with_env_value(t_minishell *data, char **value)
-{
-	char	*before_dollar;
-	char	*env_value;
-
-	remove_quotes(value);
-	if ((*value)[0] != '\'' && ft_strchr(*value, '$') != 0)
-	{
-		printf("getting val before $\n");
-		before_dollar = get_value_before_dollar(*value);
-		printf("before dollar: %s\n", before_dollar);
-		printf("getting env value\n");
-		env_value = (get_env_value(data->env, extract_key(*value)));
-		printf("env value %s\n", env_value);
-		free(*value);
-		*value = ft_strjoin(before_dollar, env_value);
-		free(before_dollar);
-		free(env_value);
-	}
-}
-

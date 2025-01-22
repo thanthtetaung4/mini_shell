@@ -81,7 +81,7 @@ void				update_export_var(t_minishell *data, char *value,
 						int index);
 void				add_var(t_minishell *data, t_list *new_node);
 int					is_valid_var(char *key);
-void				remove_quotes(char **str);
+void				remove_quotes(t_minishell *data);
 void				replace_with_env_value(t_minishell *data, char **value);
 void				replace_with_env_value(t_minishell *data, char **value);
 char				*get_env_value(t_list *env, char *key);
@@ -108,6 +108,10 @@ int					ft_strcmp(const char *s1, const char *s2);
 char				**ft_split_quoted(char const *s, char c);
 int					ft_count_tds(char **str);
 char				*ft_strrchr(const char *s, int c);
+int	ft_strnchr(char *str, int n, int c);
+void	ft_interpret(t_minishell *data);
+// test utils
+void	ft_print_args(char **args);
 
 // tree functions
 t_ast_node			*create_node(int type, char **command);

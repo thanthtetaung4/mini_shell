@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/01/20 10:01:57 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/22 06:52:09 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -302,6 +302,64 @@ int	init_data(t_minishell *data, char **envp)
 	return (1);
 }
 
+int	check_syntax_errors(char *input)
+{
+	int	i;
+
+	i = 0;
+	while (input[i])
+	{
+		if (ft_isalnum(input[i]) == 0 && input[i] != ' ' && input[i] != '/'
+			&& input[i] != '.' && input[i] != '=' && input[i] != '-'
+			&& input[i] != '_' && input[i] != '"' && input[i] != '\''
+			&& input[i] != '$' && input[i] != '>' && input[i] != '<')
+		{
+			printf("minishell: syntax error near unexpected token `%c'\n",
+				input[i]);
+			return (0);
+		}
+		i++;
+	}
+	return (1);
+}
+
+int	count_quotes(char *input)
+{
+	int	s_quote_count;
+	int	d_quote_count;
+	int	i;
+
+	i = -1;
+	s_quote_count = 0;
+	d_quote_count = 0;
+	while (input[++i])
+	{
+		if (input[i] == '"')
+			d_quote_count++;
+		if (input[i] == '\'')
+			s_quote_count++;
+	}
+	if (s_quote_count % 2 != 0)
+	{
+		printf("minishell: syntax error near unexpected token `'\n");
+		return (0);
+	}
+	if (d_quote_count % 2 != 0)
+	{
+		printf("minishell: syntax error near unexpected token `\"\n");
+		return (0);
+	}
+	return (1);
+}
+
+int	is_valid_cmd(char *input)
+{
+	if (!check_syntax_errors(input))
+		return (0);
+	if (!count_quotes(input))
+		return (0);
+	return (1);
+}
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	data;
@@ -321,11 +379,13 @@ int	main(int argc, char **argv, char **envp)
 			input = readline("minishell$ ");
 		else
 			input = readline("\033[31m✘\033[0m minishell$ ");
-		if (input && *input)
+		if (input && *input && is_valid_cmd(input))
 		{
 			add_history(input);
 			data.args = ft_split_quoted(input, ' ');
 			data.args_count = ft_count_tds(data.args);
+			ft_interpret(&data);
+			remove_quotes(&data);
 			data.status = ft_exec(&data);
 			free_cmd(data.args);
 			// this bloack needs to be changed

@@ -1,26 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_free.c                                         :+:      :+:    :+:   */
+/*   test_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/08 06:32:07 by taung             #+#    #+#             */
-/*   Updated: 2025/01/22 06:36:03 by taung            ###   ########.fr       */
+/*   Created: 2025/01/21 06:34:35 by taung             #+#    #+#             */
+/*   Updated: 2025/01/21 07:05:56 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-void	free_cmd(char **cmd)
+void	ft_print_args(char **args)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while (cmd[i])
+	while(args[i])
 	{
-		free(cmd[i]);
+		printf("cmd: %s\n",args[i]);
+		printf("size: %ld\n", ft_strlen(args[i]));
 		i++;
 	}
-	free(cmd);
 }

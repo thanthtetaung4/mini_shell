@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 07:15:04 by taung             #+#    #+#             */
-/*   Updated: 2025/01/18 08:00:40 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/22 06:21:18 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void	export_add_var(t_minishell *data, char *key, char *value)
 		data->export = ft_envnew(key, value);
 		return;
 	}
-	replace_with_env_value(data, &value);
 	if (find_var(&data->export, key) != -1)
 	{
 		update_export_var(data, value, find_var(&data->export, key));
@@ -52,17 +51,20 @@ void	ft_export(t_minishell *data)
 	}
 	while (data->args[++i])
 	{
-		// remove_quotes(&args[i]);
 		key_value = key_value_splitter(data->args[i], '=');
 		if (is_valid_var(key_value[0]) == 0)
 		{
 			if (is_print == 0)
 				printf("minishell: export: `%s': not a valid identifier\n", key_value[0]);
 			is_print = 1;
+			free(key_value[0]);
+			free(key_value[1]);
 			free(key_value);
 			continue;
 		}
 		export_add_var(data, key_value[0], key_value[1]);
+		free(key_value[0]);
+		free(key_value[1]);
 		free(key_value);
 	}
 }

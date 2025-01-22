@@ -1,26 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_free.c                                         :+:      :+:    :+:   */
+/*   ft_strnchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/08 06:32:07 by taung             #+#    #+#             */
-/*   Updated: 2025/01/22 06:36:03 by taung            ###   ########.fr       */
+/*   Created: 2025/01/20 10:50:02 by taung             #+#    #+#             */
+/*   Updated: 2025/01/20 11:08:09 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-void	free_cmd(char **cmd)
+int	ft_strnchr(char *str, int n, int c)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while (cmd[i])
+	while (i < n && str[i])
 	{
-		free(cmd[i]);
+		if (str[i] == c)
+			return (1);
 		i++;
 	}
-	free(cmd);
+	return (0);
 }
