@@ -26,9 +26,10 @@
 // 	}
 // }
 
-/*
+
 // Testing execution
 // executing OK no piping
+/*
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <stdio.h>
@@ -45,6 +46,7 @@ int	main(void)
 			char *args[256];
 	char	*token;
 	int		i;
+	char	str[] = "hi";
 
 	while (1) {
 		// Prompt for input
@@ -69,6 +71,7 @@ int	main(void)
 		}
 		if (pid == 0) {
 			// Child process
+			printf("%s\n",str);
 			printf("Child process (PID: %d) executing: %s\n", getpid(), input);
 			// Split the input into command and arguments
 			token = strtok(input, " ");
@@ -79,7 +82,14 @@ int	main(void)
 			}
 			args[i] = NULL; // Null-terminate the argument list
 			// Execute the command
-			if (execve(args[0], args, NULL) == -1) {
+			i = 0;
+			args[0] = NULL;
+			while (args[i])
+			{
+				printf("%s\n", args[i]);
+				i++;
+			}
+			if (execve("/bin/ls", args, NULL) == -1) {
 				perror("execve");
 				exit(EXIT_FAILURE);
 			}
@@ -288,38 +298,49 @@ int	main(void)
 
 int main(int argc, char **argv, char **envp)
 {
-	t_minishell	data;
-	char		*input;
+	t_minishell data;
+	char *input;
+	t_ast_node *node;
 
 	data.env = NULL;
 	data.export = NULL;
 	data.env = (load_env(envp));
 	data.status = 0;
+	data.tree = malloc(sizeof(t_tree));
+	data.tree->lowest_node = NULL;
 	data.forking = malloc(sizeof(t_forking));
 	data.forking->pids = NULL;
 	data.forking->pipe_count = 0;
-	data.forking->pipe_fds = NULL;
+	data.forking->fds = NULL;
 	data.forking->redirection_count = 0;
 	data.forking->redirection_fds = NULL;
+	data.forking->heredoc_count = 0;
 	node = NULL;
 	load_export_vars(&data);
+	// printf("a\n");
 	//////
-	// input = "ls -l < grep";
+	// input = "ls -l | grep | sdd";
 	// node = create_tree(input, &data);
 	// visualize_tree(node);
 	////////
 	while (1)
 	{
+		// printf("1\n");
 		if (!data.status)
 			input = readline("minishell$ ");
 		else
 			input = readline("\033[31m✘\033[0m minishell$ ");
 		if (input && *input)
 		{
+			// printf("d");
 			add_history(input);
 			data.args = ft_split_quoted(input, ' ');
 			data.args_count = ft_count_tds(data.args);
-			data.status = ft_exec(&data);
+			// data.status = ft_exec(&data);
+			// printf("s");
+			node = create_tree(input, &data);
+			visualize_tree(node);
+			// tree_execution(node, &data);
 			free_cmd(data.args);
 		}
 		free(input);

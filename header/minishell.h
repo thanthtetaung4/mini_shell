@@ -29,9 +29,15 @@ typedef struct s_ast
 	struct s_ast *parent;
 	struct s_ast *left;
 	struct s_ast *right;
+	int redirection;
 	char **command;
 	int executed;
 } t_ast_node;
+
+typedef struct s_tree
+{
+	t_ast_node *lowest_node;
+} t_tree;
 
 typedef struct s_env
 {
@@ -42,9 +48,10 @@ typedef struct s_env
 typedef struct s_forking
 {
 	pid_t *pids;
-	int **pipe_fds;
+	int **fds;
 	int *redirection_fds;
 	int pipe_count;
+	int heredoc_count;
 	int redirection_count;
 } t_forking;
 typedef struct s_minishell
@@ -53,7 +60,8 @@ typedef struct s_minishell
 	t_list *export;
 	char **args;
 	int status;
-	int		args_count;
+	int args_count;
+	t_tree *tree;
 	t_forking *forking;
 } t_minishell;
 
@@ -91,9 +99,9 @@ void ft_env(t_env **env);
 void ft_export(t_minishell *data);
 void ft_unset(t_minishell *data);
 void ft_exit(t_minishell *data);
-int			ft_pwd(void);
-int			ft_cd(t_minishell *data);
-int			ft_echo(t_minishell *data);
+int ft_pwd(void);
+int ft_cd(t_minishell *data);
+int ft_echo(t_minishell *data);
 
 // free functions
 void free_all(t_minishell *data);
@@ -105,13 +113,13 @@ int ft_strcmp(const char *s1, const char *s2);
 char **ft_split_quoted(char const *s, char c);
 
 // tree functions
-t_ast_node *create_node(int type, char **command);
+t_ast_node *create_node(int type, char **command, t_minishell *data);
 void add_right_node(t_ast_node **parent_node, t_ast_node *node);
 void add_left_node(t_ast_node **parent_node, t_ast_node *node);
 t_ast_node *create_tree(char *input, t_minishell *data);
 void visualize_tree(t_ast_node *lowest_node);
 int tree_execution(t_ast_node *lowest_node, t_minishell *data);
-int			ft_count_tds(char **str);
-char	*ft_strrchr(const char *s, int c);
+int ft_count_tds(char **str);
+char *ft_strrchr(const char *s, int c);
 
 #endif
