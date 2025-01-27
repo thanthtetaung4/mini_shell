@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/01/22 06:52:09 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/27 06:29:41 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,6 +298,7 @@ int	init_data(t_minishell *data, char **envp)
 	data->forking->pipe_fds = NULL;
 	data->forking->redirection_count = 0;
 	data->forking->redirection_fds = NULL;
+	data->prev_dir = getcwd(NULL, 0);
 	load_export_vars(data);
 	return (1);
 }

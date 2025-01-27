@@ -57,6 +57,7 @@ typedef struct s_minishell
 	int				status;
 	int				args_count;
 	t_forking		*forking;
+	char			*prev_dir;
 }					t_minishell;
 
 // env functions
