@@ -27,6 +27,8 @@ BUILTINS_PATH = /builtins
 
 EXPORT_PATH = /export
 
+SIGNAL_PATH = /signal
+
 SRCS = $(SRCS_PATH)/main.c $(TREE_PATH)/create_tree.c $(TREE_PATH)/visualizer.c $(TREE_PATH)/ast_utils.c $(TREE_PATH)/tree_execution.c $(SRCS_PATH)$(ENV_PATH)/env.c $(SRCS_PATH)$(ENV_PATH)/init.c \
 		$(SRCS_PATH)$(ENV_PATH)/env_utils.c $(SRCS_PATH)$(UTIL_PATH)/ft_strncpy.c \
 		$(SRCS_PATH)$(FREE_PATH)/free_all.c $(SRCS_PATH)$(FREE_PATH)/env_free.c $(SRCS_PATH)$(EXEC_PATH)/exec.c \
@@ -36,7 +38,7 @@ SRCS = $(SRCS_PATH)/main.c $(TREE_PATH)/create_tree.c $(TREE_PATH)/visualizer.c 
 		$(SRCS_PATH)$(BUILTINS_PATH)/ft_exit.c $(SRCS_PATH)$(BUILTINS_PATH)/ft_pwd.c $(SRCS_PATH)$(UTIL_PATH)/count_tds.c \
 		$(SRCS_PATH)$(BUILTINS_PATH)/ft_cd.c $(SRCS_PATH)$(UTIL_PATH)/ft_strrchr.c $(SRCS_PATH)$(BUILTINS_PATH)/ft_echo.c \
 		$(SRCS_PATH)$(UTIL_PATH)/ft_strnchr.c $(SRCS_PATH)$(UTIL_PATH)/ft_interpret.c $(SRCS_PATH)$(UTIL_PATH)/test_utils.c \
-		$(SRCS_PATH)$(UTIL_PATH)/ft_cmd_utils.c
+		$(SRCS_PATH)$(UTIL_PATH)/ft_cmd_utils.c $(SRCS_PATH)$(SIGNAL_PATH)/ft_handle_sig.c
 
 
 OBJS = ${SRCS:.c=.o}

@@ -3,24 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_free.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 06:32:07 by taung             #+#    #+#             */
-/*   Updated: 2025/01/22 06:36:03 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/27 09:01:42 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-void	free_cmd(char **cmd)
+void	free_cmd(char ***cmd)
 {
-	int i;
+	int	i;
+	char	**tmp;
 
+	tmp = *cmd;
 	i = 0;
-	while (cmd[i])
+	while (tmp[i])
 	{
-		free(cmd[i]);
+		free(tmp[i]);
 		i++;
 	}
-	free(cmd);
+	free(tmp);
+	*cmd = NULL;
+	tmp = NULL;
 }

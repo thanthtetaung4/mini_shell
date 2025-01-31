@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/01/27 06:29:41 by taung            ###   ########.fr       */
+/*   Updated: 2025/01/31 10:42:05 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,11 +286,14 @@ int	main(void)
 
 #include "../header/minishell.h"
 
+extern int	g_shell_status;
+
 int	init_data(t_minishell *data, char **envp)
 {
 	data->env = NULL;
 	data->export = NULL;
 	data->env = (load_env(envp));
+	data->args = NULL;
 	data->status = 0;
 	data->forking = malloc(sizeof(t_forking));
 	data->forking->pids = NULL;
@@ -361,12 +364,21 @@ int	is_valid_cmd(char *input)
 		return (0);
 	return (1);
 }
+
+void	handle_eof(t_minishell *data)
+{
+	write(1, "\nexit\n", 6);
+	free_all(data);
+	exit(0);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	data;
 	char		*input;
 	t_ast_node	*node;
 
+	g_shell_status = 0;
 	init_data(&data, envp);
 	node = NULL;
 	//////
@@ -376,10 +388,14 @@ int	main(int argc, char **argv, char **envp)
 	////////
 	while (1)
 	{
-		if (!data.status)
-			input = readline("minishell$ ");
+		signal(SIGINT, handle_sigint);
+		signal(SIGQUIT, SIG_IGN);
+		if (!g_shell_status)
+			input = readline("minishell$ this is printed");
 		else
 			input = readline("\033[31m✘\033[0m minishell$ ");
+		if (input == NULL)
+			handle_eof(&data);
 		if (input && *input && is_valid_cmd(input))
 		{
 			add_history(input);
@@ -388,7 +404,7 @@ int	main(int argc, char **argv, char **envp)
 			ft_interpret(&data);
 			remove_quotes(&data);
 			data.status = ft_exec(&data);
-			free_cmd(data.args);
+			free_cmd(&data.args);
 			// this bloack needs to be changed
 			// change to create tree and then exe from tree
 		}

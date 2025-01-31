@@ -7,6 +7,8 @@
 # include <stdlib.h>
 # include <sys/types.h>
 # include <unistd.h>
+# include <signal.h>
+# include <termios.h>
 
 typedef enum
 {
@@ -101,7 +103,7 @@ int					ft_echo(t_minishell *data);
 
 // free functions
 void				free_all(t_minishell *data);
-void				free_cmd(char **cmd);
+void				free_cmd(char ***cmd);
 void				env_free(void *env);
 
 // utils functions
@@ -111,6 +113,11 @@ int					ft_count_tds(char **str);
 char				*ft_strrchr(const char *s, int c);
 int	ft_strnchr(char *str, int n, int c);
 void	ft_interpret(t_minishell *data);
+
+// signal functions
+void	handle_sigint(int sig);
+void	handle_sigquit(int sig);
+
 // test utils
 void	ft_print_args(char **args);
 
