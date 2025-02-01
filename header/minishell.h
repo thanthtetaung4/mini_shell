@@ -107,6 +107,7 @@ int ft_echo(t_minishell *data);
 void free_all(t_minishell *data);
 void free_cmd(char **cmd);
 void env_free(void *env);
+void free_tree(t_ast_node *node);
 
 // utils functions
 int ft_strcmp(const char *s1, const char *s2);

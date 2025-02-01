@@ -325,25 +325,23 @@ int main(int argc, char **argv, char **envp)
 	////////
 	while (1)
 	{
-		// printf("1\n");
 		if (!data.status)
 			input = readline("minishell$ ");
 		else
 			input = readline("\033[31m✘\033[0m minishell$ ");
 		if (input && *input)
 		{
-			// printf("d");
 			add_history(input);
 			data.args = ft_split_quoted(input, ' ');
 			data.args_count = ft_count_tds(data.args);
-			// data.status = ft_exec(&data);
-			// printf("s");
 			node = create_tree(input, &data);
-			visualize_tree(node);
-			// tree_execution(node, &data);
+			data.status = tree_execution(node, &data);
 			free_cmd(data.args);
+			free_tree(node);
+			node = NULL;
+			// free_cmd(data.args);
+			// printf("DEBUG: Loop is running, data.status = %d\n", data.status); // Debug log
 		}
 		free(input);
 	}
-	free_all(&data);
 }
