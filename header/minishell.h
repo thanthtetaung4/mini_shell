@@ -9,6 +9,8 @@
 # include <unistd.h>
 # include <signal.h>
 # include <termios.h>
+# include <dirent.h>
+# include <sys/ioctl.h>
 
 typedef enum
 {
