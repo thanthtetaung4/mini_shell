@@ -50,9 +50,13 @@ typedef struct s_forking
 	pid_t *pids;
 	int **fds;
 	int *redirection_fds;
+	int completed_piping;
 	int pipe_count;
 	int heredoc_count;
 	int redirection_count;
+	int i_pid;
+	int i_rfd;
+	int i_fd;
 } t_forking;
 typedef struct s_minishell
 {
@@ -122,5 +126,6 @@ void visualize_tree(t_ast_node *lowest_node);
 int tree_execution(t_ast_node *lowest_node, t_minishell *data);
 int ft_count_tds(char **str);
 char *ft_strrchr(const char *s, int c);
+void init_forking_data(t_minishell *data);
 
 #endif

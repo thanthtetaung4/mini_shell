@@ -308,13 +308,7 @@ int main(int argc, char **argv, char **envp)
 	data.status = 0;
 	data.tree = malloc(sizeof(t_tree));
 	data.tree->lowest_node = NULL;
-	data.forking = malloc(sizeof(t_forking));
-	data.forking->pids = NULL;
-	data.forking->pipe_count = 0;
-	data.forking->fds = NULL;
-	data.forking->redirection_count = 0;
-	data.forking->redirection_fds = NULL;
-	data.forking->heredoc_count = 0;
+	init_forking_data(&data);
 	node = NULL;
 	load_export_vars(&data);
 	// printf("a\n");
@@ -336,7 +330,8 @@ int main(int argc, char **argv, char **envp)
 			data.args_count = ft_count_tds(data.args);
 			node = create_tree(input, &data);
 			data.status = tree_execution(node, &data);
-			free_cmd(data.args);
+			printf("exec ok\n");
+			// free_cmd(data.args);
 			free_tree(node);
 			node = NULL;
 			// free_cmd(data.args);

@@ -1,31 +1,29 @@
 #include "../../header/minishell.h"
 
+void free_tree_helper(t_ast_node *node)
+{
+    if (!node)
+        return;
+    free_tree_helper(node->left);
+    free_tree_helper(node->right);
+    if (node->type == COMMAND && node->command)
+    {
+        for (int i = 0; node->command[i]; i++)
+            free(node->command[i]);
+        free(node->command); 
+    }
+    free(node);
+}
+
 void free_tree(t_ast_node *node)
 {
-    t_ast_node *current, *parent;
+    t_ast_node *root;
 
     if (!node)
         return;
-
-    current = node;
-    
-    // Traverse up to the root
-    while (current->parent)
-        current = current->parent;
-    
-    // Now free the tree starting from the root
-	if (current->left)
-    	free_tree(current->left);
-	if (current->right)
-    	free_tree(current->right);
-
-    // Free the command arguments array
-    if (current->command)
-    {
-        for (int i = 0; current->command[i]; i++)
-            free(current->command[i]);
-        free(current->command);
-    }
-    // Free the node itself
-    free(current);
+    root = node;
+    while (root->parent)
+        root = root->parent;
+    free_tree_helper(root);
 }
+

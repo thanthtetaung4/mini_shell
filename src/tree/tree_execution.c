@@ -1,6 +1,21 @@
 #include "../../header/minishell.h"
 #include <sys/wait.h>
 
+void init_forking_data(t_minishell *data)
+{
+	data->forking = malloc(sizeof(t_forking));
+	data->forking->pids = NULL;
+	data->forking->pipe_count = 0;
+	data->forking->fds = NULL;
+	data->forking->redirection_count = 0;
+	data->forking->redirection_fds = NULL;
+	data->forking->heredoc_count = 0;
+	data->forking->i_fd = 0;
+	data->forking->i_pid = 0;
+	data->forking->i_rfd = 0;
+	data->forking->completed_piping = 0;
+}
+
 int init_pids(t_minishell *data)
 {
 	int num_of_pids;
@@ -15,36 +30,33 @@ int init_pids(t_minishell *data)
 		return (-1);
 	return (num_of_pids);
 }
-
 void init_fds(t_minishell *data)
 {
-	int fds_count;
-	int i;
+    int fds_count;
+    int i;
 
-	i = 0;
-	if (data->forking->pipe_count > 0 || data->forking->heredoc_count > 0) 
-	{
-		fds_count = data->forking->pipe_count + data->forking->heredoc_count;
-		data->forking->fds = malloc(sizeof(int *) * fds_count);
-		while (i < fds_count)
-		{
-			data->forking->fds[i] = malloc(sizeof(int) * 2);
-			i++;
-		}
-		if (!data->forking->fds) 
-			return;
-	} 
-	else 
-		data->forking->fds = NULL;
-	if (data->forking->redirection_count > 0) 
-	{
-		data->forking->redirection_fds = malloc(sizeof(int) * data->forking->redirection_count);
-		if (!data->forking->redirection_fds)
-			return;
-	} 
-	else
-		data->forking->redirection_fds = NULL;
+    i = 0;
+    if (data->forking->pipe_count > 0 || data->forking->heredoc_count > 0)
+    {
+        fds_count = data->forking->pipe_count + data->forking->heredoc_count + 1;
+        data->forking->fds = malloc(sizeof(int *) * fds_count);
+        if (!data->forking->fds)
+            return;
+        while (i < fds_count)
+        {
+            data->forking->fds[i] = malloc(sizeof(int) * 2);
+            i++;
+        }
+    }
+    else
+        data->forking->fds = NULL;
+    if (data->forking->redirection_count > 0)
+        data->forking->redirection_fds = malloc(sizeof(int) * data->forking->redirection_count);
+    else
+        data->forking->redirection_fds = NULL;
 }
+
+
 int check_cmd(char *cmd)
 {
 	char *bultins[8];
@@ -58,7 +70,7 @@ int check_cmd(char *cmd)
     bultins[4] = "pwd";
     bultins[5] = "unset";
 	bultins[6] = "export";
-    bultins[7] = NULL;
+	bultins[7] = NULL;
 	while (bultins[i] != NULL)
 	{
 		if (strcmp(bultins[i], cmd) == 0)
@@ -67,14 +79,14 @@ int check_cmd(char *cmd)
 	}
 	return (0);
 }
+
 int execute_command(t_minishell *data, t_ast_node *node, int i_pid)
 {
 	int *pids;
 	int i;
-
-	pids = data->forking->pids;
 	char *args[256];
 
+	pids = data->forking->pids;
 	pids[i_pid] = fork();
 	if (pids[i_pid] == -1)
 	{
@@ -103,29 +115,101 @@ int execute_command(t_minishell *data, t_ast_node *node, int i_pid)
 		wait(NULL);
 	return (0);
 }
+
+int execute_pipe_command(t_minishell *data, t_ast_node *node)
+{
+    int *pids;
+    int i;
+    char *args[256];
+    int **fds;
+
+	i = 0;
+	pids = data->forking->pids;
+	fds = data->forking->fds;
+    if (pipe(fds[data->forking->i_fd]) == -1)
+    {
+        perror("pipe");
+        exit(EXIT_FAILURE);
+    }
+    pids[data->forking->i_pid] = fork();
+    if (pids[data->forking->i_pid] == -1)
+    {
+        perror("fork");
+        return (-1);
+    }
+    else if (pids[data->forking->i_pid] == 0)  // CHILD PROCESS
+    {
+        if (data->forking->completed_piping > 0) // If not the first command
+            dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO);  // Read from previous pipe
+        if (data->forking->completed_piping < data->forking->pipe_count) // If not the last command
+            dup2(fds[data->forking->i_fd][1], STDOUT_FILENO);
+		while (i <= data->forking->i_fd)
+        {
+            close(fds[i][0]);
+            close(fds[i][1]);
+			i++;
+		}
+		if (check_cmd(node->command[0]) == 1)
+            ft_exec(data);
+        else 
+        {
+            args[0] = ft_strjoin("/bin/", node->command[0]); // Allocate correctly
+            i = 1;
+            while (node->command[i])
+            {
+                args[i] = node->command[i];
+                i++;
+            }
+            args[i] = NULL;
+            execve(args[0], args, NULL);
+            perror("execve");
+            exit(EXIT_FAILURE);
+        }
+    }
+    else 
+    {
+        wait(NULL);
+        data->forking->completed_piping++;
+        close(fds[data->forking->i_fd][1]);
+        if (data->forking->i_fd > 0)
+            close(fds[data->forking->i_fd - 1][0]);
+    }
+    return (0);
+}
+
+
 int tree_execution(t_ast_node *lowest_node, t_minishell *data)
 {
     t_ast_node *node;
-    int i_pid = 0;
-    int status;
-	int num_pids;
+	t_ast_node *temp_node;
+	int status;
 
 	node = lowest_node;
-    num_pids = init_pids(data); // Ensure you have the number of pids.
-    while (node)
-    {
+	init_pids(data);
+	init_fds(data);
+	while (node)
+	{
         if (node->type == COMMAND)
         {
             if (node->parent && node->parent->type == PIPE)
             {
-                // Handle pipes here
+                execute_pipe_command(data, node);
+				data->forking->i_fd++;
+				data->forking->i_pid++;
             }
             else if (!node->parent)
             {
-                execute_command(data, node, i_pid);
-                i_pid++;
+                execute_command(data, node, data->forking->i_pid);
+                data->forking->i_pid++;
             }
         }
+		else if (node->type == PIPE)
+		{
+			temp_node = node->right;
+			execute_pipe_command(data, temp_node);
+			data->forking->i_fd++;
+			data->forking->i_pid++;
+		}
         node = node->parent;
     }
     return data->status;

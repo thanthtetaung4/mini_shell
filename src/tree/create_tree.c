@@ -33,7 +33,6 @@ void handle_pipe_node(t_ast_node **head, char *input, t_substring *substring_dat
 	*head = temp_head;
 	add_right_node(head, temp);
 	free(temp_input);
-	data->forking->pipe_count++;
 	substring_data->end = substring_data->start - 1;
 }
 
@@ -54,31 +53,6 @@ void handle_single_command(t_ast_node **head, char *input, int end, t_minishell 
 	}
 }
 
-// void handle_special_command(char *input, t_substring *substring_data, t_minishell *data, t_ast_node **head)
-// {
-// 	int type;
-
-// 	if (input[substring_data->start] == '|')
-// 		type = PIPE;
-// 	else if (input[substring_data->start] == '>' && input[substring_data->start - 1] == '>' && input[substring_data->start + 1] != '>')
-// 		type = APPEND;
-// 	else if (input[substring_data->start] == '<' && input[substring_data->start - 1] == '<' && input[substring_data->start + 1] != '<')
-// 		type = HEREDOC;
-// 	else if (input[substring_data->start] == '>' && input[substring_data->start - 1] != '>' && input[substring_data->start + 1] != '>')
-// 		type = OUTPUT;
-// 	else if (input[substring_data->start] == '<' && input[substring_data->start - 1] != '<' && input[substring_data->start + 1] != '<')
-// 		type = INPUT;
-// 	if (type == PIPE)
-// 		data->forking->pipe_count++;
-// 	else if (type == HEREDOC)
-// 		data->forking->heredoc_count++;
-// 	else
-// 		data->forking->redirection_count++;
-// 	handle_special_node(head, input, substring_data, type);
-// 	if (type == HEREDOC || type == APPEND)
-// 		substring_data->start--;
-// 	substring_data->end = substring_data->start - 1;
-// }
 t_ast_node *create_tree(char *input, t_minishell *data)
 {
 	t_substring *substring_data;
@@ -93,7 +67,10 @@ t_ast_node *create_tree(char *input, t_minishell *data)
 	while (substring_data->start >= 0)
 	{
 		if (input[substring_data->start] == '|')
+		{
 			handle_pipe_node(&head, input, substring_data, data);
+			data->forking->pipe_count += 1;
+		}
 		else if (substring_data->start == 0)
 			handle_single_command(&head, input, substring_data->end, data);
 		if (data->tree && !data->tree->lowest_node) 
