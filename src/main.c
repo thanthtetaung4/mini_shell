@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/05 08:11:58 by codespace        ###   ########.fr       */
+/*   Updated: 2025/02/05 08:41:48 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,12 +304,9 @@ int	init_data(t_minishell *data, char **envp)
 	data->env = (load_env(envp));
 	data->args = NULL;
 	data->status = 0;
-	data->forking = malloc(sizeof(t_forking));
-	data->forking->pids = NULL;
-	data->forking->pipe_count = 0;
-	data->forking->fds = NULL;
-	data->forking->redirection_count = 0;
-	data->forking->redirection_fds = NULL;
+	data->tree = malloc(sizeof(t_tree));
+	data->tree->lowest_node = NULL;
+	init_forking_data(data);
 	data->prev_dir = getcwd(NULL, 0);
 	load_export_vars(data);
 	return (1);
@@ -403,14 +400,6 @@ int	main(int argc, char **argv, char **envp)
 			input = readline("minishell$ ");
 		else
 			input = readline("\033[31m✘\033[0m minishell$ ");
-		// Select the appropriate prompt based on g_shell_status
-		// if (!g_shell_status)
-		// 	input = readline("minishell$ ");
-		// else
-		// {
-		// 	g_shell_status = 0;  // Reset status after changing the prompt
-		// 	input = readline("\033[31m✘\033[0m minishell$ ");
-		// }
 		if (input == NULL)
 			handle_eof(&data);
 		if (input && *input && is_valid_cmd(input))
@@ -420,8 +409,12 @@ int	main(int argc, char **argv, char **envp)
 			data.args_count = ft_count_tds(data.args);
 			ft_interpret(&data);
 			remove_quotes(&data);
-			data.status = ft_exec(&data);
+			node = create_tree(input, &data);
+			data.status = tree_execution(node, &data);
+			// data.status = ft_exec(&data);
 			free_cmd(&data.args);
+			free_tree(node);
+			node = NULL;
 			// this bloack needs to be changed
 			// change to create tree and then exe from tree
 		}
