@@ -50,6 +50,8 @@ typedef struct s_forking
 	pid_t *pids;
 	int **fds;
 	int *redirection_fds;
+	int input_fd;
+	int output_fd;
 	int completed_piping;
 	int pipe_count;
 	int heredoc_count;

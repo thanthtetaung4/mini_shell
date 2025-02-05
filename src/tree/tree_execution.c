@@ -56,7 +56,6 @@ void init_fds(t_minishell *data)
         data->forking->redirection_fds = NULL;
 }
 
-
 int check_cmd(char *cmd)
 {
 	char *bultins[8];
@@ -80,9 +79,31 @@ int check_cmd(char *cmd)
 	return (0);
 }
 
-int execute_command(t_minishell *data, t_ast_node *node, int i_pid)
+int execute_command(t_minishell *data, t_ast_node *node)
 {
-	int *pids;
+	int i;
+	char *args[256];
+	
+    if (check_cmd(node->command[0]) == 1)
+        ft_exec(data);
+    else 
+    {
+        args[0] = ft_strjoin("/bin/", node->command[0]);
+        i = 1;
+        while (node->command[i]) {
+            args[i] = node->command[i];
+            i++;
+        }
+        args[i] = NULL;
+        execve(args[0], args, NULL);
+        perror("execve");
+        exit(EXIT_FAILURE);
+    }
+    return (0);
+}
+int execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
+{
+    int *pids;
 	int i;
 	char *args[256];
 
@@ -94,28 +115,11 @@ int execute_command(t_minishell *data, t_ast_node *node, int i_pid)
 		return (-1);
 	}
 	else if (pids[i_pid] == 0)
-	{
-		if (check_cmd(node->command[0]) == 1)
-			ft_exec(data);
-		else 
-		{
-			args[0] = ft_strjoin("/bin/", node->command[0]);
-			i = 1;
-			while (node->command[i]) {
-				args[i] = node->command[i];
-				i++;
-			}
-			args[i] = NULL;
-			execve(args[0], args, NULL);
-			perror("execve");
-			exit(EXIT_FAILURE);
-		}
-	}
-	else
+        execute_command(data, node);
+    else
 		wait(NULL);
 	return (0);
 }
-
 int execute_pipe_command(t_minishell *data, t_ast_node *node)
 {
     int *pids;
@@ -137,11 +141,11 @@ int execute_pipe_command(t_minishell *data, t_ast_node *node)
         perror("fork");
         return (-1);
     }
-    else if (pids[data->forking->i_pid] == 0)  // CHILD PROCESS
+    else if (pids[data->forking->i_pid] == 0) 
     {
-        if (data->forking->completed_piping > 0) // If not the first command
-            dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO);  // Read from previous pipe
-        if (data->forking->completed_piping < data->forking->pipe_count) // If not the last command
+        if (data->forking->completed_piping > 0) 
+            dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO); 
+        if (data->forking->completed_piping < data->forking->pipe_count) 
             dup2(fds[data->forking->i_fd][1], STDOUT_FILENO);
 		while (i <= data->forking->i_fd)
         {
@@ -152,19 +156,7 @@ int execute_pipe_command(t_minishell *data, t_ast_node *node)
 		if (check_cmd(node->command[0]) == 1)
             ft_exec(data);
         else 
-        {
-            args[0] = ft_strjoin("/bin/", node->command[0]); // Allocate correctly
-            i = 1;
-            while (node->command[i])
-            {
-                args[i] = node->command[i];
-                i++;
-            }
-            args[i] = NULL;
-            execve(args[0], args, NULL);
-            perror("execve");
-            exit(EXIT_FAILURE);
-        }
+            execute_command(data, node);
     }
     else 
     {
@@ -176,7 +168,6 @@ int execute_pipe_command(t_minishell *data, t_ast_node *node)
     }
     return (0);
 }
-
 
 int tree_execution(t_ast_node *lowest_node, t_minishell *data)
 {
@@ -199,7 +190,7 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
             }
             else if (!node->parent)
             {
-                execute_command(data, node, data->forking->i_pid);
+                execute_single_command(data, node, data->forking->i_pid);
                 data->forking->i_pid++;
             }
         }
