@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/05 05:29:37 by codespace        ###   ########.fr       */
+/*   Updated: 2025/02/05 08:09:12 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@
 // 	}
 // }
 
-/*
 // Testing execution
 // executing OK no piping
+/*
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <stdio.h>
@@ -45,6 +45,7 @@ int	main(void)
 			char *args[256];
 	char	*token;
 	int		i;
+	char	str[] = "hi";
 
 	while (1) {
 		// Prompt for input
@@ -69,6 +70,7 @@ int	main(void)
 		}
 		if (pid == 0) {
 			// Child process
+			printf("%s\n",str);
 			printf("Child process (PID: %d) executing: %s\n", getpid(), input);
 			// Split the input into command and arguments
 			token = strtok(input, " ");
@@ -79,7 +81,14 @@ int	main(void)
 			}
 			args[i] = NULL; // Null-terminate the argument list
 			// Execute the command
-			if (execve(args[0], args, NULL) == -1) {
+			i = 0;
+			args[0] = NULL;
+			while (args[i])
+			{
+				printf("%s\n", args[i]);
+				i++;
+			}
+			if (execve("/bin/ls", args, NULL) == -1) {
 				perror("execve");
 				exit(EXIT_FAILURE);
 			}
@@ -382,7 +391,7 @@ int	main(int argc, char **argv, char **envp)
 	init_data(&data, envp);
 	node = NULL;
 	//////
-	// input = "ls -l < grep";
+	// input = "ls -l | grep | sdd";
 	// node = create_tree(input, &data);
 	// visualize_tree(node);
 	////////
@@ -418,5 +427,4 @@ int	main(int argc, char **argv, char **envp)
 		}
 		free(input);
 	}
-	free_all(&data);
 }

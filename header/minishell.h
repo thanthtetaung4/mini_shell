@@ -1,16 +1,16 @@
 #ifndef MINI_SHELL_H
 # define MINI_SHELL_H
 # include "../libft/libft.h"
+# include <dirent.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <sys/types.h>
-# include <unistd.h>
-# include <signal.h>
-# include <termios.h>
-# include <dirent.h>
 # include <sys/ioctl.h>
+# include <sys/types.h>
+# include <termios.h>
+# include <unistd.h>
 
 typedef enum
 {
@@ -34,9 +34,15 @@ typedef struct s_ast
 	struct s_ast	*parent;
 	struct s_ast	*left;
 	struct s_ast	*right;
+	int				redirection;
 	char			**command;
 	int				executed;
 }					t_ast_node;
+
+typedef struct s_tree
+{
+	t_ast_node		*lowest_node;
+}					t_tree;
 
 typedef struct s_env
 {
@@ -47,12 +53,18 @@ typedef struct s_env
 typedef struct s_forking
 {
 	pid_t			*pids;
-	int				**pipe_fds;
+	int				**fds;
 	int				*redirection_fds;
+	int				input_fd;
+	int				output_fd;
+	int				completed_piping;
 	int				pipe_count;
+	int				heredoc_count;
 	int				redirection_count;
+	int				i_pid;
+	int				i_rfd;
+	int				i_fd;
 }					t_forking;
-
 typedef struct s_minishell
 {
 	t_list			*env;
@@ -60,8 +72,8 @@ typedef struct s_minishell
 	char			**args;
 	int				status;
 	int				args_count;
+	t_tree			*tree;
 	t_forking		*forking;
-	char			*prev_dir;
 }					t_minishell;
 
 // env functions
@@ -105,30 +117,34 @@ int					ft_echo(t_minishell *data);
 
 // free functions
 void				free_all(t_minishell *data);
-void				free_cmd(char ***cmd);
+void				free_cmd(char **cmd);
 void				env_free(void *env);
+void				free_tree(t_ast_node *node);
 
 // utils functions
 int					ft_strcmp(const char *s1, const char *s2);
 char				**ft_split_quoted(char const *s, char c);
 int					ft_count_tds(char **str);
 char				*ft_strrchr(const char *s, int c);
-int	ft_strnchr(char *str, int n, int c);
-void	ft_interpret(t_minishell *data);
+int					ft_strnchr(char *str, int n, int c);
+void				ft_interpret(t_minishell *data);
 
 // signal functions
-void	handle_sigint(int sig);
-void	handle_sigquit(int sig);
+void				handle_sigint(int sig);
+void				handle_sigquit(int sig);
 
 // test utils
-void	ft_print_args(char **args);
+void				ft_print_args(char **args);
 
 // tree functions
-t_ast_node			*create_node(int type, char **command);
+t_ast_node			*create_node(int type, char **command, t_minishell *data);
 void				add_right_node(t_ast_node **parent_node, t_ast_node *node);
 void				add_left_node(t_ast_node **parent_node, t_ast_node *node);
 t_ast_node			*create_tree(char *input, t_minishell *data);
 void				visualize_tree(t_ast_node *lowest_node);
 int					tree_execution(t_ast_node *lowest_node, t_minishell *data);
+int					ft_count_tds(char **str);
+char				*ft_strrchr(const char *s, int c);
+void				init_forking_data(t_minishell *data);
 
 #endif
