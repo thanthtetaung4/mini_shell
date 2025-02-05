@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/05 08:09:12 by codespace        ###   ########.fr       */
+/*   Updated: 2025/02/05 08:11:58 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -307,7 +307,7 @@ int	init_data(t_minishell *data, char **envp)
 	data->forking = malloc(sizeof(t_forking));
 	data->forking->pids = NULL;
 	data->forking->pipe_count = 0;
-	data->forking->pipe_fds = NULL;
+	data->forking->fds = NULL;
 	data->forking->redirection_count = 0;
 	data->forking->redirection_fds = NULL;
 	data->prev_dir = getcwd(NULL, 0);

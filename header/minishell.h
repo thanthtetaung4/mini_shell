@@ -74,6 +74,7 @@ typedef struct s_minishell
 	int				args_count;
 	t_tree			*tree;
 	t_forking		*forking;
+	char			*prev_dir;
 }					t_minishell;
 
 // env functions
@@ -117,7 +118,7 @@ int					ft_echo(t_minishell *data);
 
 // free functions
 void				free_all(t_minishell *data);
-void				free_cmd(char **cmd);
+void				free_cmd(char ***cmd);
 void				env_free(void *env);
 void				free_tree(t_ast_node *node);
 
