@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/05 08:41:48 by codespace        ###   ########.fr       */
+/*   Updated: 2025/02/05 10:58:46 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,7 +322,8 @@ int	check_syntax_errors(char *input)
 		if (ft_isalnum(input[i]) == 0 && input[i] != ' ' && input[i] != '/'
 			&& input[i] != '.' && input[i] != '=' && input[i] != '-'
 			&& input[i] != '_' && input[i] != '"' && input[i] != '\''
-			&& input[i] != '$' && input[i] != '>' && input[i] != '<')
+			&& input[i] != '$' && input[i] != '>' && input[i] != '<'
+			&& input[i] != '?')
 		{
 			printf("minishell: syntax error near unexpected token `%c'\n",
 				input[i]);

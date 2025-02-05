@@ -6,11 +6,13 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/01/22 07:37:38 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/05 10:58:47 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
+
+extern int	g_shell_status;
 
 char	*get_value_before_dollar(char *cmd, char *found_dollar)
 {
@@ -27,6 +29,11 @@ char	*get_value(t_list *env, char *found_dollar, char **pos)
 	char	*key;
 
 	i = 1;
+	if (found_dollar[i] == '?')
+	{
+		*pos += 2;
+		return (ft_itoa(g_shell_status));
+	}
 	while (ft_isalnum(found_dollar[i]) == 1 && found_dollar[i] != '\0')
 		i++;
 	key = ft_substr(found_dollar + 1, 0, i - 1);
