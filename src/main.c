@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/03 10:02:48 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/05 05:29:37 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -391,9 +391,17 @@ int	main(int argc, char **argv, char **envp)
 		signal(SIGINT, handle_sigint);
 		signal(SIGQUIT, handle_sigquit);
 		if (!g_shell_status)
-			input = readline("minishell$ this is printed");
+			input = readline("minishell$ ");
 		else
 			input = readline("\033[31m✘\033[0m minishell$ ");
+		// Select the appropriate prompt based on g_shell_status
+		// if (!g_shell_status)
+		// 	input = readline("minishell$ ");
+		// else
+		// {
+		// 	g_shell_status = 0;  // Reset status after changing the prompt
+		// 	input = readline("\033[31m✘\033[0m minishell$ ");
+		// }
 		if (input == NULL)
 			handle_eof(&data);
 		if (input && *input && is_valid_cmd(input))
