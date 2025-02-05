@@ -2,81 +2,100 @@
 
 char *copy_substring(const char *input, int start, int length)
 {
-	char *substring = malloc(length + 1);
-	if (!substring)
-		return NULL;
-	ft_strlcpy(substring, input + start, length + 1);
-	return substring;
+    char *substring = malloc(length + 1);
+    if (!substring)
+        return NULL;
+    ft_strlcpy(substring, input + start, length + 1);
+    return substring;
 }
 
-void handle_pipe_node(t_ast_node **head, char *input, t_substring *substring_data, t_minishell *data)
+void handle_pipe_node(t_ast_node **head, char **cmd ,t_minishell *data, int count)
 {
-	t_ast_node *temp;
-	t_ast_node *temp_head;
-	char *temp_input;
+    t_ast_node *temp;
+    t_ast_node *temp_head;
+    char *temp_input;
 
-	if (!(*head))
-	{
-		*head = create_node(PIPE, NULL, data);
-		temp_input = ft_strdup(input + substring_data->start + 1);
-		temp = create_node(COMMAND, ft_split_quoted(temp_input, ' '), data);
-		add_right_node(head, temp);
-		free(temp_input);
-		substring_data->end = substring_data->start - 1;
-		return;
-	}
-	temp_head = create_node(PIPE, NULL, data);
-	temp_input = copy_substring(input, substring_data->start + 1,
-								substring_data->end - substring_data->start);
-	temp = create_node(COMMAND, ft_split_quoted(temp_input, ' '), data);
-	add_left_node(head, temp_head);
-	*head = temp_head;
-	add_right_node(head, temp);
-	free(temp_input);
-	substring_data->end = substring_data->start - 1;
+    if (!(*head))
+    {
+        *head = create_node(PIPE, NULL, data, 1);
+        temp = create_node(COMMAND, cmd, data, count);
+        add_right_node(head, temp);
+        return;
+    }
+	temp_head = create_node(PIPE, NULL, data, 1);
+	temp = create_node(COMMAND, cmd, data, count);
+    add_left_node(head, temp_head);
+    *head = temp_head;
+    add_right_node(head, temp);
 }
 
-void handle_single_command(t_ast_node **head, char *input, int end, t_minishell *data)
+void handle_single_command(t_ast_node **head, char **cmd, t_minishell *data, int count)
 {
-	t_ast_node *temp;
-	char *temp_input;
+    t_ast_node *temp;
+    char *temp_input;
 
-	if (!(*(head)))
-		*head = create_node(COMMAND, ft_split_quoted(input, ' '), data);
-	else
+    if (!(*(head)))
+        *head = create_node(COMMAND, cmd, data, count);
+    else
+    {
+        temp = create_node(COMMAND, cmd, data, count);
+        add_left_node(head, temp);
+        data->tree->lowest_node = temp;
+    }
+}
+void reset_args(char **args, int counter)
+{
+	int i;
+
+	i = 0;
+	while (i < counter)
 	{
-		temp_input = copy_substring(input, 0, end);
-		temp = create_node(COMMAND, ft_split_quoted(temp_input, ' '), data);
-		add_left_node(head, temp);
-		data->tree->lowest_node = temp;
-		free(temp_input);
+		args[i] = NULL;
+		i++;
 	}
 }
-
 t_ast_node *create_tree(char *input, t_minishell *data)
 {
-	t_substring *substring_data;
-	t_ast_node *head;
+    t_ast_node *head;
+    int i;
+    int j;
+	int counter;
+	char *cmd[256];
 
-	substring_data = malloc(sizeof(t_substring));
-	if (!substring_data)
-		return NULL;
-	substring_data->end = 0;
-	substring_data->start = ft_strlen(input) - 1;
+	i = data->args_count - 1;
+	counter = 0;
+	j = 0;
 	head = NULL;
-	while (substring_data->start >= 0)
+	while (i >= 0)
 	{
-		if (input[substring_data->start] == '|')
+		counter++;
+		if (ft_strcmp(data->args[i], "|") == 0)
 		{
-			handle_pipe_node(&head, input, substring_data, data);
+			while (j < counter - 1)
+			{
+				cmd[j] = data->args[i + j + 1];
+				j++;
+			}
+			cmd[j] = NULL;
+			handle_pipe_node(&head, cmd, data, counter - 1);
+			counter = 0;
+			j = 0;
 			data->forking->pipe_count += 1;
 		}
-		else if (substring_data->start == 0)
-			handle_single_command(&head, input, substring_data->end, data);
-		if (data->tree && !data->tree->lowest_node) 
-			data->tree->lowest_node = head;
-		substring_data->start--;
-	}
-	free(substring_data);
-	return (data->tree->lowest_node);
+		else if (i == 0)
+		{
+			while (j < counter)
+			{
+				cmd[j] = data->args[i + j];
+				j++;
+			}
+			cmd[j] = NULL;
+			handle_single_command(&head, cmd, data, counter);
+			counter = 0;
+		}
+        if (data->tree && !data->tree->lowest_node) 
+            data->tree->lowest_node = head;
+        i--;
+    }
+    return (data->tree->lowest_node);
 }
