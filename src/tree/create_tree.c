@@ -1,14 +1,5 @@
 #include "../../header/minishell.h"
 
-char *copy_substring(const char *input, int start, int length)
-{
-    char *substring = malloc(length + 1);
-    if (!substring)
-        return NULL;
-    ft_strlcpy(substring, input + start, length + 1);
-    return substring;
-}
-
 void handle_pipe_node(t_ast_node **head, char **cmd ,t_minishell *data, int count)
 {
     t_ast_node *temp;
@@ -54,7 +45,7 @@ void reset_args(char **args, int counter)
 		i++;
 	}
 }
-t_ast_node *create_tree(char *input, t_minishell *data)
+t_ast_node *create_tree(t_minishell *data)
 {
     t_ast_node *head;
     int i;
@@ -68,6 +59,7 @@ t_ast_node *create_tree(char *input, t_minishell *data)
 	head = NULL;
 	while (i >= 0)
 	{
+		j = 0;
 		counter++;
 		if (ft_strcmp(data->args[i], "|") == 0)
 		{
@@ -79,7 +71,6 @@ t_ast_node *create_tree(char *input, t_minishell *data)
 			cmd[j] = NULL;
 			handle_pipe_node(&head, cmd, data, counter - 1);
 			counter = 0;
-			j = 0;
 			data->forking->pipe_count += 1;
 		}
 		else if (i == 0)

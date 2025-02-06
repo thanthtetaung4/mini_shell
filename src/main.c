@@ -406,12 +406,14 @@ int	main(int argc, char **argv, char **envp)
 			data.args_count = ft_count_tds(data.args);
 			ft_interpret(&data);
 			remove_quotes(&data);
-			node = create_tree(input, &data);
-			// visualize_tree(node);
+			node = create_tree(&data);
+			printf("cmd - %s\n", data.args[0]);
+			visualize_tree(node);
 			data.status = tree_execution(node, &data);
 			// data.status = ft_exec(&data);
 			free_cmd(&data.args);
-			// free_tree(node);
+			free_tree(node);
+			reset_forking_data(&data);
 			node = NULL;
 			// this bloack needs to be changed
 			// change to create tree and then exe from tree
