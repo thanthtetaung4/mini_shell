@@ -90,6 +90,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 {
 	int		i;
 	char	*args[256];
+	char	**env_strings;
 
 	args[0] = ft_strjoin("/bin/", node->command[0]);
 	i = 1;
@@ -99,7 +100,9 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 		i++;
 	}
 	args[i] = NULL;
-	execve(args[0], args, NULL);
+	env_strings = get_env_strings(data->env);
+	execve(args[0], args, env_strings);
+	free_cmd(&env_strings);
 	perror("execve");
 	exit(EXIT_FAILURE);
 	return (0);
@@ -109,6 +112,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 	int		*pids;
 	int		i;
 	char	*args[256];
+	int		exit_status;
 
 	if (check_cmd(node->command[0]) == 1)
 		return (ft_exec(data));
@@ -122,8 +126,8 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 	else if (pids[i_pid] == 0)
 		execute_command(data, node);
 	else
-		wait(NULL);
-	return (0);
+		wait(&exit_status);
+	return (exit_status);
 }
 int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 {
@@ -131,6 +135,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	int		i;
 	char	*args[256];
 	int		**fds;
+	int		exit_status;
 
 	i = 0;
 	pids = data->forking->pids;
@@ -159,19 +164,19 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 			i++;
 		}
 		if (check_cmd(node->command[0]) == 1)
-			ft_exec(data);
+			exit_status = ft_exec(data);
 		else
 			execute_command(data, node);
 	}
 	else
 	{
-		wait(NULL);
+		wait(&exit_status);
 		data->forking->completed_piping++;
 		close(fds[data->forking->i_fd][1]);
 		if (data->forking->i_fd > 0)
 			close(fds[data->forking->i_fd - 1][0]);
 	}
-	return (0);
+	return (exit_status);
 }
 
 int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
@@ -189,20 +194,20 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 		{
 			if (node->parent && node->parent->type == PIPE)
 			{
-				execute_pipe_command(data, node);
+				data->status = execute_pipe_command(data, node);
 				data->forking->i_fd++;
 				data->forking->i_pid++;
 			}
 			else if (!node->parent)
 			{
-				execute_single_command(data, node, data->forking->i_pid);
+				data->status = execute_single_command(data, node, data->forking->i_pid);
 				data->forking->i_pid++;
 			}
 		}
 		else if (node->type == PIPE)
 		{
 			temp_node = node->right;
-			execute_pipe_command(data, temp_node);
+			data->status = execute_pipe_command(data, temp_node);
 			data->forking->i_fd++;
 			data->forking->i_pid++;
 		}
