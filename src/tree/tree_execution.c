@@ -89,8 +89,10 @@ int	check_cmd(char *cmd)
 int	execute_command(t_minishell *data, t_ast_node *node)
 {
 	int		i;
-	char	*args[256];
+	int j;
+	char *args[256];
 
+	j = 1;
 	if (check_cmd(node->command[0]) == 1)
 		ft_exec(data, node);
 	else
@@ -99,15 +101,50 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 		i = 1;
 		while (node->command[i])
 		{
-			args[i] = node->command[i];
+			if ((node->command[i][0] == '>' || node->command[i][0] == '<') && ft_strcmp(node->command[i + 1], node->file) == 0)
+				i ++;
+			else
+			{
+				args[j] = node->command[i];
+				j++;
+			}
 			i++;
 		}
-		args[i] = NULL;
+		args[j] = NULL;
 		execve(args[0], args, NULL);
 		perror("execve");
 		exit(EXIT_FAILURE);
 	}
 	return (0);
+}
+
+void execute_redirection(t_ast_node *node, t_minishell *data, int type)
+{
+	if (type == OUTPUT || type == APPEND)
+	{
+		if (type == OUTPUT)
+			data->forking->output_fd = open(node->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		else if (type == APPEND)
+			data->forking->output_fd = open(node->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (data->forking->output_fd == -1) 
+		{
+			perror("open output file");
+			exit(1);
+		}
+		dup2(data->forking->output_fd, STDOUT_FILENO); // Redirect stdout to file
+		close(data->forking->output_fd);
+	}
+	else if (type == INPUT)
+	{
+		data->forking->input_fd = open(node->file, O_RDONLY);
+		if (data->forking->input_fd < 0)
+		{
+			perror("Error opening input file");
+			exit(EXIT_FAILURE);
+		}
+		dup2(data->forking->input_fd, STDIN_FILENO);
+		close(data->forking->input_fd);
+	}
 }
 int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 {
@@ -124,17 +161,8 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 	}
 	else if (pids[i_pid] == 0)
 	{
-		// if (node->redirection == INPUT)
-		// {
-		// 	data->forking->input_fd = open(node->file, O_RDONLY);
-		// 	if (data->forking->input_fd < 0)
-        //     {
-        //         perror("Error opening input file");
-        //         exit(EXIT_FAILURE);
-        //     }
-        //     dup2(data->forking->input_fd, STDIN_FILENO);
-		// 	close(data->forking->input_fd);
-		// }
+		if (node->redirection != -1)
+			execute_redirection(node, data, node->redirection);
 		execute_command(data, node);
 	}
 	else
@@ -175,6 +203,8 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 			close(fds[i][1]);
 			i++;
 		}
+		if (node->redirection != -1)
+			execute_redirection(node, data, node->redirection);
 		if (check_cmd(node->command[0]) == 1)
 			ft_exec(data, node);
 		else

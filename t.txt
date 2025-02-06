@@ -1,1 +1,15 @@
-hi
+Makefile
+README.md
+header
+libft
+minishell
+src
+t.txt
+Makefile
+README.md
+header
+libft
+minishell
+output.txt
+src
+t.txt
