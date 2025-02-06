@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/05 12:32:08 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/06 04:57:48 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,11 +319,7 @@ int	check_syntax_errors(char *input)
 	i = 0;
 	while (input[i])
 	{
-		if (ft_isalnum(input[i]) == 0 && input[i] != ' ' && input[i] != '/'
-			&& input[i] != '.' && input[i] != '=' && input[i] != '-'
-			&& input[i] != '_' && input[i] != '"' && input[i] != '\''
-			&& input[i] != '$' && input[i] != '>' && input[i] != '<'
-			&& input[i] != '?')
+		if (ft_isalnum(input[i]) == 0 && input[i] != ' ' && input[i] != '/' && input[i] != '.' && input[i] != '=' && input[i] != '-' && input[i] != '_' && input[i] != '"' && input[i] != '\'' && input[i] != '$' && input[i] != '>' && input[i] != '<' && input[i] != '|')
 		{
 			printf("minishell: syntax error near unexpected token `%c'\n",
 				input[i]);
@@ -411,10 +407,11 @@ int	main(int argc, char **argv, char **envp)
 			ft_interpret(&data);
 			remove_quotes(&data);
 			node = create_tree(input, &data);
+			// visualize_tree(node);
 			data.status = tree_execution(node, &data);
 			// data.status = ft_exec(&data);
 			free_cmd(&data.args);
-			free_tree(node);
+			// free_tree(node);
 			node = NULL;
 			// this bloack needs to be changed
 			// change to create tree and then exe from tree

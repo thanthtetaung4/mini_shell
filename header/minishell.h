@@ -138,7 +138,7 @@ void				handle_sigquit(int sig);
 void				ft_print_args(char **args);
 
 // tree functions
-t_ast_node			*create_node(int type, char **command, t_minishell *data);
+t_ast_node			*create_node(int type, char **command, t_minishell *data, int count);
 void				add_right_node(t_ast_node **parent_node, t_ast_node *node);
 void				add_left_node(t_ast_node **parent_node, t_ast_node *node);
 t_ast_node			*create_tree(char *input, t_minishell *data);
