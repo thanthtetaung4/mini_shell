@@ -407,7 +407,7 @@ int	main(int argc, char **argv, char **envp)
 			ft_interpret(&data);
 			remove_quotes(&data);
 			node = create_tree(&data);
-			visualize_tree(node);
+			// visualize_tree(node);
 			data.status = tree_execution(node, &data);
 			// data.status = ft_exec(&data);
 			free_cmd(&data.args);

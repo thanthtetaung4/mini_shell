@@ -112,7 +112,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 {
 	int		*pids;
-	int		i;
+	int i;
 	char	*args[256];
 
 	pids = data->forking->pids;
@@ -123,7 +123,20 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 		return (-1);
 	}
 	else if (pids[i_pid] == 0)
+	{
+		// if (node->redirection == INPUT)
+		// {
+		// 	data->forking->input_fd = open(node->file, O_RDONLY);
+		// 	if (data->forking->input_fd < 0)
+        //     {
+        //         perror("Error opening input file");
+        //         exit(EXIT_FAILURE);
+        //     }
+        //     dup2(data->forking->input_fd, STDIN_FILENO);
+		// 	close(data->forking->input_fd);
+		// }
 		execute_command(data, node);
+	}
 	else
 		wait(NULL);
 	return (0);

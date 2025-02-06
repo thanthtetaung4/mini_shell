@@ -11,6 +11,7 @@
 # include <sys/types.h>
 # include <termios.h>
 # include <unistd.h>
+#include <fcntl.h>
 
 typedef enum
 {
@@ -35,7 +36,8 @@ typedef struct s_ast
 	struct s_ast	*left;
 	struct s_ast	*right;
 	int				redirection;
-	char			**command;
+	char *file;
+	char **command;
 	int				executed;
 }					t_ast_node;
 
