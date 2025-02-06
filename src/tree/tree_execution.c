@@ -115,7 +115,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 	int		exit_status;
 
 	if (check_cmd(node->command[0]) == 1)
-		return (ft_exec(data));
+		return (ft_exec(data, node));
 	pids = data->forking->pids;
 	pids[i_pid] = fork();
 	if (pids[i_pid] == -1)
@@ -164,7 +164,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 			i++;
 		}
 		if (check_cmd(node->command[0]) == 1)
-			exit_status = ft_exec(data);
+			exit_status = ft_exec(data, node);
 		else
 			execute_command(data, node);
 	}

@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/06 05:21:26 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/06 05:49:06 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -411,7 +411,7 @@ int	main(int argc, char **argv, char **envp)
 			ft_interpret(&data);
 			remove_quotes(&data);
 			node = create_tree(input, &data);
-			// visualize_tree(node);
+			visualize_tree(node);
 			data.status = tree_execution(node, &data);
 			if (data.status == 0)
 				printf("\033[32m✔\033[0m ");
