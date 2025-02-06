@@ -48,6 +48,7 @@ t_ast_node *create_node(int type, char **command, t_minishell *data, int count)
 		while (i < count)
 		{
 			node->command[i] = ft_strdup(command[i]);
+			// printf("node command %i - %s\n", i, node->command[i]);
 			i++;
 		}
 		node->command[i] = NULL;

@@ -105,7 +105,7 @@ void				replace_with_env_value(t_minishell *data, char **value);
 char				*get_env_value(t_list *env, char *key);
 
 // exec functions
-int					ft_exec(t_minishell *data);
+int					ft_exec(t_minishell *data, t_ast_node *node);
 
 // builtins functions
 void				ft_env(t_env **env);

@@ -92,7 +92,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	char	*args[256];
 
 	if (check_cmd(node->command[0]) == 1)
-		ft_exec(data);
+		ft_exec(data, node);
 	else
 	{
 		args[0] = ft_strjoin("/bin/", node->command[0]);
@@ -136,7 +136,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	int		**fds;
 
 	i = 0;
-	printf("i_fd = %i\n", data->forking->i_fd);
+	// printf("i_fd = %i\n", data->forking->i_fd);
 	pids = data->forking->pids;
 	fds = data->forking->fds;
 	if (pipe(fds[data->forking->i_fd]) == -1)
@@ -163,7 +163,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 			i++;
 		}
 		if (check_cmd(node->command[0]) == 1)
-			ft_exec(data);
+			ft_exec(data, node);
 		else
 			execute_command(data, node);
 	}
@@ -187,7 +187,7 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	node = lowest_node;
 	init_pids(data);
 	init_fds(data);
-	printf("pipe count = %i\n", data->forking->pipe_count);
+	// printf("pipe count = %i\n", data->forking->pipe_count);
 	while (node)
 	{
 		if (node->type == COMMAND)
