@@ -9,3 +9,7 @@ drwxrwxrwx+ 2 codespace root       4096 Feb  6 14:34 libft
 -rw-r--r--  1 codespace codespace    17 Feb  6 15:33 output.txt
 drwxrwxrwx+ 9 codespace root       4096 Feb  6 14:34 src
 -rw-rw-rw-  1 codespace codespace   115 Feb  6 15:32 t.txt
+hii >> output.txt
+minishell$ ^C[31m✘[0m minishell$ 
+[31m✘[0m minishell$ 
+exit
