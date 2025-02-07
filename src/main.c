@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/06 05:49:06 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/07 07:20:14 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -410,14 +410,15 @@ int	main(int argc, char **argv, char **envp)
 			data.args_count = ft_count_tds(data.args);
 			ft_interpret(&data);
 			remove_quotes(&data);
-			node = create_tree(input, &data);
-			visualize_tree(node);
+			node = create_tree(&data);
+			// visualize_tree(node);
 			data.status = tree_execution(node, &data);
 			if (data.status == 0)
 				printf("\033[32m✔\033[0m ");
 			// data.status = ft_exec(&data);
 			free_cmd(&data.args);
-			// free_tree(node);
+			free_tree(node);
+			reset_forking_data(&data);
 			node = NULL;
 			// this bloack needs to be changed
 			// change to create tree and then exe from tree

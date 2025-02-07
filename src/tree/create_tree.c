@@ -1,14 +1,5 @@
 #include "../../header/minishell.h"
 
-char *copy_substring(const char *input, int start, int length)
-{
-    char *substring = malloc(length + 1);
-    if (!substring)
-        return NULL;
-    ft_strlcpy(substring, input + start, length + 1);
-    return substring;
-}
-
 void handle_pipe_node(t_ast_node **head, char **cmd ,t_minishell *data, int count)
 {
     t_ast_node *temp;
@@ -35,8 +26,12 @@ void handle_single_command(t_ast_node **head, char **cmd, t_minishell *data, int
     char *temp_input;
 
     if (!(*(head)))
+	{
         *head = create_node(COMMAND, cmd, data, count);
-    else
+		data->tree->lowest_node = *head;
+		// printf("%s\n", (*head)->command[0]);
+	}
+	else
     {
         temp = create_node(COMMAND, cmd, data, count);
         add_left_node(head, temp);
@@ -54,7 +49,7 @@ void reset_args(char **args, int counter)
 		i++;
 	}
 }
-t_ast_node *create_tree(char *input, t_minishell *data)
+t_ast_node *create_tree(t_minishell *data)
 {
     t_ast_node *head;
     int i;
@@ -64,10 +59,10 @@ t_ast_node *create_tree(char *input, t_minishell *data)
 
 	i = data->args_count - 1;
 	counter = 0;
-	j = 0;
 	head = NULL;
 	while (i >= 0)
 	{
+		j = 0;
 		counter++;
 		if (ft_strcmp(data->args[i], "|") == 0)
 		{
@@ -79,7 +74,6 @@ t_ast_node *create_tree(char *input, t_minishell *data)
 			cmd[j] = NULL;
 			handle_pipe_node(&head, cmd, data, counter - 1);
 			counter = 0;
-			j = 0;
 			data->forking->pipe_count += 1;
 		}
 		else if (i == 0)
@@ -93,8 +87,11 @@ t_ast_node *create_tree(char *input, t_minishell *data)
 			handle_single_command(&head, cmd, data, counter);
 			counter = 0;
 		}
-        if (data->tree && !data->tree->lowest_node) 
-            data->tree->lowest_node = head;
+        // if (data->tree && !data->tree->lowest_node) 
+		// {
+        //     data->tree->lowest_node = head;
+		// 	// printf("lowest node - %s\n", data->tree->lowest_node->command[0]);
+		// }
         i--;
     }
     return (data->tree->lowest_node);

@@ -1,6 +1,6 @@
 #include "../../header/minishell.h"
 
-int check_redirections(char **command, t_minishell *data)
+int check_redirections(char **command, t_minishell *data, t_ast_node *node)
 {
 	int i;
 
@@ -10,13 +10,22 @@ int check_redirections(char **command, t_minishell *data)
 	while (command && command[i])
 	{
 		if (ft_strcmp(">>", command[i]) == 0)
+		{
+			node->file = command[i + 1];
 			return (APPEND);
+		}
 		else if (ft_strcmp("<<", command[i]) == 0)
 			return (HEREDOC);
 		else if (ft_strcmp("<", command[i]) == 0)
+		{
+			node->file = command[i + 1];
 			return (INPUT);
+		}
 		else if (ft_strcmp(">", command[i]) == 0)
+		{
+			node->file = command[i + 1];
 			return (OUTPUT);
+		}
 		i++;
 	}
 	return (-1);
@@ -40,6 +49,7 @@ t_ast_node *create_node(int type, char **command, t_minishell *data, int count)
 	node->parent = NULL;
 	node->left = NULL;
 	node->right = NULL;
+	node->file = NULL;
 	node->executed = 0;
 	node->type = type;
 	if (node->type == COMMAND)
@@ -48,13 +58,14 @@ t_ast_node *create_node(int type, char **command, t_minishell *data, int count)
 		while (i < count)
 		{
 			node->command[i] = ft_strdup(command[i]);
+			// printf("node command %i - %s\n", i, node->command[i]);
 			i++;
 		}
 		node->command[i] = NULL;
 	}
 	else
 		node->command = NULL;
-	node->redirection = check_redirections(command, data);
+	node->redirection = check_redirections(command, data, node);
 	redirection_counter(data, node->redirection);
 	return node;
 }

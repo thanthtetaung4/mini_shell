@@ -11,6 +11,7 @@
 # include <sys/types.h>
 # include <termios.h>
 # include <unistd.h>
+#include <fcntl.h>
 
 typedef enum
 {
@@ -35,7 +36,8 @@ typedef struct s_ast
 	struct s_ast	*left;
 	struct s_ast	*right;
 	int				redirection;
-	char			**command;
+	char *file;
+	char **command;
 	int				executed;
 }					t_ast_node;
 
@@ -141,11 +143,12 @@ void				ft_print_args(char **args);
 t_ast_node			*create_node(int type, char **command, t_minishell *data, int count);
 void				add_right_node(t_ast_node **parent_node, t_ast_node *node);
 void				add_left_node(t_ast_node **parent_node, t_ast_node *node);
-t_ast_node			*create_tree(char *input, t_minishell *data);
+t_ast_node			*create_tree(t_minishell *data);
 void				visualize_tree(t_ast_node *lowest_node);
 int					tree_execution(t_ast_node *lowest_node, t_minishell *data);
 int					ft_count_tds(char **str);
 char				*ft_strrchr(const char *s, int c);
 void				init_forking_data(t_minishell *data);
+void reset_forking_data(t_minishell *data);
 
 #endif

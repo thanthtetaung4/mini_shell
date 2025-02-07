@@ -110,7 +110,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 {
 	int		*pids;
-	int		i;
+	int i;
 	char	*args[256];
 	int		exit_status;
 
@@ -124,7 +124,20 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 		return (-1);
 	}
 	else if (pids[i_pid] == 0)
+	{
+		// if (node->redirection == INPUT)
+		// {
+		// 	data->forking->input_fd = open(node->file, O_RDONLY);
+		// 	if (data->forking->input_fd < 0)
+        //     {
+        //         perror("Error opening input file");
+        //         exit(EXIT_FAILURE);
+        //     }
+        //     dup2(data->forking->input_fd, STDIN_FILENO);
+		// 	close(data->forking->input_fd);
+		// }
 		execute_command(data, node);
+	}
 	else
 		wait(&exit_status);
 	return (exit_status);
@@ -138,6 +151,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	int		exit_status;
 
 	i = 0;
+	// printf("i_fd = %i\n", data->forking->i_fd);
 	pids = data->forking->pids;
 	fds = data->forking->fds;
 	if (pipe(fds[data->forking->i_fd]) == -1)
@@ -188,6 +202,7 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	node = lowest_node;
 	init_pids(data);
 	init_fds(data);
+	// printf("pipe count = %i\n", data->forking->pipe_count);
 	while (node)
 	{
 		if (node->type == COMMAND)
