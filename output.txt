@@ -1,15 +1,3 @@
-output.txt
-t.txt
-total 72
--rw-rw-rw-  1 codespace codespace  1943 Feb  5 09:34 Makefile
--rw-rw-rw-  1 codespace root         13 Jan  7 15:52 README.md
-drwxrwxrwx+ 2 codespace root       4096 Feb  6 14:31 header
-drwxrwxrwx+ 2 codespace root       4096 Feb  6 14:34 libft
--rwxrwxrwx  1 codespace codespace 43672 Feb  6 15:32 minishell
--rw-r--r--  1 codespace codespace    17 Feb  6 15:33 output.txt
-drwxrwxrwx+ 9 codespace root       4096 Feb  6 14:34 src
--rw-rw-rw-  1 codespace codespace   115 Feb  6 15:32 t.txt
-hii >> output.txt
-minishell$ ^C[31m✘[0m minishell$ 
-[31m✘[0m minishell$ 
+hello > output.txt
+minishell$ 
 exit
