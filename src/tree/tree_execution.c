@@ -205,6 +205,7 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	// printf("pipe count = %i\n", data->forking->pipe_count);
 	while (node)
 	{
+		// printf("cmd: %s\n", node->command[0]);
 		if (node->type == COMMAND)
 		{
 			if (node->parent && node->parent->type == PIPE)

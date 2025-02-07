@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/07 07:20:14 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/07 12:45:25 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -375,7 +375,7 @@ int	is_valid_cmd(char *input)
 void	handle_eof(t_minishell *data)
 {
 	write(1, "\nexit\n", 6);
-	free_all(data);
+	free_all(data, 0);
 	exit(0);
 }
 
@@ -413,8 +413,8 @@ int	main(int argc, char **argv, char **envp)
 			node = create_tree(&data);
 			// visualize_tree(node);
 			data.status = tree_execution(node, &data);
-			if (data.status == 0)
-				printf("\033[32m✔\033[0m ");
+			// if (data.status == 0)
+			// 	printf("\033[32m✔\033[0m ");
 			// data.status = ft_exec(&data);
 			free_cmd(&data.args);
 			free_tree(node);

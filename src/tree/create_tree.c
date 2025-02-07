@@ -23,7 +23,7 @@ void handle_pipe_node(t_ast_node **head, char **cmd ,t_minishell *data, int coun
 void handle_single_command(t_ast_node **head, char **cmd, t_minishell *data, int count)
 {
     t_ast_node *temp;
-    char *temp_input;
+    // char *temp_input;
 
     if (!(*(head)))
 	{
@@ -36,6 +36,7 @@ void handle_single_command(t_ast_node **head, char **cmd, t_minishell *data, int
         temp = create_node(COMMAND, cmd, data, count);
         add_left_node(head, temp);
         data->tree->lowest_node = temp;
+		temp = NULL;
     }
 }
 void reset_args(char **args, int counter)
@@ -87,12 +88,13 @@ t_ast_node *create_tree(t_minishell *data)
 			handle_single_command(&head, cmd, data, counter);
 			counter = 0;
 		}
-        // if (data->tree && !data->tree->lowest_node) 
+        // if (data->tree && !data->tree->lowest_node)
 		// {
         //     data->tree->lowest_node = head;
 		// 	// printf("lowest node - %s\n", data->tree->lowest_node->command[0]);
 		// }
         i--;
     }
+	// free(head);
     return (data->tree->lowest_node);
 }

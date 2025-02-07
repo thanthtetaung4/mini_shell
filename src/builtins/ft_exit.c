@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 07:14:56 by taung             #+#    #+#             */
-/*   Updated: 2025/01/18 08:01:12 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/07 11:20:17 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	ft_exit(t_minishell *data)
 {
 	if (!data->args[1])
 	{
-		free_all(data);
+		free_all(data, 1);
 		ft_putstr_fd("exit\n",0);
 		exit(0);
 	}
@@ -41,12 +41,12 @@ void	ft_exit(t_minishell *data)
 			ft_putstr_fd("exit: ", 1);
 			ft_putstr_fd(data->args[1], 1);
 			ft_putstr_fd(": numeric argument require\n", 1);
-			free_all(data);
+			free_all(data, 1);
 			exit(1);
 		}
 		else
 		{
-			free_all(data);
+			free_all(data, 1);
 			exit(1);
 		}
 	}

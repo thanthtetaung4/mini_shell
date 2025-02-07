@@ -119,7 +119,7 @@ int					ft_cd(t_minishell *data);
 int					ft_echo(t_minishell *data);
 
 // free functions
-void				free_all(t_minishell *data);
+void				free_all(t_minishell *data, int free_execution_data);
 void				free_cmd(char ***cmd);
 void				env_free(void *env);
 void				free_tree(t_ast_node *node);
@@ -150,5 +150,8 @@ int					ft_count_tds(char **str);
 char				*ft_strrchr(const char *s, int c);
 void				init_forking_data(t_minishell *data);
 void reset_forking_data(t_minishell *data);
+
+//tree utils
+int					get_node_type(char **command);
 
 #endif

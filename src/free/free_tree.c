@@ -13,10 +13,11 @@ void free_tree_helper(t_ast_node *node)
     {
         while (node->command[i])
         {
+
             free(node->command[i]);
             i++;
         }
-        free(node->command); 
+        free(node->command);
     }
     free(node);
 }

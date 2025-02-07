@@ -3,17 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   free_all.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/29 15:31:26 by taung             #+#    #+#             */
-/*   Updated: 2025/01/27 09:02:15 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/07 12:54:51 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-void	free_all(t_minishell *data)
+void	free_all(t_minishell *data, int free_execution_data)
 {
+
+	free(data->prev_dir);
+	if (free_execution_data)
+	{
+		if (data->tree->lowest_node)
+			free_tree(data->tree->lowest_node);
+		if (data->forking)
+		{
+			reset_forking_data(data);
+
+		}
+	}
+	if (data->tree)
+		free(data->tree);
+	free(data->forking);
 	if (data->env)
 		ft_lstclear(&data->env, env_free);
 	if (data->export)
