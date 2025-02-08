@@ -64,7 +64,10 @@ t_ast_node *create_tree(t_minishell *data)
 	while (i >= 0)
 	{
 		j = 0;
-		counter++;
+		if ((data->args[i][0] == '<' && data->args[i][0] == '<') && data->args[i + 1])
+			counter--;
+		else
+			counter++;
 		if (ft_strcmp(data->args[i], "|") == 0)
 		{
 			while (j < counter - 1)

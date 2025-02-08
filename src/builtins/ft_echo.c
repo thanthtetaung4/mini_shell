@@ -12,22 +12,22 @@
 
 #include "../../header/minishell.h"
 
-int	ft_echo(t_minishell *data)
+int	ft_echo(t_minishell *data, t_ast_node *node)
 {
 	int	i;
 	int	n_flag;
 
 	i = 1;
 	n_flag = 0;
-	if (data->args[i] && ft_strcmp(data->args[i], "-n") == 0)
+	if (node->command[i] && ft_strcmp(node->command[i], "-n") == 0)
 	{
 		n_flag = 1;
 		i++;
 	}
-	while (data->args[i])
+	while (node->command[i])
 	{
-		ft_putstr_fd(data->args[i], 1);
-		if (data->args[i + 1])
+		ft_putstr_fd(node->command[i], 1);
+		if (node->command[i + 1])
 			ft_putstr_fd(" ", 1);
 		i++;
 	}

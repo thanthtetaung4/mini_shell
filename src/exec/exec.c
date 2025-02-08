@@ -27,6 +27,7 @@ int	ft_exec(t_minishell *data, t_ast_node *node)
 	if (ft_strncmp(node->command[0], "cd", ft_strlen(node->command[0])) == 0)
 		ft_cd(data);
 	if (ft_strncmp(node->command[0], "echo", ft_strlen(node->command[0])) == 0)
-		ft_echo(data);
+		ft_echo(data, node);
+	// exit(0);
 	return (0);
 }

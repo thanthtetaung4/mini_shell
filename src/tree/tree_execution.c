@@ -89,29 +89,26 @@ int	check_cmd(char *cmd)
 int	execute_command(t_minishell *data, t_ast_node *node)
 {
 	int		i;
-	int j;
 	char *args[256];
 	char	**env_strings;
 
-	j = 1;
-	args[0] = ft_strjoin("/bin/", node->command[0]);
-	i = 1;
-	while (node->command[i])
+	if (check_cmd(node->command[0]) == 1)
+		ft_exec(data, node);
+	else
 	{
-			if ((node->command[i][0] == '>' || node->command[i][0] == '<') && ft_strcmp(node->command[i + 1], node->file) == 0)
-				i ++;
-			else
-			{
-			args[j] = node->command[i];
-				j++;
-			}
-		i++;
+		args[0] = ft_strjoin("/bin/", node->command[0]);
+		i = 1;
+		while (node->command[i])
+		{
+			args[i] = node->command[i];
+			i++;
+		}
+		args[i] = NULL;
+		env_strings = get_env_strings(data->env);
+		execve(args[0], args, env_strings);
+		free_cmd(&env_strings);
+		perror("execve");
 	}
-	args[j] = NULL;
-	env_strings = get_env_strings(data->env);
-	execve(args[0], args, env_strings);
-	free_cmd(&env_strings);
-	perror("execve");
 	exit(EXIT_FAILURE);
 	return (0);
 }
@@ -151,8 +148,6 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 	char	*args[256];
 	int		exit_status;
 
-	if (check_cmd(node->command[0]) == 1)
-		return (ft_exec(data, node));
 	pids = data->forking->pids;
 	pids[i_pid] = fork();
 	if (pids[i_pid] == -1)
@@ -207,10 +202,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 		}
 		if (node->redirection != -1)
 			execute_redirection(node, data, node->redirection);
-		if (check_cmd(node->command[0]) == 1)
-			exit_status = ft_exec(data, node);
-		else
-			execute_command(data, node);
+		execute_command(data, node);
 	}
 	else
 	{

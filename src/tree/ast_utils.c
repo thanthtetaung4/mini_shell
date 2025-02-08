@@ -41,8 +41,10 @@ t_ast_node *create_node(int type, char **command, t_minishell *data, int count)
 {
 	t_ast_node *node;
 	int i;
+	int j;
 
 	i = 0;
+	j = 0;
 	node = (t_ast_node *)malloc(sizeof(t_ast_node));
 	if (!node)
 		return (NULL);
@@ -52,21 +54,30 @@ t_ast_node *create_node(int type, char **command, t_minishell *data, int count)
 	node->file = NULL;
 	node->executed = 0;
 	node->type = type;
+	node->redirection = check_redirections(command, data, node);
+	redirection_counter(data, node->redirection);
 	if (node->type == COMMAND)
 	{
+		// printf("count = %i\n", count);
 		node->command = malloc(sizeof(char *) * count + 1);
 		while (i < count)
 		{
-			node->command[i] = ft_strdup(command[i]);
+			// printf("cmd\n");
+			if ((command[i][0] == '>' || command[i][0] == '<') && ft_strcmp(command[i + 1], node->file) == 0)
+				i++;
+			else
+			{
+				node->command[j] = ft_strdup(command[i]);
+				j++;
+			}
 			// printf("node command %i - %s\n", i, node->command[i]);
 			i++;
 		}
-		node->command[i] = NULL;
+		node->command[j] = NULL;
 	}
 	else
 		node->command = NULL;
-	node->redirection = check_redirections(command, data, node);
-	redirection_counter(data, node->redirection);
+	// printf("NODE creation complete\n");
 	return node;
 }
 
