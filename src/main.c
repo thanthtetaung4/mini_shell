@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/07 12:45:25 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/10 09:32:49 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -327,7 +327,7 @@ int	check_syntax_errors(char *input)
 		{
 			printf("minishell: syntax error near unexpected token `%c'\n",
 				input[i]);
-			return (0);
+ 			return (0);
 		}
 		i++;
 	}

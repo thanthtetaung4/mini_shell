@@ -89,8 +89,8 @@ int	check_cmd(char *cmd)
 int	execute_command(t_minishell *data, t_ast_node *node)
 {
 	int		i;
-	int j;
-	char *args[256];
+	int		j;
+	char	*args[256];
 	char	**env_strings;
 
 	j = 1;
@@ -98,13 +98,14 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	i = 1;
 	while (node->command[i])
 	{
-			if ((node->command[i][0] == '>' || node->command[i][0] == '<') && ft_strcmp(node->command[i + 1], node->file) == 0)
-				i ++;
-			else
-			{
+		if ((node->command[i][0] == '>' || node->command[i][0] == '<')
+			&& ft_strcmp(node->command[i + 1], node->file) == 0)
+			i++;
+		else
+		{
 			args[j] = node->command[i];
-				j++;
-			}
+			j++;
+		}
 		i++;
 	}
 	args[j] = NULL;
@@ -116,20 +117,23 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	return (0);
 }
 
-void execute_redirection(t_ast_node *node, t_minishell *data, int type)
+void	execute_redirection(t_ast_node *node, t_minishell *data, int type)
 {
 	if (type == OUTPUT || type == APPEND)
 	{
 		if (type == OUTPUT)
-			data->forking->output_fd = open(node->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			data->forking->output_fd = open(node->file,
+					O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		else if (type == APPEND)
-			data->forking->output_fd = open(node->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		if (data->forking->output_fd == -1) 
+			data->forking->output_fd = open(node->file,
+					O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (data->forking->output_fd == -1)
 		{
 			perror("open output file");
 			exit(1);
 		}
-		dup2(data->forking->output_fd, STDOUT_FILENO); // Redirect stdout to file
+		dup2(data->forking->output_fd, STDOUT_FILENO);
+		// Redirect stdout to file
 		close(data->forking->output_fd);
 	}
 	else if (type == INPUT)
@@ -147,7 +151,7 @@ void execute_redirection(t_ast_node *node, t_minishell *data, int type)
 int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 {
 	int		*pids;
-	int i;
+	int		i;
 	char	*args[256];
 	int		exit_status;
 
@@ -162,6 +166,8 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 	}
 	else if (pids[i_pid] == 0)
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGINT, handle_sigint);
 		if (node->redirection != -1)
 			execute_redirection(node, data, node->redirection);
 		execute_command(data, node);
@@ -246,7 +252,8 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 			}
 			else if (!node->parent)
 			{
-				data->status = execute_single_command(data, node, data->forking->i_pid);
+				data->status = execute_single_command(data, node,
+						data->forking->i_pid);
 				data->forking->i_pid++;
 			}
 		}

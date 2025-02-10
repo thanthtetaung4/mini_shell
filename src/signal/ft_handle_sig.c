@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 07:22:20 by taung             #+#    #+#             */
-/*   Updated: 2025/02/05 12:45:45 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/10 09:42:23 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ int		g_shell_status;
 void	handle_sigint(int sig)
 {
 	(void)sig;
-	// write(1, "\n", 1);  // Print a newline after Ctrl+C
-	ioctl(STDIN_FILENO, TIOCSTI, "\n");
+	write(1, "\n", 1);  // Print a newline after Ctrl+C
+	// ioctl(STDIN_FILENO, TIOCSTI, "\n");
 	g_shell_status = 130;   // Set the status code to indicate Ctrl+C
 	rl_on_new_line();       // Signal readline to expect a new line
 	rl_replace_line("", 0); // Clear the current line
