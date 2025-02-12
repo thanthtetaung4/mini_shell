@@ -135,6 +135,9 @@ void				ft_interpret(t_minishell *data);
 // signal functions
 void				handle_sigint(int sig);
 void				handle_sigquit(int sig);
+void	handle_sigquit_child(int sig);
+void	handle_sigint_child(int sig);
+void setup_child_signals(void);
 
 // test utils
 void				ft_print_args(char **args);

@@ -154,6 +154,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 	int		i;
 	char	*args[256];
 	int		exit_status;
+	int		sig;
 
 	if (check_cmd(node->command[0]) == 1)
 		return (ft_exec(data, node));
@@ -167,13 +168,37 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 	else if (pids[i_pid] == 0)
 	{
 		signal(SIGINT, SIG_DFL);
-		signal(SIGINT, handle_sigint);
+		signal(SIGQUIT, SIG_DFL);
 		if (node->redirection != -1)
 			execute_redirection(node, data, node->redirection);
 		execute_command(data, node);
 	}
 	else
-		wait(&exit_status);
+	{
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
+		waitpid(pids[i_pid], &exit_status, 0);
+		if (WIFSIGNALED(exit_status))
+		{
+			sig = WTERMSIG(exit_status);
+			if (sig == SIGQUIT)
+			{
+				write(1, "Quit: (Core dumped)\n", 20);
+				exit_status = 128 + sig;
+			}
+			else if (sig == SIGINT)
+			{
+				write(1, "\n", 1);
+				exit_status = 128 + sig;
+			}
+		}
+		else if (WIFEXITED(exit_status))
+		{
+			exit_status = WEXITSTATUS(exit_status);
+		}
+		signal(SIGINT, handle_sigint);
+		signal(SIGQUIT, handle_sigquit);
+	}
 	return (exit_status);
 }
 int	execute_pipe_command(t_minishell *data, t_ast_node *node)
