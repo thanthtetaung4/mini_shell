@@ -159,6 +159,8 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 	if (check_cmd(node->command[0]) == 1)
 		return (ft_exec(data, node));
 	pids = data->forking->pids;
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	pids[i_pid] = fork();
 	if (pids[i_pid] == -1)
 	{
@@ -175,8 +177,8 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 	}
 	else
 	{
-		signal(SIGINT, SIG_IGN);
-		signal(SIGQUIT, SIG_IGN);
+		// signal(SIGINT, SIG_IGN);
+		// signal(SIGQUIT, SIG_IGN);
 		waitpid(pids[i_pid], &exit_status, 0);
 		if (WIFSIGNALED(exit_status))
 		{

@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/12 04:32:01 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/12 06:01:19 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,10 @@ int	main(int argc, char **argv, char **envp)
 	{
 		signal(SIGINT, handle_sigint);
 		signal(SIGQUIT, handle_sigquit);
-		input = readline("minishell$ ");
+		if (!g_shell_status)
+			input = readline("minishell$ ");
+		else
+			input = readline("\033[31m✘\033[0m minishell$ ");
 		if (input == NULL)
 			handle_eof(&data);
 		if (input && *input && is_valid_cmd(input))
@@ -121,7 +124,7 @@ int	main(int argc, char **argv, char **envp)
 			remove_quotes(&data);
 			node = create_tree(&data);
 			// visualize_tree(node);
-			data.status = tree_execution(node, &data);
+			g_shell_status = tree_execution(node, &data);
 			// if (data.status == 0)
 			// 	printf("\033[32m✔\033[0m ");
 			// data.status = ft_exec(&data);
