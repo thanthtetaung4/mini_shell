@@ -95,7 +95,6 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	if (check_cmd(node->command[0]) == 1)
 	{
 		(ft_exec(data, node));
-		exit(0);
 	}
 	else
 	{
@@ -112,6 +111,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 		free_cmd(&env_strings);
 		perror("execve");
 	}
+	exit(EXIT_SUCCESS);
 	return (0);
 }
 
@@ -246,8 +246,12 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	}
 	else
 	{
-		wait(&exit_status);
-		wait(&exit_status);
+		i = 0;
+		while (i <= data->forking->completed_piping)
+		{
+			wait(&exit_status);
+			i++;
+		}
 		if (WIFSIGNALED(exit_status))
 		{
 			sig = WTERMSIG(exit_status);
