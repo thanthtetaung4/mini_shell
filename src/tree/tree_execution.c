@@ -93,7 +93,10 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	char	**env_strings;
 
 	if (check_cmd(node->command[0]) == 1)
-		ft_exec(data, node);
+	{
+		(ft_exec(data, node));
+		exit(0);
+	}
 	else
 	{
 		args[0] = ft_strjoin("/bin/", node->command[0]);
@@ -109,24 +112,26 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 		free_cmd(&env_strings);
 		perror("execve");
 	}
-	exit(EXIT_FAILURE);
 	return (0);
 }
 
-void execute_redirection(t_ast_node *node, t_minishell *data, int type)
+void	execute_redirection(t_ast_node *node, t_minishell *data, int type)
 {
 	if (type == OUTPUT || type == APPEND)
 	{
 		if (type == OUTPUT)
-			data->forking->output_fd = open(node->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			data->forking->output_fd = open(node->file,
+					O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		else if (type == APPEND)
-			data->forking->output_fd = open(node->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		if (data->forking->output_fd == -1) 
+			data->forking->output_fd = open(node->file,
+					O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (data->forking->output_fd == -1)
 		{
 			perror("open output file");
 			exit(1);
 		}
-		dup2(data->forking->output_fd, STDOUT_FILENO); // Redirect stdout to file
+		dup2(data->forking->output_fd, STDOUT_FILENO);
+		// Redirect stdout to file
 		close(data->forking->output_fd);
 	}
 	else if (type == INPUT)
@@ -144,11 +149,14 @@ void execute_redirection(t_ast_node *node, t_minishell *data, int type)
 int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 {
 	int		*pids;
-	int i;
+	int		i;
 	char	*args[256];
 	int		exit_status;
+	int		sig;
 
 	pids = data->forking->pids;
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	pids[i_pid] = fork();
 	if (pids[i_pid] == -1)
 	{
@@ -157,12 +165,39 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 	}
 	else if (pids[i_pid] == 0)
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		if (node->redirection != -1)
 			execute_redirection(node, data, node->redirection);
 		execute_command(data, node);
 	}
 	else
+	{
+		// signal(SIGINT, SIG_IGN);
+		// signal(SIGQUIT, SIG_IGN);
+		// waitpid(pids[i_pid], &exit_status, 0);
 		wait(&exit_status);
+		if (WIFSIGNALED(exit_status))
+		{
+			sig = WTERMSIG(exit_status);
+			if (sig == SIGQUIT)
+			{
+				write(1, "Quit: (Core dumped)\n", 20);
+				exit_status = 128 + sig;
+			}
+			else if (sig == SIGINT)
+			{
+				write(1, "\n", 1);
+				exit_status = 128 + sig;
+			}
+		}
+		else if (WIFEXITED(exit_status))
+		{
+			exit_status = WEXITSTATUS(exit_status);
+		}
+		signal(SIGINT, handle_sigint);
+		signal(SIGQUIT, handle_sigquit);
+	}
 	return (exit_status);
 }
 int	execute_pipe_command(t_minishell *data, t_ast_node *node)
@@ -172,6 +207,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	char	*args[256];
 	int		**fds;
 	int		exit_status;
+	int		sig;
 
 	i = 0;
 	// printf("i_fd = %i\n", data->forking->i_fd);
@@ -182,6 +218,8 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 		perror("pipe");
 		exit(EXIT_FAILURE);
 	}
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	pids[data->forking->i_pid] = fork();
 	if (pids[data->forking->i_pid] == -1)
 	{
@@ -190,6 +228,8 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	}
 	else if (pids[data->forking->i_pid] == 0)
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		if (data->forking->completed_piping > 0)
 			dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO);
 		if (data->forking->completed_piping < data->forking->pipe_count)
@@ -207,6 +247,27 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	else
 	{
 		wait(&exit_status);
+		wait(&exit_status);
+		if (WIFSIGNALED(exit_status))
+		{
+			sig = WTERMSIG(exit_status);
+			if (sig == SIGQUIT)
+			{
+				write(1, "Quit: (Core dumped)\n", 20);
+				exit_status = 128 + sig;
+			}
+			else if (sig == SIGINT)
+			{
+				write(1, "\n", 1);
+				exit_status = 128 + sig;
+			}
+		}
+		else if (WIFEXITED(exit_status))
+		{
+			exit_status = WEXITSTATUS(exit_status);
+		}
+		signal(SIGINT, handle_sigint);
+		signal(SIGQUIT, handle_sigquit);
 		data->forking->completed_piping++;
 		close(fds[data->forking->i_fd][1]);
 		if (data->forking->i_fd > 0)
@@ -238,7 +299,8 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 			}
 			else if (!node->parent)
 			{
-				data->status = execute_single_command(data, node, data->forking->i_pid);
+				data->status = execute_single_command(data, node,
+						data->forking->i_pid);
 				data->forking->i_pid++;
 			}
 		}
