@@ -179,7 +179,8 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 	{
 		// signal(SIGINT, SIG_IGN);
 		// signal(SIGQUIT, SIG_IGN);
-		waitpid(pids[i_pid], &exit_status, 0);
+		// waitpid(pids[i_pid], &exit_status, 0);
+		wait(&exit_status);
 		if (WIFSIGNALED(exit_status))
 		{
 			sig = WTERMSIG(exit_status);
@@ -210,6 +211,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	char	*args[256];
 	int		**fds;
 	int		exit_status;
+	int		sig;
 
 	i = 0;
 	// printf("i_fd = %i\n", data->forking->i_fd);
@@ -220,6 +222,8 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 		perror("pipe");
 		exit(EXIT_FAILURE);
 	}
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	pids[data->forking->i_pid] = fork();
 	if (pids[data->forking->i_pid] == -1)
 	{
@@ -228,6 +232,8 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	}
 	else if (pids[data->forking->i_pid] == 0)
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		if (data->forking->completed_piping > 0)
 			dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO);
 		if (data->forking->completed_piping < data->forking->pipe_count)
@@ -248,6 +254,27 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	else
 	{
 		wait(&exit_status);
+		wait(&exit_status);
+		if (WIFSIGNALED(exit_status))
+		{
+			sig = WTERMSIG(exit_status);
+			if (sig == SIGQUIT)
+			{
+				write(1, "Quit: (Core dumped)\n", 20);
+				exit_status = 128 + sig;
+			}
+			else if (sig == SIGINT)
+			{
+				write(1, "\n", 1);
+				exit_status = 128 + sig;
+			}
+		}
+		else if (WIFEXITED(exit_status))
+		{
+			exit_status = WEXITSTATUS(exit_status);
+		}
+		signal(SIGINT, handle_sigint);
+		signal(SIGQUIT, handle_sigquit);
 		data->forking->completed_piping++;
 		close(fds[data->forking->i_fd][1]);
 		if (data->forking->i_fd > 0)
