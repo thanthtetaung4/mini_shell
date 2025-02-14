@@ -146,24 +146,23 @@ void	execute_redirection(t_ast_node *node, t_minishell *data, int type)
 		close(data->forking->input_fd);
 	}
 }
-int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
+int	execute_single_command(t_minishell *data, t_ast_node *node)
 {
-	int		*pids;
+	int		pid;
 	int		i;
 	char	*args[256];
 	int		exit_status;
 	int		sig;
 
-	pids = data->forking->pids;
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	pids[i_pid] = fork();
-	if (pids[i_pid] == -1)
+	pid = fork();
+	if (pid == -1)
 	{
 		perror("fork");
 		return (-1);
 	}
-	else if (pids[i_pid] == 0)
+	else if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
@@ -202,7 +201,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node, int i_pid)
 }
 int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 {
-	int		*pids;
+	int		pid;
 	int		i;
 	char	*args[256];
 	int		**fds;
@@ -211,7 +210,6 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 
 	i = 0;
 	// printf("i_fd = %i\n", data->forking->i_fd);
-	pids = data->forking->pids;
 	fds = data->forking->fds;
 	if (pipe(fds[data->forking->i_fd]) == -1)
 	{
@@ -220,13 +218,13 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	}
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	pids[data->forking->i_pid] = fork();
-	if (pids[data->forking->i_pid] == -1)
+	pid = fork();
+	if (pid == -1)
 	{
 		perror("fork");
 		return (-1);
 	}
-	else if (pids[data->forking->i_pid] == 0)
+	else if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
@@ -287,7 +285,6 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	int			status;
 
 	node = lowest_node;
-	init_pids(data);
 	init_fds(data);
 	// printf("pipe count = %i\n", data->forking->pipe_count);
 	while (node)
@@ -299,13 +296,10 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 			{
 				data->status = execute_pipe_command(data, node);
 				data->forking->i_fd++;
-				data->forking->i_pid++;
 			}
 			else if (!node->parent)
 			{
-				data->status = execute_single_command(data, node,
-						data->forking->i_pid);
-				data->forking->i_pid++;
+				data->status = execute_single_command(data, node);
 			}
 		}
 		else if (node->type == PIPE)
@@ -313,7 +307,6 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 			temp_node = node->right;
 			data->status = execute_pipe_command(data, temp_node);
 			data->forking->i_fd++;
-			data->forking->i_pid++;
 		}
 		node = node->parent;
 	}
