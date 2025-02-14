@@ -35,7 +35,7 @@ void	export_add_var(t_minishell *data, char *key, char *value)
 	}
 }
 
-void	ft_export(t_minishell *data)
+void	ft_export(t_minishell *data, t_ast_node *node)
 {
 	int		i;
 	t_list	*new_node;
@@ -44,14 +44,14 @@ void	ft_export(t_minishell *data)
 
 	is_print = 0;
 	i = 0;
-	if (!data->args[1])
+	if (!node->command[i])
 	{
 		print_export_vars(&data->export);
 		return;
 	}
-	while (data->args[++i])
+	while (node->command[++i])
 	{
-		key_value = key_value_splitter(data->args[i], '=');
+		key_value = key_value_splitter(node->command[i], '=');
 		if (is_valid_var(key_value[0]) == 0)
 		{
 			if (is_print == 0)

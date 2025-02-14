@@ -17,7 +17,7 @@ int	ft_exec(t_minishell *data, t_ast_node *node)
 	if (ft_strncmp(node->command[0], "env", ft_strlen(node->command[0])) == 0)
 		print_env(&data->env);
 	if (ft_strncmp(node->command[0], "export", ft_strlen(node->command[0])) == 0)
-		ft_export(data);
+		ft_export(data, node);
 	if (ft_strncmp(node->command[0], "unset", ft_strlen(node->command[0])) == 0)
 		ft_unset(data);
 	if (ft_strncmp(node->command[0], "exit", ft_strlen(node->command[0])) == 0)

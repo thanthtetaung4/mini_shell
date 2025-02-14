@@ -111,7 +111,7 @@ int					ft_exec(t_minishell *data, t_ast_node *node);
 
 // builtins functions
 void				ft_env(t_env **env);
-void				ft_export(t_minishell *data);
+void				ft_export(t_minishell *data, t_ast_node *node);
 void				ft_unset(t_minishell *data);
 void				ft_exit(t_minishell *data);
 int					ft_pwd(void);
