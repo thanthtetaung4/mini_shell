@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/29 15:31:26 by taung             #+#    #+#             */
-/*   Updated: 2025/02/07 12:54:51 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/17 07:07:31 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 void	free_all(t_minishell *data, int free_execution_data)
 {
-
-	free(data->prev_dir);
 	if (free_execution_data)
 	{
 		if (data->tree->lowest_node)

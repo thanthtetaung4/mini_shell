@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 08:12:59 by taung             #+#    #+#             */
-/*   Updated: 2025/01/27 06:37:10 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/17 07:05:12 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ void	update_prev_dir(t_minishell *data)
 	char	*prev_dir;
 
 	prev_dir = getcwd(NULL, 0);
-	free(data->prev_dir);
-	data->prev_dir = prev_dir;
+	update_export_var(data, prev_dir, find_var(&(data->export), "OLDPWD"));
+	ft_update_env(&data->env, ft_envnew("OLDPWD", prev_dir));
 }
 
 int	cd_to_home(t_minishell *data)
@@ -38,8 +38,7 @@ int	cd_to_prev(t_minishell *data)
 	int		status;
 	char	*tmp;
 
-	tmp = ft_strdup(data->prev_dir);
-	update_prev_dir(data);
+	tmp = get_env_value(data->env, "OLDPWD");
 	status = chdir(tmp);
 	printf("%s\n", tmp);
 	free(tmp);

@@ -2,6 +2,7 @@
 # define MINI_SHELL_H
 # include "../libft/libft.h"
 # include <dirent.h>
+# include <fcntl.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
@@ -11,7 +12,6 @@
 # include <sys/types.h>
 # include <termios.h>
 # include <unistd.h>
-#include <fcntl.h>
 
 typedef enum
 {
@@ -36,8 +36,8 @@ typedef struct s_ast
 	struct s_ast	*left;
 	struct s_ast	*right;
 	int				redirection;
-	char *file;
-	char **command;
+	char			*file;
+	char			**command;
 	int				executed;
 }					t_ast_node;
 
@@ -76,7 +76,6 @@ typedef struct s_minishell
 	int				args_count;
 	t_tree			*tree;
 	t_forking		*forking;
-	char			*prev_dir;
 }					t_minishell;
 
 // env functions
@@ -88,7 +87,7 @@ void				print_env(t_list **env);
 void				ft_add_env(t_list **env, t_list *new_node);
 void				ft_update_env(t_list **env, t_list *new_node);
 char				**get_env_strings(t_list *env);
-
+char				*ft_get_env(t_minishell *data, char *key);
 // env struct functions
 t_list				*ft_envnew(char *key, char *value);
 
@@ -111,7 +110,7 @@ int					ft_exec(t_minishell *data, t_ast_node *node);
 
 // builtins functions
 void				ft_env(t_env **env);
-void				ft_export(t_minishell *data);
+void				ft_export(t_minishell *data, t_ast_node *node);
 void				ft_unset(t_minishell *data);
 void				ft_exit(t_minishell *data);
 int					ft_pwd(void);
@@ -135,15 +134,16 @@ void				ft_interpret(t_minishell *data);
 // signal functions
 void				handle_sigint(int sig);
 void				handle_sigquit(int sig);
-void	handle_sigquit_child(int sig);
-void	handle_sigint_child(int sig);
-void setup_child_signals(void);
+void				handle_sigquit_child(int sig);
+void				handle_sigint_child(int sig);
+void				setup_child_signals(void);
 
 // test utils
 void				ft_print_args(char **args);
 
 // tree functions
-t_ast_node			*create_node(int type, char **command, t_minishell *data, int count);
+t_ast_node			*create_node(int type, char **command, t_minishell *data,
+						int count);
 void				add_right_node(t_ast_node **parent_node, t_ast_node *node);
 void				add_left_node(t_ast_node **parent_node, t_ast_node *node);
 t_ast_node			*create_tree(t_minishell *data);
@@ -152,9 +152,9 @@ int					tree_execution(t_ast_node *lowest_node, t_minishell *data);
 int					ft_count_tds(char **str);
 char				*ft_strrchr(const char *s, int c);
 void				init_forking_data(t_minishell *data);
-void reset_forking_data(t_minishell *data);
+void				reset_forking_data(t_minishell *data);
 
-//tree utils
+// tree utils
 int					get_node_type(char **command);
 
 #endif

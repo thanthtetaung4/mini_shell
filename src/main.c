@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/12 06:01:19 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/17 07:07:06 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ int	init_data(t_minishell *data, char **envp)
 	data->tree = malloc(sizeof(t_tree));
 	data->tree->lowest_node = NULL;
 	init_forking_data(data);
-	data->prev_dir = getcwd(NULL, 0);
 	load_export_vars(data);
 	return (1);
 }
