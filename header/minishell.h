@@ -76,6 +76,8 @@ typedef struct s_minishell
 	int				args_count;
 	t_tree			*tree;
 	t_forking		*forking;
+	int stdout_backup;
+	int stdin_backup;
 }					t_minishell;
 
 // env functions
