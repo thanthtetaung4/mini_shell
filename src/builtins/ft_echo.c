@@ -28,11 +28,11 @@ int	ft_echo(t_minishell *data, t_ast_node *node)
 	{
 		ft_putstr_fd(node->command[i], 1);
 		if (node->command[i + 1])
-		ft_putstr_fd(" ", 1);
+			ft_putstr_fd(" ", 1);
 		i++;
 	}
 	if (!n_flag)
-	ft_putstr_fd("\n", 1);
+		ft_putstr_fd("\n", 1);
 
 	// data->forking->completed_piping++;
 	return (0);

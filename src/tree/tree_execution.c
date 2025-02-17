@@ -148,40 +148,45 @@ void	execute_redirection(t_ast_node *node, t_minishell *data, int type)
 }
 int	execute_single_command(t_minishell *data, t_ast_node *node)
 {
-	int		pid;
+	int		*pids;
 	int		i;
 	char	*args[256];
 	int		exit_status;
 	int		sig;
+	int     stdout_fd = -1;
+	int     stdin_fd = -1;
 
 	pids = data->forking->pids;
-	if (ft_strcmp(node->command[0], "export") == 0)
+	int i_pid = data->forking->i_pid;
+	
+	if (check_cmd(node->command[0]))
 	{
-		ft_export(data, node);
-	}
-	else if (ft_strcmp(node->command[0], "unset") == 0)
-	{
-		ft_unset(data);
-	}
-	else if (ft_strcmp(node->command[0], "cd") == 0)
-	{
-		ft_cd(data);
-	}
-	else if (ft_strcmp(node->command[0], "pwd") == 0)
-	{
-		ft_pwd();
-	}
-	else if (ft_strcmp(node->command[0], "echo") == 0)
-	{
-		ft_echo(data, node);
-	}
-	else if (ft_strcmp(node->command[0], "env") == 0)
-	{
-		print_env(&data->env);
-	}
-	else if (ft_strcmp(node->command[0], "exit") == 0)
-	{
-		ft_exit(data);
+		// Save original file descriptors if we have redirection
+		if (node->redirection != -1)
+		{
+			if (node->redirection == OUTPUT || node->redirection == APPEND)
+				stdout_fd = dup(STDOUT_FILENO);
+			else if (node->redirection == INPUT)
+				stdin_fd = dup(STDIN_FILENO);
+		}
+
+		// Handle redirection
+		if (node->redirection != -1)
+			execute_redirection(node, data, node->redirection);
+
+		exit_status = ft_exec(data, node);
+
+		// Restore original file descriptors
+		if (stdout_fd != -1)
+		{
+			dup2(stdout_fd, STDOUT_FILENO);
+			close(stdout_fd);
+		}
+		if (stdin_fd != -1)
+		{
+			dup2(stdin_fd, STDIN_FILENO);
+			close(stdin_fd);
+		}
 	}
 	else
 	{
@@ -248,29 +253,50 @@ int execute_pipe_command(t_minishell *data, t_ast_node *node)
 
     // Handle built-in commands differently as they don't need forking
     if (check_cmd(node->command[0]))
+	{
+    int stdout_fd = -1;
+    int stdin_fd = -1;
+
+    // Save current stdin/stdout if we need to modify them
+    if (data->forking->completed_piping > 0)
+        stdin_fd = dup(STDIN_FILENO);
+    if (data->forking->completed_piping < data->forking->pipe_count)
+        stdout_fd = dup(STDOUT_FILENO);
+	
+	if (node->redirection != -1)
+        execute_redirection(node, data, node->redirection);
+
+    // Set up pipes for builtin commands
+    if (data->forking->completed_piping > 0)
     {
-        // Set up pipes for builtin commands
-        if (data->forking->completed_piping > 0)
-        {
-            dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO);
-        }
-        if (data->forking->completed_piping < data->forking->pipe_count)
-        {
-            dup2(fds[data->forking->i_fd][1], STDOUT_FILENO);
-        }
-
-        exit_status = ft_exec(data, node);
-
-        // Restore standard file descriptors if needed
-        if (data->forking->completed_piping < data->forking->pipe_count)
-        {
-            dup2(data->stdout_backup, STDOUT_FILENO);
-        }
-        if (data->forking->completed_piping > 0)
-        {
-            dup2(data->stdin_backup, STDIN_FILENO);
-        }
+        if (dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO) == -1)
+            perror("dup2");
+        close(fds[data->forking->i_fd - 1][0]);
+        close(fds[data->forking->i_fd - 1][1]);
     }
+    if (data->forking->completed_piping < data->forking->pipe_count)
+    {
+        if (dup2(fds[data->forking->i_fd][1], STDOUT_FILENO) == -1)
+            perror("dup2");
+        // Don't close the write end of the pipe yet
+    }
+
+    exit_status = ft_exec(data, node);
+
+    // Restore original stdin/stdout
+    if (stdin_fd != -1)
+    {
+        dup2(stdin_fd, STDIN_FILENO);
+        close(stdin_fd);
+    }
+    if (stdout_fd != -1)
+    {
+        dup2(stdout_fd, STDOUT_FILENO);
+        close(stdout_fd);
+        // Now we can close the write end of the pipe
+        close(fds[data->forking->i_fd][1]);
+    }
+}
     else
     {
         signal(SIGINT, SIG_IGN);
@@ -317,10 +343,12 @@ int execute_pipe_command(t_minishell *data, t_ast_node *node)
             // Parent process
             // Close pipe ends that aren't needed anymore
             if (data->forking->completed_piping > 0)
-            {
-                close(fds[data->forking->i_fd - 1][0]);
-            }
-            close(fds[data->forking->i_fd][1]);
+			{
+				close(fds[data->forking->i_fd - 1][0]);
+				close(fds[data->forking->i_fd - 1][1]); // Add this
+			}
+			close(fds[data->forking->i_fd][1]);
+			close(fds[data->forking->i_fd][0]);
 
             // Don't wait for the process if it's not the last command
             if (data->forking->completed_piping == data->forking->pipe_count)
@@ -365,6 +393,7 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 
 	node = lowest_node;
 	init_fds(data);
+	init_pids(data);
 	// printf("pipe count = %i\n", data->forking->pipe_count);
 	while (node)
 	{
