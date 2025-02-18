@@ -158,7 +158,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 
 	pids = data->forking->pids;
 	int i_pid = data->forking->i_pid;
-	
+
 	if (check_cmd(node->command[0]))
 	{
 		// Save original file descriptors if we have redirection
@@ -233,155 +233,229 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 	}
 	return (exit_status);
 }
-int execute_pipe_command(t_minishell *data, t_ast_node *node)
-{
-    int *pids;
-    int i;
-    int **fds;
-    int exit_status = 0;
-    int sig;
+// int execute_pipe_command(t_minishell *data, t_ast_node *node)
+// {
+//     int *pids;
+//     int i;
+//     int **fds;
+//     int exit_status = 0;
+//     int sig;
 
+//     pids = data->forking->pids;
+//     fds = data->forking->fds;
+
+//     // Create pipe before any fork or execution
+//     if (pipe(fds[data->forking->i_fd]) == -1)
+//     {
+//         perror("pipe");
+//         return (EXIT_FAILURE);
+//     }
+
+//     // Handle built-in commands differently as they don't need forking
+//     if (check_cmd(node->command[0]))
+// 	{
+//     int stdout_fd = -1;
+//     int stdin_fd = -1;
+
+//     // Save current stdin/stdout if we need to modify them
+//     if (data->forking->completed_piping > 0)
+//         stdin_fd = dup(STDIN_FILENO);
+//     if (data->forking->completed_piping < data->forking->pipe_count)
+//         stdout_fd = dup(STDOUT_FILENO);
+
+// 	if (node->redirection != -1)
+//         execute_redirection(node, data, node->redirection);
+
+//     // Set up pipes for builtin commands
+//     if (data->forking->completed_piping > 0)
+//     {
+//         if (dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO) == -1)
+//             perror("dup2");
+//         close(fds[data->forking->i_fd - 1][0]);
+//         close(fds[data->forking->i_fd - 1][1]);
+//     }
+//     if (data->forking->completed_piping < data->forking->pipe_count)
+//     {
+//         if (dup2(fds[data->forking->i_fd][1], STDOUT_FILENO) == -1)
+//             perror("dup2");
+//         // Don't close the write end of the pipe yet
+//     }
+
+//     exit_status = ft_exec(data, node);
+
+//     // Restore original stdin/stdout
+//     if (stdin_fd != -1)
+//     {
+//         dup2(stdin_fd, STDIN_FILENO);
+//         close(stdin_fd);
+//     }
+//     if (stdout_fd != -1)
+//     {
+//         dup2(stdout_fd, STDOUT_FILENO);
+//         close(stdout_fd);
+//         // Now we can close the write end of the pipe
+//         close(fds[data->forking->i_fd][1]);
+//     }
+// }
+//     else
+//     {
+//         signal(SIGINT, SIG_IGN);
+//         signal(SIGQUIT, SIG_IGN);
+
+//         pids[data->forking->i_pid] = fork();
+//         if (pids[data->forking->i_pid] == -1)
+//         {
+//             perror("fork");
+//             return (-1);
+//         }
+//         else if (pids[data->forking->i_pid] == 0)
+//         {
+//             // Child process
+//             signal(SIGINT, SIG_DFL);
+//             signal(SIGQUIT, SIG_DFL);
+
+//             // Set up pipes
+//             if (data->forking->completed_piping > 0)
+//             {
+//                 dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO);
+//                 close(fds[data->forking->i_fd - 1][0]);
+//             }
+//             if (data->forking->completed_piping < data->forking->pipe_count)
+//             {
+//                 dup2(fds[data->forking->i_fd][1], STDOUT_FILENO);
+//             }
+
+//             // Close all pipe ends in child
+//             for (i = 0; i <= data->forking->i_fd; i++)
+//             {
+//                 close(fds[i][0]);
+//                 close(fds[i][1]);
+//             }
+
+//             if (node->redirection != -1)
+//                 execute_redirection(node, data, node->redirection);
+
+//             execute_command(data, node);
+//             exit(EXIT_FAILURE); // In case execute_command fails
+//         }
+//         else
+//         {
+//             // Parent process
+//             // Close pipe ends that aren't needed anymore
+//             if (data->forking->completed_piping > 0)
+// 			{
+// 				close(fds[data->forking->i_fd - 1][0]);
+// 				close(fds[data->forking->i_fd - 1][1]); // Add this
+// 			}
+// 			close(fds[data->forking->i_fd][1]);
+// 			close(fds[data->forking->i_fd][0]);
+
+//             // Don't wait for the process if it's not the last command
+//             if (data->forking->completed_piping == data->forking->pipe_count)
+//             {
+//                 waitpid(pids[data->forking->i_pid], &exit_status, 0);
+//                 if (WIFSIGNALED(exit_status))
+//                 {
+//                     sig = WTERMSIG(exit_status);
+//                     if (sig == SIGQUIT)
+//                     {
+//                         write(1, "Quit: (Core dumped)\n", 20);
+//                         exit_status = 128 + sig;
+//                     }
+//                     else if (sig == SIGINT)
+//                     {
+//                         write(1, "\n", 1);
+//                         exit_status = 128 + sig;
+//                     }
+//                 }
+//                 else if (WIFEXITED(exit_status))
+//                 {
+//                     exit_status = WEXITSTATUS(exit_status);
+//                 }
+//             }
+
+//             signal(SIGINT, handle_sigint);
+//             signal(SIGQUIT, handle_sigquit);
+//         }
+//     }
+
+//     data->forking->completed_piping++;
+//     return (exit_status);
+// }
+
+int    execute_pipe_command(t_minishell *data, t_ast_node *node)
+{
+    int        *pids;
+    int        i;
+    char    *args[256];
+    int        **fds;
+    int        exit_status;
+    int        sig;
+    i = 0;
+    // printf("i_fd = %i\n", data->forking->i_fd);
     pids = data->forking->pids;
     fds = data->forking->fds;
-
-    // Create pipe before any fork or execution
     if (pipe(fds[data->forking->i_fd]) == -1)
     {
         perror("pipe");
-        return (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
-
-    // Handle built-in commands differently as they don't need forking
-    if (check_cmd(node->command[0]))
-	{
-    int stdout_fd = -1;
-    int stdin_fd = -1;
-
-    // Save current stdin/stdout if we need to modify them
-    if (data->forking->completed_piping > 0)
-        stdin_fd = dup(STDIN_FILENO);
-    if (data->forking->completed_piping < data->forking->pipe_count)
-        stdout_fd = dup(STDOUT_FILENO);
-	
-	if (node->redirection != -1)
-        execute_redirection(node, data, node->redirection);
-
-    // Set up pipes for builtin commands
-    if (data->forking->completed_piping > 0)
+    signal(SIGINT, SIG_IGN);
+    signal(SIGQUIT, SIG_IGN);
+    pids[data->forking->i_pid] = fork();
+    if (pids[data->forking->i_pid] == -1)
     {
-        if (dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO) == -1)
-            perror("dup2");
-        close(fds[data->forking->i_fd - 1][0]);
-        close(fds[data->forking->i_fd - 1][1]);
+        perror("fork");
+        return (-1);
     }
-    if (data->forking->completed_piping < data->forking->pipe_count)
+    else if (pids[data->forking->i_pid] == 0)
     {
-        if (dup2(fds[data->forking->i_fd][1], STDOUT_FILENO) == -1)
-            perror("dup2");
-        // Don't close the write end of the pipe yet
+        signal(SIGINT, SIG_DFL);
+        signal(SIGQUIT, SIG_DFL);
+        if (data->forking->completed_piping > 0)
+            dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO);
+        if (data->forking->completed_piping < data->forking->pipe_count)
+            dup2(fds[data->forking->i_fd][1], STDOUT_FILENO);
+        while (i <= data->forking->i_fd)
+        {
+            close(fds[i][0]);
+            close(fds[i][1]);
+            i++;
+        }
+        if (node->redirection != -1)
+            execute_redirection(node, data, node->redirection);
+        execute_command(data, node);
     }
-
-    exit_status = ft_exec(data, node);
-
-    // Restore original stdin/stdout
-    if (stdin_fd != -1)
-    {
-        dup2(stdin_fd, STDIN_FILENO);
-        close(stdin_fd);
-    }
-    if (stdout_fd != -1)
-    {
-        dup2(stdout_fd, STDOUT_FILENO);
-        close(stdout_fd);
-        // Now we can close the write end of the pipe
-        close(fds[data->forking->i_fd][1]);
-    }
-}
     else
     {
-        signal(SIGINT, SIG_IGN);
-        signal(SIGQUIT, SIG_IGN);
-
-        pids[data->forking->i_pid] = fork();
-        if (pids[data->forking->i_pid] == -1)
+        if (WIFSIGNALED(exit_status))
         {
-            perror("fork");
-            return (-1);
+            sig = WTERMSIG(exit_status);
+            if (sig == SIGQUIT)
+            {
+                write(1, "Quit: (Core dumped)\n", 20);
+                exit_status = 128 + sig;
+            }
+            else if (sig == SIGINT)
+            {
+                write(1, "\n", 1);
+                exit_status = 128 + sig;
+            }
         }
-        else if (pids[data->forking->i_pid] == 0)
+        else if (WIFEXITED(exit_status))
         {
-            // Child process
-            signal(SIGINT, SIG_DFL);
-            signal(SIGQUIT, SIG_DFL);
-
-            // Set up pipes
-            if (data->forking->completed_piping > 0)
-            {
-                dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO);
-                close(fds[data->forking->i_fd - 1][0]);
-            }
-            if (data->forking->completed_piping < data->forking->pipe_count)
-            {
-                dup2(fds[data->forking->i_fd][1], STDOUT_FILENO);
-            }
-
-            // Close all pipe ends in child
-            for (i = 0; i <= data->forking->i_fd; i++)
-            {
-                close(fds[i][0]);
-                close(fds[i][1]);
-            }
-
-            if (node->redirection != -1)
-                execute_redirection(node, data, node->redirection);
-
-            execute_command(data, node);
-            exit(EXIT_FAILURE); // In case execute_command fails
+            exit_status = WEXITSTATUS(exit_status);
         }
-        else
-        {
-            // Parent process
-            // Close pipe ends that aren't needed anymore
-            if (data->forking->completed_piping > 0)
-			{
-				close(fds[data->forking->i_fd - 1][0]);
-				close(fds[data->forking->i_fd - 1][1]); // Add this
-			}
-			close(fds[data->forking->i_fd][1]);
-			close(fds[data->forking->i_fd][0]);
-
-            // Don't wait for the process if it's not the last command
-            if (data->forking->completed_piping == data->forking->pipe_count)
-            {
-                waitpid(pids[data->forking->i_pid], &exit_status, 0);
-                if (WIFSIGNALED(exit_status))
-                {
-                    sig = WTERMSIG(exit_status);
-                    if (sig == SIGQUIT)
-                    {
-                        write(1, "Quit: (Core dumped)\n", 20);
-                        exit_status = 128 + sig;
-                    }
-                    else if (sig == SIGINT)
-                    {
-                        write(1, "\n", 1);
-                        exit_status = 128 + sig;
-                    }
-                }
-                else if (WIFEXITED(exit_status))
-                {
-                    exit_status = WEXITSTATUS(exit_status);
-                }
-            }
-
-            signal(SIGINT, handle_sigint);
-            signal(SIGQUIT, handle_sigquit);
-        }
+        signal(SIGINT, handle_sigint);
+        signal(SIGQUIT, handle_sigquit);
+        data->forking->completed_piping++;
+        close(fds[data->forking->i_fd][1]);
+        if (data->forking->i_fd > 0)
+            close(fds[data->forking->i_fd - 1][0]);
     }
-
-    data->forking->completed_piping++;
     return (exit_status);
 }
+
 
 int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 {
