@@ -39,6 +39,7 @@ int	cd_to_prev(t_minishell *data)
 	char	*tmp;
 
 	tmp = get_env_value(data->env, "OLDPWD");
+	update_prev_dir(data);
 	status = chdir(tmp);
 	printf("%s\n", tmp);
 	free(tmp);

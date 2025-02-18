@@ -50,9 +50,7 @@ void	ft_export(t_minishell *data, t_ast_node *node)
 		return ;
 	}
 	while (node->command[++i])
-	while (node->command[++i])
 	{
-		key_value = key_value_splitter(node->command[i], '=');
 		key_value = key_value_splitter(node->command[i], '=');
 		if (is_valid_var(key_value[0]) == 0)
 		{
