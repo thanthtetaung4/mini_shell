@@ -98,7 +98,9 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	}
 	else
 	{
-		args[0] = ft_strjoin("/bin/", node->command[0]);
+		args[0] = ft_strdup(node->command[0]);
+		if (node->command[0][0] != '.' && node->command[0][0] != '/')
+			args[0] = ft_strjoin("/bin/", node->command[0]);
 		i = 1;
 		while (node->command[i])
 		{
