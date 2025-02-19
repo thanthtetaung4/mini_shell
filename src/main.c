@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/17 07:07:06 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/19 16:27:40 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,20 +33,22 @@ int	check_syntax_errors(char *input)
 	int	i;
 
 	i = 0;
-	while (input[i])
-	{
-		if (ft_isalnum(input[i]) == 0 && input[i] != ' ' && input[i] != '/'
-			&& input[i] != '.' && input[i] != '=' && input[i] != '-'
-			&& input[i] != '_' && input[i] != '"' && input[i] != '\''
-			&& input[i] != '$' && input[i] != '>' && input[i] != '<'
-			&& input[i] != '|' && input[i] != '?')
-		{
-			printf("minishell: syntax error near unexpected token `%c'\n",
-				input[i]);
- 			return (0);
-		}
-		i++;
-	}
+	// while (input[i])
+	// {
+	// 	// if (ft_isalnum(input[i]) == 0 && input[i] != ' ' && input[i] != '/'
+	// 	// 	&& input[i] != '.' && input[i] != '=' && input[i] != '-'
+	// 	// 	&& input[i] != '_' && input[i] != '"' && input[i] != '\''
+	// 	// 	&& input[i] != '$' && input[i] != '>' && input[i] != '<'
+	// 	// 	&& input[i] != '|' && input[i] != '?' && input[i] != '!'
+	// 	// 	&& input[i] != '\n')
+	// 	if (input[i] == '&')
+	// 	{
+	// 		printf("minishell: syntax error near unexpected token `%c'\n",
+	// 			input[i]);
+ 	// 		return (0);
+	// 	}
+	// 	i++;
+	// }
 	return (1);
 }
 
@@ -81,8 +83,8 @@ int	count_quotes(char *input)
 
 int	is_valid_cmd(char *input)
 {
-	if (!check_syntax_errors(input))
-		return (0);
+	// if (!check_syntax_errors(input))
+	// 	return (0);
 	if (!count_quotes(input))
 		return (0);
 	return (1);
@@ -114,8 +116,13 @@ int	main(int argc, char **argv, char **envp)
 			input = readline("\033[31m✘\033[0m minishell$ ");
 		if (input == NULL)
 			handle_eof(&data);
-		if (input && *input && is_valid_cmd(input))
+		if (input && *input)
 		{
+			if (!is_valid_cmd(input))
+			{
+				g_shell_status = 1;
+				continue;
+			}
 			add_history(input);
 			data.args = ft_split_quoted(input, ' ');
 			data.args_count = ft_count_tds(data.args);
