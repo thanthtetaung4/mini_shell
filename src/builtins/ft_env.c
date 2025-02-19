@@ -6,13 +6,14 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/29 15:26:12 by taung             #+#    #+#             */
-/*   Updated: 2025/01/08 04:52:53 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/19 15:24:36 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-void	ft_env(t_list **env)
+int	ft_env(t_list **env)
 {
 	print_env(env);
+	return (0);
 }

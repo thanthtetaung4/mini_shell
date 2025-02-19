@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 08:12:59 by taung             #+#    #+#             */
-/*   Updated: 2025/02/17 07:05:12 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/19 15:22:25 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,17 @@ int	ft_cd(t_minishell *data)
 		if (ft_strcmp(data->args[1], "-") == 0)
 			return (cd_to_prev(data));
 		update_prev_dir(data);
-		if (chdir(data->args[1]) == 1)
+		if (access(data->args[1], F_OK) == 0)
 		{
-			printf("No such file or directory\n");
+			if (chdir(data->args[1]) == -1)
+			{
+				printf("No such file or directory\n");
+				return (1);
+			}
+		}
+		else
+		{
+			printf("No permission\n");
 			return (1);
 		}
 	}

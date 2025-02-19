@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 07:15:04 by taung             #+#    #+#             */
-/*   Updated: 2025/02/17 05:04:19 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/19 15:22:57 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	export_add_var(t_minishell *data, char *key, char *value)
 	}
 }
 
-void	ft_export(t_minishell *data, t_ast_node *node)
+int	ft_export(t_minishell *data, t_ast_node *node)
 {
 	int		i;
 	t_list	*new_node;
@@ -47,7 +47,7 @@ void	ft_export(t_minishell *data, t_ast_node *node)
 	if (!node->command[1])
 	{
 		print_export_vars(&data->export);
-		return ;
+		return (0);
 	}
 	while (node->command[++i])
 	{
@@ -55,8 +55,11 @@ void	ft_export(t_minishell *data, t_ast_node *node)
 		if (is_valid_var(key_value[0]) == 0)
 		{
 			if (is_print == 0)
+			{
 				printf("minishell: export: `%s': not a valid identifier\n",
-					key_value[0]);
+						key_value[0]);
+				return (1);
+			}
 			is_print = 1;
 			free(key_value[0]);
 			free(key_value[1]);
@@ -68,4 +71,5 @@ void	ft_export(t_minishell *data, t_ast_node *node)
 		free(key_value[1]);
 		free(key_value);
 	}
+	return (0);
 }

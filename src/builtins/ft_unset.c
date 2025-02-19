@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 06:46:44 by taung             #+#    #+#             */
-/*   Updated: 2025/01/18 08:00:56 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/19 15:23:39 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	ft_lstremove(t_list **lst, int index)
 	}
 }
 
-void	ft_unset(t_minishell *data)
+int	ft_unset(t_minishell *data)
 {
 	int i;
 	int index;
@@ -56,4 +56,5 @@ void	ft_unset(t_minishell *data)
 			ft_lstremove(&(data->env), index);
 		}
 	}
+	return (0);
 }
