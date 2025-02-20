@@ -132,6 +132,7 @@ int					ft_count_tds(char **str);
 char				*ft_strrchr(const char *s, int c);
 int					ft_strnchr(char *str, int n, int c);
 void				ft_interpret(t_minishell *data);
+char				*ft_insert_spaces(char *input);
 
 // signal functions
 void				handle_sigint(int sig);

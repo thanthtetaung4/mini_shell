@@ -124,7 +124,10 @@ int	main(int argc, char **argv, char **envp)
 				continue;
 			}
 			add_history(input);
+			input = ft_insert_spaces(input);
+			// printf("splitting\n");
 			data.args = ft_split_quoted(input, ' ');
+			// printf("splitting done\n");
 			data.args_count = ft_count_tds(data.args);
 			ft_interpret(&data);
 			remove_quotes(&data);

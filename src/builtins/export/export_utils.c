@@ -78,13 +78,22 @@ void	add_var(t_minishell *data, t_list *new_node)
 void	load_export_vars(t_minishell *data)
 {
 	t_list	*current;
+	int		shlvl;
 
 	current = data->env;
 	while (current)
 	{
 		if (((t_env *)current->content)->key[0] != '_')
+		{
+			if (ft_strcmp(((t_env *)current->content)->key, "SHLVL") == 0)
+			{
+				shlvl = ft_atoi(((t_env *)current->content)->value) + 1;
+				free(((t_env *)current->content)->value);
+				((t_env *)current->content)->value = ft_itoa(shlvl);
+			}
 			add_var(data, ft_envnew(((t_env *)current->content)->key,
 					((t_env *)current->content)->value));
+		}
 		current = current->next;
 	}
 	return ;

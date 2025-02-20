@@ -12,6 +12,14 @@
 
 #include "../../header/minishell.h"
 
+char	**handle_shlvl(char **env_pair)
+{
+	int	shlvl;
+
+	shlvl = ft_atoi(env_pair[1]) + 1;
+	env_pair[1] = ft_itoa(shlvl);
+}
+
 t_list	*load_env(char **envp)
 {
 	t_list	*env;
