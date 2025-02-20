@@ -128,9 +128,9 @@ int	main(int argc, char **argv, char **envp)
 			data.args_count = ft_count_tds(data.args);
 			ft_interpret(&data);
 			remove_quotes(&data);
-			printf("----------\n");
-			ft_print_args(data.args);
-			printf("----------\n");
+			// printf("----------\n");
+			// ft_print_args(data.args);
+			// printf("----------\n");
 			node = create_tree(&data);
 			// visualize_tree(node);
 			g_shell_status = tree_execution(node, &data);
