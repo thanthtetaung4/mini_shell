@@ -159,4 +159,7 @@ void				reset_forking_data(t_minishell *data);
 // tree utils
 int					get_node_type(char **command);
 
+// redirections
+int heredoc(t_minishell *data, t_ast_node *node);
+
 #endif
