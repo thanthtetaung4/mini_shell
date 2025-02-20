@@ -139,7 +139,7 @@ void	execute_redirection(t_ast_node *node, t_minishell *data, int type)
 	else if (type == INPUT)
 	{
 		data->forking->input_fd = open(node->file, O_RDONLY);
-		if (data->forking->input_fd < 0)
+		if (data->forking->input_fd == -1)
 		{
 			perror("Error opening input file");
 			exit(EXIT_FAILURE);
@@ -148,6 +148,7 @@ void	execute_redirection(t_ast_node *node, t_minishell *data, int type)
 		close(data->forking->input_fd);
 	}
 }
+
 int	execute_single_command(t_minishell *data, t_ast_node *node)
 {
 	int		*pids;
@@ -283,7 +284,7 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	// printf("pipe count = %i\n", data->forking->pipe_count);
 	while (node)
 	{
-		// printf("cmd: %s\n", node->command[0]);
+		// printf("cmd: %s, file: %s\n", node->command[0], node->file);
 		if (node->type == COMMAND)
 		{
 			if (node->parent && node->parent->type == PIPE)
