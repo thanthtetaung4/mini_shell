@@ -147,6 +147,10 @@ void	execute_redirection(t_ast_node *node, t_minishell *data, int type)
 		dup2(data->forking->input_fd, STDIN_FILENO);
 		close(data->forking->input_fd);
 	}
+	else if (type == HEREDOC)
+	{
+		heredoc(data, node);
+	}
 }
 
 int	execute_single_command(t_minishell *data, t_ast_node *node)

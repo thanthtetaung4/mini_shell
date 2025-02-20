@@ -16,7 +16,10 @@ int check_redirections(char **command, t_minishell *data, t_ast_node *node)
 			return (APPEND);
 		}
 		else if (ft_strcmp("<<", command[i]) == 0)
+		{
+			node->file = command[i + 1];;
 			return (HEREDOC);
+		}
 		else if (ft_strcmp("<", command[i]) == 0)
 		{
 			// printf("input found file:%s\n", command[i + 1]);
