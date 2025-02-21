@@ -67,9 +67,11 @@ typedef struct s_forking
 	int				i_rfd;
 	int				i_fd;
 }					t_forking;
+
 typedef struct s_minishell
 {
 	t_list			*env;
+	char			*input;
 	t_list			*export;
 	char			**args;
 	int				status;

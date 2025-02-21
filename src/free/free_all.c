@@ -33,5 +33,6 @@ void	free_all(t_minishell *data, int free_execution_data)
 		ft_lstclear(&data->export, env_free);
 	if (data->args)
 		free_cmd(&data->args);
+	free(data->input);
 	rl_clear_history();
 }

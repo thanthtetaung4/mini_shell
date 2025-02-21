@@ -171,7 +171,43 @@ int	execute_redirection(t_ast_node *node, t_minishell *data, int type)
 	}
 	else
 	{
-		printf("file not found\n");
+		if (type == OUTPUT || type == APPEND)
+		{
+
+				if (type == OUTPUT)
+					data->forking->output_fd = open(node->file,
+							O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				else if (type == APPEND)
+					data->forking->output_fd = open(node->file,
+							O_WRONLY | O_CREAT | O_APPEND, 0644);
+				if (data->forking->output_fd == -1)
+				{
+					perror("open output file");
+					return (1);
+				}
+				dup2(data->forking->output_fd, STDOUT_FILENO);
+				close(data->forking->output_fd);
+
+
+		}
+		else if (type == INPUT)
+		{
+
+				data->forking->input_fd = open(node->file, O_RDONLY);
+				if (data->forking->input_fd == -1)
+				{
+					perror("Error opening input file");
+					exit(EXIT_FAILURE);
+				}
+				dup2(data->forking->input_fd, STDIN_FILENO);
+				close(data->forking->input_fd);
+
+
+		}
+		else if (type == HEREDOC)
+		{
+			heredoc(data, node);
+		}
 	}
 	return (0);
 }
@@ -283,7 +319,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 			if (execute_redirection(node, data, node->redirection))
 				exit(1);
 		exit_status = execute_command(data, node);
-		// free_all(data, 1);
+		free_all(data, 1);
 	}
 	else
 	{

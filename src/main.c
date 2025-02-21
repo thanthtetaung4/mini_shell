@@ -17,6 +17,7 @@ extern int	g_shell_status;
 int	init_data(t_minishell *data, char **envp)
 {
 	data->env = NULL;
+	data->input = NULL;
 	data->export = NULL;
 	data->env = (load_env(envp));
 	data->args = NULL;
@@ -100,7 +101,6 @@ void	handle_eof(t_minishell *data)
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	data;
-	char		*input;
 	t_ast_node	*node;
 
 	g_shell_status = 0;
@@ -111,22 +111,22 @@ int	main(int argc, char **argv, char **envp)
 		signal(SIGINT, handle_sigint);
 		signal(SIGQUIT, handle_sigquit);
 		if (!g_shell_status)
-			input = readline("minishell$ ");
+			data.input = readline("minishell$ ");
 		else
-			input = readline("\033[31m✘\033[0m minishell$ ");
-		if (input == NULL)
+			data.input = readline("\033[31m✘\033[0m minishell$ ");
+		if (data.input == NULL)
 			handle_eof(&data);
-		if (input && *input)
+		if (data.input && *data.input)
 		{
-			if (!is_valid_cmd(input))
+			if (!is_valid_cmd(data.input))
 			{
 				g_shell_status = 1;
 				continue;
 			}
-			add_history(input);
-			input = ft_insert_spaces(input);
+			add_history(data.input);
+			data.input = ft_insert_spaces(data.input);
 			// printf("splitting\n");
-			data.args = ft_split_quoted(input, ' ');
+			data.args = ft_split_quoted(data.input, ' ');
 			// printf("splitting done\n");
 			data.args_count = ft_count_tds(data.args);
 			ft_interpret(&data);
@@ -147,6 +147,6 @@ int	main(int argc, char **argv, char **envp)
 			// this bloack needs to be changed
 			// change to create tree and then exe from tree
 		}
-		free(input);
+		free(data.input);
 	}
 }
