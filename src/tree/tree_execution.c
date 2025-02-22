@@ -113,6 +113,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 		execve(args[0], args, env_strings);
 		free_cmd(&env_strings);
 		perror("execve");
+		exit(EXIT_FAILURE);
 	}
 	exit(EXIT_SUCCESS);
 	return (0);
@@ -221,7 +222,6 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 {
 	int		pid;
 	int		i;
-	char	*args[256];
 	int		exit_status;
 	int		sig;
 	int		stdout_fd;
@@ -272,6 +272,28 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 				if (execute_redirection(node, data, node->redirection))
 					return (exit_status);
 			execute_command(data, node);
+		}
+		else
+		{
+			wait(&exit_status);
+			if (WIFSIGNALED(exit_status))
+			{
+				sig = WTERMSIG(exit_status);
+				if (sig == SIGQUIT)
+				{
+					write(1, "Quit: (Core dumped)\n", 20);
+					exit_status = 128 + sig;
+				}
+				else if (sig == SIGINT)
+				{
+					write(1, "\n", 1);
+					exit_status = 128 + sig;
+				}
+			}
+			else if (WIFEXITED(exit_status))
+			{
+				exit_status = WEXITSTATUS(exit_status);
+			}
 		}
 	}
 	return (exit_status);
@@ -415,5 +437,6 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	//close(data->forking->fds[data->forking->i_fd][1]);
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);
+	// printf("status: %d\n", data->status);
 	return (data->status);
 }

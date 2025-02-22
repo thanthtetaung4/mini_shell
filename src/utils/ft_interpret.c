@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/02/22 16:52:55 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/22 18:12:46 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,12 @@ void	ft_interpret(t_minishell *data)
 	i = 0;
 	while (data->args[i])
 	{
-		// printf("cmd: %s\n", data->args[i]);
 		found_dollar = ft_strchr(data->args[i], '$');
+		if (found_dollar && (ft_strlen(found_dollar) == 1 || (ft_isalnum(found_dollar[1]) == 0 && found_dollar[1] != '?')))
+		{
+				i++;
+				continue ;
+		}
 		if (found_dollar != 0 && ft_strcmp(data->args[i - 1], "<<") != 0)
 		{
 			if (ft_strchr(found_dollar, '\''))
@@ -94,9 +98,7 @@ void	ft_interpret(t_minishell *data)
 				i++;
 				continue ;
 			}
-			// printf("found dollar: %s\n", found_dollar);
 			interpret(&data->args[i], data->env, found_dollar);
-			// printf("arg: %s\n", data->args[i]);
 		}
 		i++;
 	}

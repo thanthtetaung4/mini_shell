@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 07:14:56 by taung             #+#    #+#             */
-/*   Updated: 2025/02/07 11:20:17 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/23 02:03:36 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,30 +28,29 @@ int		check_valid_args(char *arg)
 
 void	ft_exit(t_minishell *data)
 {
+	int	exit_status;
+
 	if (!data->args[1])
 	{
 		free_all(data, 1);
 		ft_putstr_fd("exit\n",0);
 		exit(0);
 	}
-	else if (data->args[1])
+	else if (data->args_count == 2)
 	{
 		if (!check_valid_args(data->args[1]))
 		{
-			ft_putstr_fd("exit: ", 1);
-			ft_putstr_fd(data->args[1], 1);
-			ft_putstr_fd(": numeric argument require\n", 1);
+			ft_putstr_fd(" numeric argument required\n", 2);
 			free_all(data, 1);
-			exit(1);
+			exit(2);
 		}
 		else
 		{
+			exit_status = ft_atoi(data->args[1]);
 			free_all(data, 1);
-			exit(1);
+			exit(exit_status);
 		}
 	}
-	else if (data->args[2])
-	{
-		ft_putstr_fd("exit: too many arguments\n",0);
-	}
+	else if (data->args_count > 2)
+		ft_putstr_fd(" too many arguments\n", 2);
 }

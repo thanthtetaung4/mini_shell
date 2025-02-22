@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 08:12:59 by taung             #+#    #+#             */
-/*   Updated: 2025/02/19 16:46:02 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/23 01:40:11 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,19 +61,19 @@ int	ft_cd(t_minishell *data)
 			{
 				if (chdir(data->args[1]) == -1)
 				{
-					printf("No such file or directory\n");
+					ft_putstr_fd("No such file or directory\n", 2);
 					return (1);
 				}
 			}
 			else
 			{
-				printf("No permission\n");
+				ft_putstr_fd("No permission\n", 2);
 				return (1);
 			}
 		}
 		else
 		{
-			printf("No such file or directory\n");
+			ft_putstr_fd(" No such file or directory\n", 2);
 			return (1);
 		}
 	}
@@ -81,7 +81,7 @@ int	ft_cd(t_minishell *data)
 		return (cd_to_home(data));
 	else
 	{
-		printf("Too many arguements\n");
+		ft_putstr_fd(" too many arguments\n", 2);
 		return (1);
 	}
 	return (0);
