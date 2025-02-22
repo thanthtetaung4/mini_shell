@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/02/05 10:58:47 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/22 16:52:55 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	ft_interpret(t_minishell *data)
 	{
 		// printf("cmd: %s\n", data->args[i]);
 		found_dollar = ft_strchr(data->args[i], '$');
-		if (found_dollar != 0)
+		if (found_dollar != 0 && ft_strcmp(data->args[i - 1], "<<") != 0)
 		{
 			if (ft_strchr(found_dollar, '\''))
 			{

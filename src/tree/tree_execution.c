@@ -99,7 +99,8 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	else
 	{
 		args[0] = ft_strdup(node->command[0]);
-		if (node->command[0][0] != '.' && node->command[0][0] != '/')
+		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
+		&& ft_strcmp(ft_substr(node->command[0], 0, 5), "/bin/"))
 			args[0] = ft_strjoin("/bin/", node->command[0]);
 		i = 1;
 		while (node->command[i])
@@ -123,7 +124,7 @@ int	execute_redirection(t_ast_node *node, t_minishell *data, int type)
 	{
 		if (type == OUTPUT || type == APPEND)
 		{
-			if (access(node->file, W_OK) == 0)
+			if (access(node->file, W_OK) == 0 && access(node->file, R_OK) == 0)
 			{
 				if (type == OUTPUT)
 					data->forking->output_fd = open(node->file,
@@ -141,7 +142,9 @@ int	execute_redirection(t_ast_node *node, t_minishell *data, int type)
 			}
 			else
 			{
-				printf("%s denied permission\n", node->file);
+				ft_putstr_fd(node->file, 2);
+				ft_putstr_fd(": Permission denied\n", 2);
+				// printf("%s denied permission\n", node->file);
 				return (1);
 			}
 		}
@@ -160,7 +163,9 @@ int	execute_redirection(t_ast_node *node, t_minishell *data, int type)
 			}
 			else
 			{
-				printf("%s denied permission\n", node->file);
+				ft_putstr_fd(node->file, 2);
+				ft_putstr_fd(": Permission denied\n", 2);
+				// printf("%s denied permission\n", node->file);
 				return (1);
 			}
 		}
@@ -284,7 +289,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	i = 0;
 	fds = data->forking->fds;
 	exit_status = 0;
-	if (pipe(fds[data->forking->i_fd]) == -1)
+	if (pipe(data->forking->fds[data->forking->i_fd]) == -1)
 	{
 		perror("pipe");
 		exit(EXIT_FAILURE);
@@ -302,13 +307,13 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		if (data->forking->completed_piping > 0)
-			dup2(fds[data->forking->i_fd - 1][0], STDIN_FILENO);
+			dup2(data->forking->fds[data->forking->i_fd - 1][0], STDIN_FILENO);
 		if (data->forking->completed_piping < data->forking->pipe_count)
-			dup2(fds[data->forking->i_fd][1], STDOUT_FILENO);
+			dup2(data->forking->fds[data->forking->i_fd][1], STDOUT_FILENO);
 		while (i <= data->forking->i_fd)
 		{
-			close(fds[i][0]);
-			close(fds[i][1]);
+			close(data->forking->fds[i][0]);
+			close(data->forking->fds[i][1]);
 			i++;
 		}
 		if (node->redirection != -1)
@@ -320,9 +325,12 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	else
 	{
 		data->forking->completed_piping++;
-		close(fds[data->forking->i_fd][1]);
+		close(data->forking->fds[data->forking->i_fd][1]);
+		close(data->forking->fds[data->forking->i_fd][0]);
 		if (data->forking->i_fd > 0)
-			close(fds[data->forking->i_fd - 1][0]);
+		{
+			close(data->forking->fds[data->forking->i_fd - 1][0]);
+		}
 	}
 	return (exit_status);
 }
@@ -403,6 +411,8 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 			data->status = WEXITSTATUS(data->status);
 		}
 	}
+	//close(data->forking->fds[data->forking->i_fd - 2][1]);
+	//close(data->forking->fds[data->forking->i_fd][1]);
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);
 	return (data->status);
