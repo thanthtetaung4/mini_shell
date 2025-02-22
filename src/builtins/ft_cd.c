@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 08:12:59 by taung             #+#    #+#             */
-/*   Updated: 2025/02/23 01:40:11 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/23 02:08:00 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	update_prev_dir(t_minishell *data)
 	prev_dir = getcwd(NULL, 0);
 	update_export_var(data, prev_dir, find_var(&(data->export), "OLDPWD"));
 	ft_update_env(&data->env, ft_envnew("OLDPWD", prev_dir));
+	free(prev_dir);
 }
 
 int	cd_to_home(t_minishell *data)
