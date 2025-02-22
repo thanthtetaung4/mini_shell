@@ -1,0 +1,7 @@
+Makefile
+README.md
+header
+libft
+minishell
+src
+t.txt

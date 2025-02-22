@@ -214,19 +214,16 @@ int	execute_redirection(t_ast_node *node, t_minishell *data, int type)
 
 int	execute_single_command(t_minishell *data, t_ast_node *node)
 {
-	int		*pids;
+	int		pid;
 	int		i;
 	char	*args[256];
 	int		exit_status;
 	int		sig;
 	int		stdout_fd;
 	int		stdin_fd;
-	int		i_pid;
 
 	stdout_fd = -1;
 	stdin_fd = -1;
-	pids = data->forking->pids;
-	i_pid = data->forking->i_pid;
 	exit_status = 0;
 	if (check_cmd(node->command[0]))
 	{
@@ -256,13 +253,13 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 	{
 		signal(SIGINT, SIG_IGN);
 		signal(SIGQUIT, SIG_IGN);
-		pids[i_pid] = fork();
-		if (pids[i_pid] == -1)
+		pid = fork();
+		if (pid == -1)
 		{
 			perror("fork");
 			return (-1);
 		}
-		else if (pids[i_pid] == 0)
+		else if (pid == 0)
 		{
 			signal(SIGINT, SIG_DFL);
 			signal(SIGQUIT, SIG_DFL);
@@ -277,7 +274,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 
 int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 {
-	int		*pids;
+	int		pid;
 	int		i;
 	char	*args[256];
 	int		**fds;
@@ -285,7 +282,6 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	int		sig;
 
 	i = 0;
-	pids = data->forking->pids;
 	fds = data->forking->fds;
 	exit_status = 0;
 	if (pipe(fds[data->forking->i_fd]) == -1)
@@ -295,13 +291,13 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	}
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	pids[data->forking->i_pid] = fork();
-	if (pids[data->forking->i_pid] == -1)
+	pid = fork();
+	if (pid == -1)
 	{
 		perror("fork");
 		return (-1);
 	}
-	else if (pids[data->forking->i_pid] == 0)
+	else if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
@@ -343,7 +339,7 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	exit_status = 0;
 	node = lowest_node;
 	init_fds(data);
-	init_pids(data);
+	// init_pids(data);
 	while (node)
 	{
 		if (node->type == COMMAND)

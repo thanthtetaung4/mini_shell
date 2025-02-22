@@ -4,16 +4,17 @@ void free_tree_helper(t_ast_node *node)
 {
     int i;
 
-    i = 0;
     if (!node)
         return;
-    free_tree_helper(node->left);
-    free_tree_helper(node->right);
-    if (node->type == COMMAND && node->command && node->command[i])
+    if (node->left)
+        free_tree_helper(node->left);
+    if (node->right)
+        free_tree_helper(node->right);
+    if (node->type == COMMAND && node->command)
     {
+        i = 0;
         while (node->command[i])
         {
-
             free(node->command[i]);
             i++;
         }
