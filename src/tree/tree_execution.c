@@ -89,19 +89,61 @@ int	check_cmd(char *cmd)
 int	execute_command(t_minishell *data, t_ast_node *node)
 {
 	int		i;
-	char	*args[256];
+	char	**args;
 	char	**env_strings;
+	struct stat path_stat;
+	int		exit_status;
 
+	// printf("command: %s,E\n", node->command[0]);
+	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
+		return (0);
+	args = malloc(sizeof(char *) * data->args_count);
 	if (check_cmd(node->command[0]) == 1)
-	{
-		(ft_exec(data, node));
-	}
+		return (ft_exec(data, node));
 	else
 	{
 		args[0] = ft_strdup(node->command[0]);
+		if (args[0][0] == '.' && args[0][1] == '/')
+		{
+			if (stat(args[0], &path_stat) == 0)
+			{
+				if (S_ISDIR(path_stat.st_mode))
+				{
+					ft_putstr_fd(" Is a directory\n", 2);
+					exit (126);
+				}
+			}
+			if (access(args[0], F_OK) != 0)
+			{
+				ft_putstr_fd(" No such file or directory\n", 2);
+				exit (127);
+			}
+			if (access(args[0], X_OK) != 0)
+			{
+				ft_putstr_fd(" Permission denied\n", 2);
+				exit (126);
+			}
+		}
+		if (args[0][0] == '/')
+		{
+			if (stat(args[0], &path_stat) == 0)
+			{
+				if (S_ISDIR(path_stat.st_mode))
+				{
+					ft_putstr_fd(" Is a directory\n", 2);
+					exit (126);
+				}
+			}
+			if (access(args[0], F_OK) != 0)
+			{
+				ft_putstr_fd(" No such file or directory\n", 2);
+				exit (127);
+			}
+		}
 		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
 		&& ft_strcmp(ft_substr(node->command[0], 0, 5), "/bin/"))
-			args[0] = ft_strjoin("/bin/", node->command[0]);
+		args[0] = ft_strjoin("/bin/", node->command[0]);
+
 		i = 1;
 		while (node->command[i])
 		{
@@ -110,13 +152,33 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 		}
 		args[i] = NULL;
 		env_strings = get_env_strings(data->env);
-		execve(args[0], args, env_strings);
+		exit_status = execve(args[0], args, env_strings);
+		// printf("exit status: %d\n", exit_status);
+		//);
+		if (exit_status == -1)
+		{
+			if (errno == ENOENT)
+			{
+				ft_putstr_fd(" command not found\n", 2);
+				exit (127);
+			}
+			else if (errno == EACCES)
+			{
+				// ft_putstr_fd(node->command[0], 2);
+				ft_putstr_fd(" command not found\n", 2);
+				exit (127);
+			}
+			// ft_putstr_fd(" command not found\n", 2);
+			// exit (127);
+		}
 		free_cmd(&env_strings);
-		perror("execve");
-		exit(EXIT_FAILURE);
+		// perror("execve");
+		exit(exit_status);
 	}
+	free_2d_string(args);
+	free(args);
 	exit(EXIT_SUCCESS);
-	return (0);
+	return (1);
 }
 
 int	execute_redirection(t_ast_node *node, t_minishell *data, int type)
@@ -229,7 +291,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 
 	stdout_fd = -1;
 	stdin_fd = -1;
-	exit_status = 0;
+	exit_status = 1;
 	if (check_cmd(node->command[0]))
 	{
 		if (node->redirection != -1)
@@ -271,7 +333,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 			if (node->redirection != -1)
 				if (execute_redirection(node, data, node->redirection))
 					return (exit_status);
-			execute_command(data, node);
+			exit_status = execute_command(data, node);
 		}
 		else
 		{

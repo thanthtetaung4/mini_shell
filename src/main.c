@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/22 23:28:03 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/23 10:58:30 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,12 +140,14 @@ int	main(int argc, char **argv, char **envp)
 			data.args = split_args(data.input);
 			// printf("splitting done\n");
 			data.args_count = ft_count_tds(data.args);
+			// printf("counted\n");
 			ft_interpret(&data);
 			// printf("----------\n");
 			// ft_print_args(data.args);
 			// printf("----------\n");
 			remove_cmd_quote(&data);
-			// remove_quotes_export
+			remove_empty_args(&data);
+			// printf("args_count: %d\n", data.args_count);
 			node = create_tree(&data);
 			// visualize_tree(node);
 			g_shell_status = tree_execution(node, &data);

@@ -13,6 +13,9 @@
 # include <termios.h>
 # include <unistd.h>
 # include <stdbool.h>
+# include <sys/stat.h>
+# include <sys/wait.h>
+# include <errno.h>
 
 typedef enum
 {
@@ -127,6 +130,7 @@ void				free_all(t_minishell *data, int free_execution_data);
 void				free_cmd(char ***cmd);
 void				env_free(void *env);
 void				free_tree(t_ast_node *node);
+void free_2d_string(char **str);
 
 // utils functions
 int					ft_strcmp(const char *s1, const char *s2);
@@ -137,6 +141,8 @@ int					ft_strnchr(char *str, int n, int c);
 void				ft_interpret(t_minishell *data);
 char				*ft_insert_spaces(char *input);
 char **split_args(const char *input);
+int	ft_check_perm(char *path);
+void    remove_empty_args(t_minishell *data);
 
 // signal functions
 void				handle_sigint(int sig);

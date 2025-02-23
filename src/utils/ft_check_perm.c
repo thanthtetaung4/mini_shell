@@ -1,34 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   count_tds.c                                        :+:      :+:    :+:   */
+/*   ft_check_perm.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/18 08:43:04 by taung             #+#    #+#             */
-/*   Updated: 2025/02/23 02:24:06 by taung            ###   ########.fr       */
+/*   Created: 2025/02/23 09:21:39 by taung             #+#    #+#             */
+/*   Updated: 2025/02/23 10:21:49 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
+#include <errno.h>
 
-int	ft_count_tds(char **str)
+int	ft_check_perm(char *path)
 {
-	int	i;
+	int ret;
 
-	i = 0;
-	if (str[i] == NULL)
+	// printf("path: %s\n", path);
+	if(access(path, X_OK) == 0)
 		return (0);
-	while(str[i] != NULL)
+	else
 	{
-		i++;
+		ft_putstr_fd(" Permission denied\n", 2);
+		return (1);
 	}
-	return (i);
 }
-
-// int main(void)
-// {
-// 	char *str[] = {"hi", "hello", NULL};
-
-// 	printf("%i\n", ft_count_tds(str));
-// }
