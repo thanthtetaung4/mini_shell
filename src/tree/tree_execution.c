@@ -94,9 +94,10 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	if (check_cmd(node->command[0]) == 1)
 	{
 		exit_status = ft_exec(data, node);
+		free_all(data, 1);
 		exit(exit_status);
 	}
-	else
+	else if (data->forking->pipe_count == 0)
 	{
 		args = malloc(sizeof(char *) * (data->args_count + 1));
 		args[0] = node->command[0];
@@ -160,6 +161,77 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 				ft_putstr_fd(" command not found\n", 2);
 				free_2d_string(args);
 				free_cmd(&env_strings);
+				exit (127);
+		}
+		free_cmd(&env_strings);
+		free_2d_string(args);
+		exit(exit_status);
+	}
+	else if (data->forking->pipe_count > 0)
+	{
+		args = malloc(sizeof(char *) * (data->args_count + 1));
+		args[0] = node->command[0];
+		if (args[0][0] == '.' && args[0][1] == '/')
+		{
+			if (stat(args[0], &path_stat) == 0)
+			{
+				if (S_ISDIR(path_stat.st_mode))
+				{
+					ft_putstr_fd(" Is a directory\n", 2);
+					free_2d_string(args);
+					exit (126);
+				}
+			}
+			if (access(args[0], F_OK) != 0)
+			{
+				ft_putstr_fd(" No such file or directory\n", 2);
+				free_2d_string(args);
+				exit (127);
+			}
+			if (access(args[0], X_OK) != 0)
+			{
+				ft_putstr_fd(" Permission denied\n", 2);
+				free_2d_string(args);
+				exit (126);
+			}
+		}
+		if (args[0][0] == '/')
+		{
+			if (stat(args[0], &path_stat) == 0)
+			{
+				if (S_ISDIR(path_stat.st_mode))
+				{
+					ft_putstr_fd(" Is a directory\n", 2);
+					free_2d_string(args);
+					exit (126);
+				}
+			}
+			if (access(args[0], F_OK) != 0)
+			{
+				ft_putstr_fd(" No such file or directory\n", 2);
+				free_2d_string(args);
+				exit (127);
+			}
+		}
+		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
+		&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
+			args[0] = ft_strjoin("/bin/", node->command[0]);
+
+		i = 1;
+		while (i < data->args_count)
+		{
+			args[i] = ft_strdup(node->command[i]);
+			i++;
+		}
+		args[i] = NULL;
+		env_strings = get_env_strings(data->env);
+		exit_status = execve(args[0], args, env_strings);
+		if (exit_status == -1)
+		{
+				ft_putstr_fd(" command not found\n", 2);
+				free_2d_string(args);
+				free_cmd(&env_strings);
+				free_all(data, 1);
 				exit (127);
 		}
 		free_cmd(&env_strings);
