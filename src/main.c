@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/19 16:27:40 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/23 10:58:30 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,31 +55,41 @@ int	check_syntax_errors(char *input)
 
 int	count_quotes(char *input)
 {
-	int	s_quote_count;
-	int	d_quote_count;
-	int	i;
+    int	s_quote_count;
+    int	d_quote_count;
+    int	i;
+    int	in_d_quotes;
+    int	in_s_quotes;
 
-	i = -1;
-	s_quote_count = 0;
-	d_quote_count = 0;
-	while (input[++i])
-	{
-		if (input[i] == '"')
-			d_quote_count++;
-		if (input[i] == '\'')
-			s_quote_count++;
-	}
-	if (s_quote_count % 2 != 0)
-	{
-		printf("minishell: syntax error near unexpected token `'\n");
-		return (0);
-	}
-	if (d_quote_count % 2 != 0)
-	{
-		printf("minishell: syntax error near unexpected token `\"\n");
-		return (0);
-	}
-	return (1);
+    i = -1;
+    s_quote_count = 0;
+    d_quote_count = 0;
+    in_d_quotes = 0;
+    in_s_quotes = 0;
+    while (input[++i])
+    {
+        if (input[i] == '"' && !in_s_quotes)
+        {
+            d_quote_count++;
+            in_d_quotes = !in_d_quotes;
+        }
+        if (input[i] == '\'' && !in_d_quotes)
+        {
+            s_quote_count++;
+            in_s_quotes = !in_s_quotes;
+        }
+    }
+    if (s_quote_count % 2 != 0)
+    {
+        ft_putstr_fd("minishell: syntax error near unexpected token `'\n", 2);
+        return (0);
+    }
+    if (d_quote_count % 2 != 0)
+    {
+        ft_putstr_fd("minishell: syntax error near unexpected token `\"\n", 2);
+        return (0);
+    }
+    return (1);
 }
 
 int	is_valid_cmd(char *input)
@@ -124,16 +134,20 @@ int	main(int argc, char **argv, char **envp)
 				continue;
 			}
 			add_history(data.input);
+			// printf("input: %s\n", data.input);
 			data.input = ft_insert_spaces(data.input);
 			// printf("splitting\n");
-			data.args = ft_split_quoted(data.input, ' ');
+			data.args = split_args(data.input);
 			// printf("splitting done\n");
 			data.args_count = ft_count_tds(data.args);
+			// printf("counted\n");
 			ft_interpret(&data);
-			remove_quotes(&data);
 			// printf("----------\n");
 			// ft_print_args(data.args);
 			// printf("----------\n");
+			remove_cmd_quote(&data);
+			remove_empty_args(&data);
+			// printf("args_count: %d\n", data.args_count);
 			node = create_tree(&data);
 			// visualize_tree(node);
 			g_shell_status = tree_execution(node, &data);

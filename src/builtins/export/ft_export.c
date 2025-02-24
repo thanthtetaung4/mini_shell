@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 07:15:04 by taung             #+#    #+#             */
-/*   Updated: 2025/02/19 15:22:57 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/23 01:40:34 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,7 @@ int	ft_export(t_minishell *data, t_ast_node *node)
 		{
 			if (is_print == 0)
 			{
-				printf("minishell: export: `%s': not a valid identifier\n",
-						key_value[0]);
+				ft_putstr_fd(" not a valid identifier\n", 2);
 				return (1);
 			}
 			is_print = 1;

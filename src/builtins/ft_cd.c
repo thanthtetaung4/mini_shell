@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 08:12:59 by taung             #+#    #+#             */
-/*   Updated: 2025/02/19 16:46:02 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/23 02:08:00 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	update_prev_dir(t_minishell *data)
 	prev_dir = getcwd(NULL, 0);
 	update_export_var(data, prev_dir, find_var(&(data->export), "OLDPWD"));
 	ft_update_env(&data->env, ft_envnew("OLDPWD", prev_dir));
+	free(prev_dir);
 }
 
 int	cd_to_home(t_minishell *data)
@@ -61,19 +62,19 @@ int	ft_cd(t_minishell *data)
 			{
 				if (chdir(data->args[1]) == -1)
 				{
-					printf("No such file or directory\n");
+					ft_putstr_fd("No such file or directory\n", 2);
 					return (1);
 				}
 			}
 			else
 			{
-				printf("No permission\n");
+				ft_putstr_fd("No permission\n", 2);
 				return (1);
 			}
 		}
 		else
 		{
-			printf("No such file or directory\n");
+			ft_putstr_fd(" No such file or directory\n", 2);
 			return (1);
 		}
 	}
@@ -81,7 +82,7 @@ int	ft_cd(t_minishell *data)
 		return (cd_to_home(data));
 	else
 	{
-		printf("Too many arguements\n");
+		ft_putstr_fd(" too many arguments\n", 2);
 		return (1);
 	}
 	return (0);

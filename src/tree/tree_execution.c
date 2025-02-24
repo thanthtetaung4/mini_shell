@@ -21,18 +21,13 @@ int	init_pids(t_minishell *data)
 	int	num_of_pids;
 
 	num_of_pids = 0;
-	if (data->forking->heredoc_count != 0
-		|| data->forking->redirection_count != 0
-		|| data->forking->pipe_count != 0)
-		num_of_pids = data->forking->pipe_count + data->forking->heredoc_count
-			+ data->forking->redirection_count;
-	else if (data->forking->heredoc_count == 0
-		&& data->forking->redirection_count == 0
-		&& data->forking->pipe_count != 0)
+	if (data->forking->pipe_count > 0)
 		num_of_pids = data->forking->pipe_count + 1;
 	data->forking->pids = malloc(sizeof(int) * (num_of_pids));
 	if (!data->forking->pids)
 		return (-1);
+	// printf("nums of pids => %d\n", num_of_pids);
+	// printf("nums of pipe counts => %d\n", data->forking->pipe_count);
 	return (num_of_pids);
 }
 void	init_fds(t_minishell *data)
@@ -89,19 +84,61 @@ int	check_cmd(char *cmd)
 int	execute_command(t_minishell *data, t_ast_node *node)
 {
 	int		i;
-	char	*args[256];
+	char	**args;
 	char	**env_strings;
+	struct stat path_stat;
+	int		exit_status;
 
+	// printf("command: %s,E\n", node->command[0]);
+	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
+		return (0);
+	args = malloc(sizeof(char *) * data->args_count);
 	if (check_cmd(node->command[0]) == 1)
-	{
-		(ft_exec(data, node));
-	}
+		return (ft_exec(data, node));
 	else
 	{
 		args[0] = ft_strdup(node->command[0]);
+		if (args[0][0] == '.' && args[0][1] == '/')
+		{
+			if (stat(args[0], &path_stat) == 0)
+			{
+				if (S_ISDIR(path_stat.st_mode))
+				{
+					ft_putstr_fd(" Is a directory\n", 2);
+					exit (126);
+				}
+			}
+			if (access(args[0], F_OK) != 0)
+			{
+				ft_putstr_fd(" No such file or directory\n", 2);
+				exit (127);
+			}
+			if (access(args[0], X_OK) != 0)
+			{
+				ft_putstr_fd(" Permission denied\n", 2);
+				exit (126);
+			}
+		}
+		if (args[0][0] == '/')
+		{
+			if (stat(args[0], &path_stat) == 0)
+			{
+				if (S_ISDIR(path_stat.st_mode))
+				{
+					ft_putstr_fd(" Is a directory\n", 2);
+					exit (126);
+				}
+			}
+			if (access(args[0], F_OK) != 0)
+			{
+				ft_putstr_fd(" No such file or directory\n", 2);
+				exit (127);
+			}
+		}
 		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
 		&& ft_strcmp(ft_substr(node->command[0], 0, 5), "/bin/"))
-			args[0] = ft_strjoin("/bin/", node->command[0]);
+		args[0] = ft_strjoin("/bin/", node->command[0]);
+
 		i = 1;
 		while (node->command[i])
 		{
@@ -110,12 +147,33 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 		}
 		args[i] = NULL;
 		env_strings = get_env_strings(data->env);
-		execve(args[0], args, env_strings);
+		exit_status = execve(args[0], args, env_strings);
+		// printf("exit status: %d\n", exit_status);
+		//);
+		if (exit_status == -1)
+		{
+			if (errno == ENOENT)
+			{
+				ft_putstr_fd(" command not found\n", 2);
+				exit (127);
+			}
+			else if (errno == EACCES)
+			{
+				// ft_putstr_fd(node->command[0], 2);
+				ft_putstr_fd(" command not found\n", 2);
+				exit (127);
+			}
+			// ft_putstr_fd(" command not found\n", 2);
+			// exit (127);
+		}
 		free_cmd(&env_strings);
-		perror("execve");
+		// perror("execve");
+		exit(exit_status);
 	}
+	free_2d_string(args);
+	free(args);
 	exit(EXIT_SUCCESS);
-	return (0);
+	return (1);
 }
 
 int	execute_redirection(t_ast_node *node, t_minishell *data)
@@ -226,7 +284,6 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 {
 	int		pid;
 	int		i;
-	char	*args[256];
 	int		exit_status;
 	int		sig;
 	int		stdout_fd;
@@ -281,7 +338,29 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 			if (node->redirection->types[0] != -1)
 				if (execute_redirection(node, data))
 					return (exit_status);
-			execute_command(data, node);
+			exit_status = execute_command(data, node);
+		}
+		else
+		{
+			wait(&exit_status);
+			if (WIFSIGNALED(exit_status))
+			{
+				sig = WTERMSIG(exit_status);
+				if (sig == SIGQUIT)
+				{
+					write(1, "Quit: (Core dumped)\n", 20);
+					exit_status = 128 + sig;
+				}
+				else if (sig == SIGINT)
+				{
+					write(1, "\n", 1);
+					exit_status = 128 + sig;
+				}
+			}
+			else if (WIFEXITED(exit_status))
+			{
+				exit_status = WEXITSTATUS(exit_status);
+			}
 		}
 	}
 	return (exit_status);
@@ -299,6 +378,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	i = 0;
 	fds = data->forking->fds;
 	exit_status = 0;
+	// init_pids(data);
 	if (pipe(data->forking->fds[data->forking->i_fd]) == -1)
 	{
 		perror("pipe");
@@ -337,6 +417,8 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 		data->forking->completed_piping++;
 		close(data->forking->fds[data->forking->i_fd][1]);
 		// close(data->forking->fds[data->forking->i_fd][0]);
+		data->forking->pids[data->forking->i_pid] = pid;
+		data->forking->i_pid++;
 		if (data->forking->i_fd > 0)
 		{
 			close(data->forking->fds[data->forking->i_fd - 1][0]);
@@ -357,7 +439,7 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	exit_status = 0;
 	node = lowest_node;
 	init_fds(data);
-	// init_pids(data);
+	init_pids(data);
 	while (node)
 	{
 		if (node->type == COMMAND)
@@ -381,9 +463,11 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 		node = node->parent;
 	}
 	i = 0;
-	while (i <= data->forking->completed_piping)
+	while (i < data->forking->completed_piping)
 	{
-		wait(&data->status);
+		// wait(&data->status);
+		// printf("pid %d => %d\n",i,data->forking->pids[i]);
+		waitpid(data->forking->pids[i], &data->status, 0);
 		i++;
 	}
 	if (data->forking->pipe_count == 0)
@@ -425,5 +509,6 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	//close(data->forking->fds[data->forking->i_fd][1]);
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);
+	// printf("status: %d\n", data->status);
 	return (data->status);
 }

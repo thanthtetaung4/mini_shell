@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test_utils.c                                       :+:      :+:    :+:   */
+/*   ft_check_perm.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/21 06:34:35 by taung             #+#    #+#             */
-/*   Updated: 2025/02/23 01:27:42 by taung            ###   ########.fr       */
+/*   Created: 2025/02/23 09:21:39 by taung             #+#    #+#             */
+/*   Updated: 2025/02/23 10:21:49 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
+#include <errno.h>
 
-void	ft_print_args(char **args)
+int	ft_check_perm(char *path)
 {
-	int	i;
+	int ret;
 
-	i = 0;
-	while(args[i])
+	// printf("path: %s\n", path);
+	if(access(path, X_OK) == 0)
+		return (0);
+	else
 	{
-		if (i == 0)
-			printf("cmd: %s\n",args[i]);
-		else
-			printf("arg[%d]: %s\n",i,args[i]);
-		printf("size: %ld\n", ft_strlen(args[i]));
-		i++;
+		ft_putstr_fd(" Permission denied\n", 2);
+		return (1);
 	}
 }

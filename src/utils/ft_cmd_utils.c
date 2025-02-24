@@ -6,13 +6,13 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 06:09:05 by taung             #+#    #+#             */
-/*   Updated: 2025/01/22 06:09:13 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/22 23:08:37 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-void	remove_quotes(t_minishell *data)
+void	remove_quotes_export(t_minishell *data)
 {
 	int		i;
 	int		j;

@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 06:42:51 by codespace         #+#    #+#             */
-/*   Updated: 2025/02/17 05:28:53 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/22 23:31:55 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,11 @@ void	print_export_vars(t_list **export)
 	current = *export;
 	while (current)
 	{
-		printf("%s=\"%s\"\n", ((t_env *)current->content)->key,
-			((t_env *)current->content)->value);
+		if (((t_env *)current->content)->value[0] == '\'' || ((t_env *)current->content)->value[0] == '\"')
+			printf("%s=%s\n", ((t_env *)current->content)->key, ((t_env *)current->content)->value);
+		else
+			printf("%s=\"%s\"\n", ((t_env *)current->content)->key,
+				((t_env *)current->content)->value);
 		current = current->next;
 	}
 	return ;
