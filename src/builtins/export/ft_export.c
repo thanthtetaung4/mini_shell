@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 07:15:04 by taung             #+#    #+#             */
-/*   Updated: 2025/02/23 01:40:34 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/24 22:58:40 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,15 @@ void	export_add_var(t_minishell *data, char *key, char *value)
 	if (!data->export)
 	{
 		data->export = ft_envnew(key, value);
+		if (ft_strlen(value) > 0)
+			ft_update_env(&(data->env), ft_envnew(key, value));
 		return ;
 	}
 	if (find_var(&data->export, key) != -1)
 	{
 		update_export_var(data, value, find_var(&data->export, key));
-		ft_update_env(&(data->env), ft_envnew(key, value));
+		if (ft_strlen(value) > 0)
+			ft_update_env(&(data->env), ft_envnew(key, value));
 		return ;
 	}
 	else

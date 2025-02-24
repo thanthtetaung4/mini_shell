@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 19:34:14 by taung             #+#    #+#             */
-/*   Updated: 2025/01/08 04:53:20 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/25 01:07:36 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ char	**get_env_strings(t_list *env)
 	char	**env_strings;
 	t_list	*current;
 	int		i;
+	char	*tmp;
 
 	i = 0;
 	current = env;
@@ -104,8 +105,10 @@ char	**get_env_strings(t_list *env)
 		return (NULL);
 	while (current)
 	{
-		env_strings[i] = ft_strjoin(((t_env *)current->content)->key, "=");
-		env_strings[i] = ft_strjoin(env_strings[i], ((t_env *)current->content)->value);
+		tmp = ft_strjoin(((t_env *)current->content)->key, "=");
+		env_strings[i] = ft_strjoin(tmp, ((t_env *)current->content)->value);
+		free(tmp);
+		tmp = NULL;
 		current = current->next;
 		i++;
 	}
