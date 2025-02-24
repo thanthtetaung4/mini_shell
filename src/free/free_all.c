@@ -21,7 +21,6 @@ void	free_all(t_minishell *data, int free_execution_data)
 		if (data->forking)
 		{
 			reset_forking_data(data);
-
 		}
 	}
 	if (data->tree)

@@ -29,14 +29,21 @@ typedef struct s_substring
 	int				end;
 }					t_substring;
 
+typedef struct s_redirections
+{
+	int *types;
+	char **files;
+	int *file_fds;
+	int redirection_count;
+	int heredoc_count;
+} t_redirections;
 typedef struct s_ast
 {
 	int				type;
 	struct s_ast	*parent;
 	struct s_ast	*left;
 	struct s_ast	*right;
-	int				redirection;
-	char			*file;
+	t_redirections *redirection;
 	char			**command;
 	int				executed;
 }					t_ast_node;

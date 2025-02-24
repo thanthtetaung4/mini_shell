@@ -1,5 +1,18 @@
 #include "../../header/minishell.h"
+void free_redirections(t_ast_node *node)
+{
+    int i;
 
+    i = 0;
+    free(node->redirection->types);
+    while (node->redirection->files[i])
+    {
+        free(node->redirection->files[i]);
+        i++;
+    }
+    free(node->redirection->files);
+    free(node->redirection); // free(node->redirection->file_fds);
+}
 void free_tree_helper(t_ast_node *node)
 {
     int i;
@@ -12,6 +25,7 @@ void free_tree_helper(t_ast_node *node)
         free_tree_helper(node->right);
     if (node->type == COMMAND && node->command)
     {
+        free_redirections(node);
         i = 0;
         while (node->command[i])
         {
@@ -32,7 +46,9 @@ void free_tree(t_ast_node *node)
     root = node;
     while (root->parent)
         root = root->parent;
+    // printf("root %s\n", root->command[0]);
     free_tree_helper(root);
+    // printf("ft ok\n");
 }
 void	reset_forking_data(t_minishell *data)
 {

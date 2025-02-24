@@ -142,6 +142,7 @@ int	main(int argc, char **argv, char **envp)
 			// data.status = ft_exec(&data);
 			free_cmd(&data.args);
 			free_tree(node);
+			// printf("ok\n");
 			reset_forking_data(&data);
 			node = NULL;
 			// this bloack needs to be changed

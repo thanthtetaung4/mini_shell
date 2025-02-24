@@ -24,7 +24,6 @@ void handle_single_command(t_ast_node **head, char **cmd, t_minishell *data, int
 {
     t_ast_node *temp;
     // char *temp_input;
-
     if (!(*(head)))
 	{
         *head = create_node(COMMAND, cmd, data, count);
