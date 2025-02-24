@@ -21,18 +21,13 @@ int	init_pids(t_minishell *data)
 	int	num_of_pids;
 
 	num_of_pids = 0;
-	if (data->forking->heredoc_count != 0
-		|| data->forking->redirection_count != 0
-		|| data->forking->pipe_count != 0)
-		num_of_pids = data->forking->pipe_count + data->forking->heredoc_count
-			+ data->forking->redirection_count;
-	else if (data->forking->heredoc_count == 0
-		&& data->forking->redirection_count == 0
-		&& data->forking->pipe_count != 0)
+	if (data->forking->pipe_count > 0)
 		num_of_pids = data->forking->pipe_count + 1;
 	data->forking->pids = malloc(sizeof(int) * (num_of_pids));
 	if (!data->forking->pids)
 		return (-1);
+	// printf("nums of pids => %d\n", num_of_pids);
+	// printf("nums of pipe counts => %d\n", data->forking->pipe_count);
 	return (num_of_pids);
 }
 void	init_fds(t_minishell *data)
@@ -291,7 +286,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 
 	stdout_fd = -1;
 	stdin_fd = -1;
-	exit_status = 1;
+	exit_status = 0;
 	if (check_cmd(node->command[0]))
 	{
 		if (node->redirection != -1)
@@ -373,6 +368,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	i = 0;
 	fds = data->forking->fds;
 	exit_status = 0;
+	// init_pids(data);
 	if (pipe(data->forking->fds[data->forking->i_fd]) == -1)
 	{
 		perror("pipe");
@@ -410,7 +406,9 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	{
 		data->forking->completed_piping++;
 		close(data->forking->fds[data->forking->i_fd][1]);
-		close(data->forking->fds[data->forking->i_fd][0]);
+		// close(data->forking->fds[data->forking->i_fd][0]);
+		data->forking->pids[data->forking->i_pid] = pid;
+		data->forking->i_pid++;
 		if (data->forking->i_fd > 0)
 		{
 			close(data->forking->fds[data->forking->i_fd - 1][0]);
@@ -431,7 +429,7 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	exit_status = 0;
 	node = lowest_node;
 	init_fds(data);
-	// init_pids(data);
+	init_pids(data);
 	while (node)
 	{
 		if (node->type == COMMAND)
@@ -455,9 +453,11 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 		node = node->parent;
 	}
 	i = 0;
-	while (i <= data->forking->completed_piping)
+	while (i < data->forking->completed_piping)
 	{
-		wait(&data->status);
+		// wait(&data->status);
+		// printf("pid %d => %d\n",i,data->forking->pids[i]);
+		waitpid(data->forking->pids[i], &data->status, 0);
 		i++;
 	}
 	if (data->forking->pipe_count == 0)
