@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/23 10:58:30 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/25 01:25:30 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ int	main(int argc, char **argv, char **envp)
 			data.args = split_args(data.input);
 			// printf("splitting done\n");
 			data.args_count = ft_count_tds(data.args);
+			//we can't do this here because this will make "ls | pwd" => args count 3 and when we execute pipe this is the problem
 			// printf("counted\n");
 			ft_interpret(&data);
 			// printf("----------\n");

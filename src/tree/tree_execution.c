@@ -89,7 +89,6 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	struct stat path_stat;
 	int		exit_status;
 
-	// printf("command: %s,E\n", node->command[0]);
 	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
 		return (0);
 	args = malloc(sizeof(char *) * (data->args_count + 1));
@@ -372,6 +371,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	fds = data->forking->fds;
 	exit_status = 0;
 	// init_pids(data);
+	data->args_count = ft_count_tds(node->command);
 	if (pipe(data->forking->fds[data->forking->i_fd]) == -1)
 	{
 		perror("pipe");
