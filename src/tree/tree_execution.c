@@ -91,11 +91,14 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 
 	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
 		return (0);
-	args = malloc(sizeof(char *) * (data->args_count + 1));
 	if (check_cmd(node->command[0]) == 1)
-		return (ft_exec(data, node));
+	{
+		exit_status = ft_exec(data, node);
+		exit(exit_status);
+	}
 	else
 	{
+		args = malloc(sizeof(char *) * (data->args_count + 1));
 		args[0] = node->command[0];
 		if (args[0][0] == '.' && args[0][1] == '/')
 		{
@@ -160,10 +163,9 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 				exit (127);
 		}
 		free_cmd(&env_strings);
+		free_2d_string(args);
 		exit(exit_status);
 	}
-	free_2d_string(args);
-	exit(EXIT_SUCCESS);
 	return (1);
 }
 
@@ -403,7 +405,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 			if (execute_redirection(node, data))
 				exit(1);
 		exit_status = execute_command(data, node);
-		free_all(data, 1);
+		free_all(data, 0);
 	}
 	else
 	{
