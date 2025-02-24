@@ -57,7 +57,7 @@ void	reset_forking_data(t_minishell *data)
 	i = 0;
 	if (data->forking->fds && data->forking->fds[i])
 	{
-		while (i < data->forking->i_fd)
+		while (i <= data->forking->i_fd)
 		{
             free(data->forking->fds[i]);
             i++;
