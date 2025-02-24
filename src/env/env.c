@@ -32,6 +32,7 @@ t_list	*ft_envnew(char *key, char *value)
 
 void	ft_add_env(t_list **env, t_list *new_node)
 {
+	printf("adding %s:%s\n", ((t_env*)new_node->content)->key, ((t_env*)new_node->content)->value);
 	if (new_node && ft_strlen(((t_env*)new_node->content)->value) > 0)
 		ft_lstadd_back(env, new_node);
 }
@@ -41,6 +42,7 @@ void	ft_update_env(t_list **env, t_list *new_node)
 	t_list	*current;
 	t_list	*prev;
 
+	printf("updating %s:%s\n", ((t_env*)new_node->content)->key, ((t_env*)new_node->content)->value);
 	current = *env;
 	prev = NULL;
 	while (current)
