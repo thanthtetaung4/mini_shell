@@ -145,7 +145,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	else if (data->forking->pipe_count == 0)
 	{
 		args = malloc(sizeof(char *) * (data->args_count + 1));
-		args[0] = node->command[0];
+		args[0] = ft_strdup(node->command[0]);
 		if (args[0][0] == '.' && args[0][1] == '/')
 		{
 			if (stat(args[0], &path_stat) == 0)
