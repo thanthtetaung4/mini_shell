@@ -55,14 +55,17 @@ void	reset_forking_data(t_minishell *data)
 	int i;
 
 	i = 0;
-	if (data->forking->fds && data->forking->fds[i])
+	if (data->forking->fds)
 	{
-		while (i <= data->forking->i_fd)
+        if (data->forking->fds[i])
+		{
+            while (i < (data->forking->pipe_count + data->forking->heredoc_count + 1))
 		{
             free(data->forking->fds[i]);
             i++;
 		}
-        // printf("fds\n");
+    }
+        // printf("fds\n");}
 		free(data->forking->fds);
     }
     if (data->forking->pids)
