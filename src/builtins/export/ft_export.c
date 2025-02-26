@@ -19,15 +19,13 @@ void	export_add_var(t_minishell *data, char *key, char *value)
 	if (!data->export)
 	{
 		data->export = ft_envnew(key, value);
-		if (ft_strlen(value) > 0)
-			ft_update_env(&(data->env), ft_envnew(key, value));
+		ft_update_env(&(data->env), ft_envnew(key, value));
 		return ;
 	}
 	if (find_var(&data->export, key) != -1)
 	{
 		update_export_var(data, value, find_var(&data->export, key));
-		if (ft_strlen(value) > 0)
-			ft_update_env(&(data->env), ft_envnew(key, value));
+		ft_update_env(&(data->env), ft_envnew(key, value));
 		return ;
 	}
 	else
@@ -54,24 +52,28 @@ int	ft_export(t_minishell *data, t_ast_node *node)
 	}
 	while (node->command[++i])
 	{
-		key_value = key_value_splitter(node->command[i], '=');
-		if (is_valid_var(key_value[0]) == 0)
+		if (ft_strchr(node->command[i], '='))
 		{
-			if (is_print == 0)
+
+			key_value = key_value_splitter(node->command[i], '=');
+			if (is_valid_var(key_value[0]) == 0)
 			{
-				ft_putstr_fd(" not a valid identifier\n", 2);
-				return (1);
+				if (is_print == 0)
+				{
+					ft_putstr_fd(" not a valid identifier\n", 2);
+					return (1);
+				}
+				is_print = 1;
+				free(key_value[0]);
+				free(key_value[1]);
+				free(key_value);
+				continue ;
 			}
-			is_print = 1;
+			export_add_var(data, key_value[0], key_value[1]);
 			free(key_value[0]);
 			free(key_value[1]);
 			free(key_value);
-			continue ;
 		}
-		export_add_var(data, key_value[0], key_value[1]);
-		free(key_value[0]);
-		free(key_value[1]);
-		free(key_value);
 	}
 	return (0);
 }
