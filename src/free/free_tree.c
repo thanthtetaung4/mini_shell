@@ -25,7 +25,7 @@ void free_tree_helper(t_ast_node *node)
         free_tree_helper(node->right);
     if (node->type == COMMAND && node->command)
     {
-        // free_redirections(node);
+        free_redirections(node);
         i = 0;
         while (node->command[i])
         {
