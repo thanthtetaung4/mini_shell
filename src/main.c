@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/25 01:25:30 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/26 04:09:39 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,25 +143,19 @@ int	main(int argc, char **argv, char **envp)
 			//we can't do this here because this will make "ls | pwd" => args count 3 and when we execute pipe this is the problem
 			// printf("counted\n");
 			ft_interpret(&data);
-			// printf("----------\n");
-			// ft_print_args(data.args);
-			// printf("----------\n");
+			printf("----------\n");
+			ft_print_args(data.args);
+			printf("----------\n");
 			remove_cmd_quote(&data);
 			remove_empty_args(&data);
 			// printf("args_count: %d\n", data.args_count);
 			node = create_tree(&data);
 			// visualize_tree(node);
 			g_shell_status = tree_execution(node, &data);
-			// if (data.status == 0)
-			// 	printf("\033[32m✔\033[0m ");
-			// data.status = ft_exec(&data);
 			free_cmd(&data.args);
 			free_tree(node);
-			// printf("ok\n");
 			reset_forking_data(&data);
 			node = NULL;
-			// this bloack needs to be changed
-			// change to create tree and then exe from tree
 		}
 		free(data.input);
 	}
