@@ -17,7 +17,7 @@ int check_redirection(char *arg)
 void redirection_counter(t_minishell *data, t_ast_node *node, char **command)
 {
 	int i;
-	
+
 	i = 0;
 	while (command[i])
 	{
@@ -26,7 +26,7 @@ void redirection_counter(t_minishell *data, t_ast_node *node, char **command)
 			data->forking->heredoc_count++;
 			node->redirection->heredoc_count++;
 		}
-		else if (ft_strcmp(command[i], "<") == 0 || ft_strcmp(command[i], ">") == 0 || ft_strcmp(command[i], ">>") == 0 == OUTPUT)
+		else if (ft_strcmp(command[i], "<") == 0 || ft_strcmp(command[i], ">") == 0 || ft_strcmp(command[i], ">>") == 0)
 		{
 			data->forking->redirection_count++;
 			node->redirection->redirection_count++;
@@ -98,11 +98,12 @@ t_ast_node *create_node(int type, char **command, t_minishell *data, int count)
 		// printf("%s\n", command[0]);
 		// printf("r count %d\n", data->forking->redirection_count);
 		// printf("initial %d\n", count);
-		if (data->forking->redirection_count != 0 || data->forking->heredoc_count != 0)
+		if (node->redirection->redirection_count != 0 || node->redirection->heredoc_count != 0)
 			count -= (2 * data->forking->redirection_count) + (2 * data->forking->heredoc_count);
 		// printf("after %d\n", count);
 		// printf("________\n");
 		node->command = malloc(sizeof(char *) * (count + 1));
+		// printf("%d\n", count);
 		if (!node->command)
 			return (NULL);
 		while (j < count && command[i])
@@ -114,7 +115,7 @@ t_ast_node *create_node(int type, char **command, t_minishell *data, int count)
 			{
 				node->command[j] = ft_strdup(command[i]);
 				if (!node->command[j])
-					return (NULL); 
+					return (NULL);
 				j++;
 			}
 			i++;

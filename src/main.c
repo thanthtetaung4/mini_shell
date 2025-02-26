@@ -143,11 +143,11 @@ int	main(int argc, char **argv, char **envp)
 			//we can't do this here because this will make "ls | pwd" => args count 3 and when we execute pipe this is the problem
 			// printf("counted\n");
 			ft_interpret(&data);
+			remove_cmd_quote(&data);
+			remove_empty_args(&data);
 			// printf("----------\n");
 			// ft_print_args(data.args);
 			// printf("----------\n");
-			remove_cmd_quote(&data);
-			remove_empty_args(&data);
 			// printf("args_count: %d\n", data.args_count);
 			node = create_tree(&data);
 			// visualize_tree(node);

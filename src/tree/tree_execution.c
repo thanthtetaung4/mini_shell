@@ -145,7 +145,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	else if (data->forking->pipe_count == 0)
 	{
 		args = malloc(sizeof(char *) * (data->args_count + 1));
-		args[0] = node->command[0];
+		args[0] = ft_strdup(node->command[0]);
 		if (args[0][0] == '.' && args[0][1] == '/')
 		{
 			if (stat(args[0], &path_stat) == 0)
@@ -201,7 +201,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 		}
 
 		i = 1;
-		while (i < data->args_count)
+		while (node->command[i])
 		{
 			args[i] = ft_strdup(node->command[i]);
 			i++;
@@ -332,7 +332,8 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 					if (data->forking->redirection_fds[i] == -1)
 					{
 						perror("open output file");
-						return (1);
+						// return (1);
+						exit(EXIT_FAILURE);
 					}
 					dup2(data->forking->redirection_fds[i], STDOUT_FILENO);
 					close(data->forking->redirection_fds[i]);
@@ -342,7 +343,8 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 					ft_putstr_fd(node->redirection->files[i], 2);
 					ft_putstr_fd(": Permission denied\n", 2);
 					// printf("%s denied permission\n", node->file);
-					return (1);
+					// return (1);
+					exit(EXIT_FAILURE);
 				}
 			}
 			else if (node->redirection->types[i] == INPUT)
@@ -363,7 +365,8 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 					ft_putstr_fd(node->redirection->files[i], 2);
 					ft_putstr_fd(": Permission denied\n", 2);
 					// printf("%s denied permission\n", node->file);
-					return (1);
+					// return (1);
+					exit(EXIT_FAILURE);
 				}
 			}
 			else if (node->redirection->types[i] == HEREDOC)
@@ -377,18 +380,19 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 			{
 
 					if (node->redirection->types[i] == OUTPUT)
-						data->forking->output_fd = open(node->redirection->files[i],
+						data->forking->redirection_fds[i] = open(node->redirection->files[i],
 								O_WRONLY | O_CREAT | O_TRUNC, 0644);
 					else if (node->redirection->types[i] == APPEND)
-						data->forking->output_fd = open(node->redirection->files[i],
+						data->forking->redirection_fds[i] = open(node->redirection->files[i],
 								O_WRONLY | O_CREAT | O_APPEND, 0644);
-					if (data->forking->output_fd == -1)
+					if (data->forking->redirection_fds[i] == -1)
 					{
 						perror("open output file");
-						return (1);
+						// return (1);
+						exit(EXIT_FAILURE);
 					}
-					dup2(data->forking->output_fd, STDOUT_FILENO);
-					close(data->forking->output_fd);
+					dup2(data->forking->redirection_fds[i], STDOUT_FILENO);
+					close(data->forking->redirection_fds[i]);
 
 			}
 			else if (node->redirection->types[i] == INPUT)
@@ -427,6 +431,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 	stdin_fd = -1;
 	exit_status = 0;
 	i = 0;
+	// printf("%s\n", node->command[i]);
 	// printf("type: %d\n",node->redirection->types[0]);
 	// printf("args count: %d\n", data->args_count);
 	if (check_cmd(node->command[0]))
@@ -442,7 +447,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 		if (node->redirection->types[0] != -1)
 		{
 			if (execute_redirection(node, data))
-				return (1);
+				exit (1);
 		}
 		exit_status = ft_exec(data, node);
 		if (stdout_fd != -1)
@@ -472,7 +477,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 			signal(SIGQUIT, SIG_DFL);
 			if (node->redirection->types[0] != -1)
 				if (execute_redirection(node, data))
-					return (exit_status);
+					exit (exit_status);
 			exit_status = execute_command(data, node);
 		}
 		else
@@ -562,6 +567,79 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	}
 	return (exit_status);
 }
+
+// int execute_pipe_command(t_minishell *data, t_ast_node *node)
+// {
+//     int pid;
+//     int i;
+//     char *args[256];
+//     int **fds;
+//     int exit_status;
+//     int sig;
+
+//     i = 0;
+//     fds = data->forking->fds;
+//     exit_status = 0;
+
+//     // init_pids(data);
+//     data->args_count = ft_count_tds(node->command);
+
+//     if (pipe(data->forking->fds[data->forking->i_fd]) == -1)
+//     {
+//         perror("pipe");
+//         exit(EXIT_FAILURE);
+//     }
+
+//     signal(SIGINT, SIG_IGN);
+//     signal(SIGQUIT, SIG_IGN);
+
+//     pid = fork();
+//     if (pid == -1)
+//     {
+//         perror("fork");
+//         return (-1);
+//     }
+//     else if (pid == 0)
+//     {
+//         signal(SIGINT, SIG_DFL);
+//         signal(SIGQUIT, SIG_DFL);
+
+//         // Apply redirections first
+//         if (node->redirection->types[0] != -1)
+//             if (execute_redirection(node, data))
+//                 exit(1);
+
+//         // Then set up pipes (which will override redirections if necessary)
+//         if (data->forking->completed_piping > 0)
+//             dup2(data->forking->fds[data->forking->i_fd - 1][0], STDIN_FILENO);
+//         if (data->forking->completed_piping < data->forking->pipe_count)
+//             dup2(data->forking->fds[data->forking->i_fd][1], STDOUT_FILENO);
+
+//         // Close all pipe file descriptors
+//         while (i <= data->forking->i_fd)
+//         {
+//             close(data->forking->fds[i][0]);
+//             close(data->forking->fds[i][1]);
+//             i++;
+//         }
+
+//         exit_status = execute_command(data, node);
+//         free_all(data, 0);
+//     }
+//     else
+//     {
+//         data->forking->completed_piping++;
+//         close(data->forking->fds[data->forking->i_fd][1]);
+//         // close(data->forking->fds[data->forking->i_fd][0]);
+//         data->forking->pids[data->forking->i_pid] = pid;
+//         data->forking->i_pid++;
+//         if (data->forking->i_fd > 0)
+//         {
+//             close(data->forking->fds[data->forking->i_fd - 1][0]);
+//         }
+//     }
+//     return (exit_status);
+// }
 
 int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 {
