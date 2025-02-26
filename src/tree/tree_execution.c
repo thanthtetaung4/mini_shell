@@ -1302,251 +1302,272 @@ char *find_command_path(char *cmd, t_minishell *data)
  */
 int execute_command(t_minishell *data, t_ast_node *node)
 {
-    char **args;
-    char **env_strings;
-    struct stat path_stat;
-    int exit_status = 0;
-    int i = 0;
+	int		i;
+	char	**args;
+	char	**env_strings;
+	struct stat path_stat;
+	int		exit_status;
 
-    if (!data || !node || !node->command)
-        return (1);
+	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
+		return (0);
+	if (check_cmd(node->command[0]) == 1)
+	{
+		exit_status = ft_exec(data, node);
+		free_all(data, 1);
+		exit(exit_status);
+	}
+	else if (data->forking->pipe_count == 0)
+	{
+		args = malloc(sizeof(char *) * (data->args_count + 1));
+		args[0] = ft_strdup(node->command[0]);
+		if (args[0][0] == '.' && args[0][1] == '/')
+		{
+			if (stat(args[0], &path_stat) == 0)
+			{
+				if (S_ISDIR(path_stat.st_mode))
+				{
+					ft_putstr_fd(" Is a directory\n", 2);
+					free_2d_string(args);
+					free_all(data, 1);
+					exit (126);
+				}
+			}
+			if (access(args[0], F_OK) != 0)
+			{
+				ft_putstr_fd(" No such file or directory\n", 2);
+				free_2d_string(args);
+				free_all(data, 1);
+				exit (127);
+			}
+			if (access(args[0], X_OK) != 0)
+			{
+				ft_putstr_fd(" Permission denied\n", 2);
+				free_2d_string(args);
+				free_all(data, 1);
+				exit (126);
+			}
+		}
+		if (args[0][0] == '/')
+		{
+			if (stat(args[0], &path_stat) == 0)
+			{
+				if (S_ISDIR(path_stat.st_mode))
+				{
+					ft_putstr_fd(" Is a directory\n", 2);
+					free_2d_string(args);
+					free_all(data, 1);
+					exit (126);
+				}
+			}
+			if (access(args[0], F_OK) != 0)
+			{
+				ft_putstr_fd(" No such file or directory\n", 2);
+				free_2d_string(args);
+				free_all(data, 1);
+				exit (127);
+			}
+		}
+		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
+		&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
+		{
+			args[0] = find_command_path(node->command[0], data);
+			// printf("executed cmd: %s\n", args[0]);
+		}
 
-    // Check if the command is empty or has no arguments
-    if (data->args_count == 0 || !node->command[0] || ft_strlen(node->command[0]) == 0)
-        return (0);
+		i = 1;
+		while (node->command[i])
+		{
+			args[i] = ft_strdup(node->command[i]);
+			i++;
+		}
+		args[i] = NULL;
+		env_strings = get_env_strings(data->env);
+		exit_status = execve(args[0], args, env_strings);
+		if (exit_status == -1)
+		{
+				ft_putstr_fd(" command not found\n", 2);
+				free_2d_string(args);
+				free_cmd(&env_strings);
+				free_all(data, 1);
+				exit (127);
+		}
+		free_cmd(&env_strings);
+		free_2d_string(args);
+		free_all(data, 1);
+		exit(exit_status);
+	}
+	else if (data->forking->pipe_count > 0)
+	{
+		args = malloc(sizeof(char *) * (data->args_count + 1));
+		args[0] = node->command[0];
+		if (args[0][0] == '.' && args[0][1] == '/')
+		{
+			if (stat(args[0], &path_stat) == 0)
+			{
+				if (S_ISDIR(path_stat.st_mode))
+				{
+					ft_putstr_fd(" Is a directory\n", 2);
+					free_2d_string(args);
+					free_all(data, 1);
+					exit (126);
+				}
+			}
+			if (access(args[0], F_OK) != 0)
+			{
+				ft_putstr_fd(" No such file or directory\n", 2);
+				free_2d_string(args);
+				free_all(data, 1);
+				exit (127);
+			}
+			if (access(args[0], X_OK) != 0)
+			{
+				ft_putstr_fd(" Permission denied\n", 2);
+				free_2d_string(args);
+				free_all(data, 1);
+				exit (126);
+			}
+		}
+		if (args[0][0] == '/')
+		{
+			if (stat(args[0], &path_stat) == 0)
+			{
+				if (S_ISDIR(path_stat.st_mode))
+				{
+					ft_putstr_fd(" Is a directory\n", 2);
+					free_2d_string(args);
+					free_all(data, 1);
+					exit (126);
+				}
+			}
+			if (access(args[0], F_OK) != 0)
+			{
+				ft_putstr_fd(" No such file or directory\n", 2);
+				free_2d_string(args);
+				free_all(data, 1);
+				exit (127);
+			}
+		}
+		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
+		&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
+		{
+			args[0] = find_command_path(node->command[0], data);
+			// if (ft_strlen(args[0]) == 0)
+			// {
+			// 	ft_putstr_fd(" command not found\n", 2);
+			// 	free_2d_string(args);
+			// 	exit (127);
+			// }
+		}
+			// args[0] = ft_strjoin("/bin/", node->command[0]);
 
-    // Handle builtin commands
-    if (check_cmd(node->command[0]) == 1)
-    {
-        exit_status = ft_exec(data, node);
-        free_all(data, 1);
-        exit(exit_status);
-    }
-
-    // Handle external commands
-    args = malloc(sizeof(char *) * (data->args_count + 1));
-    if (!args)
-    {
-        free_all(data, 1);
-        exit(1);
-    }
-
-    // Handle relative or absolute paths
-    if ((node->command[0][0] == '.' && node->command[0][1] == '/') ||
-        node->command[0][0] == '/')
-    {
-        args[0] = ft_strdup(node->command[0]);
-        if (!args[0])
-        {
-            free(args);
-            free_all(data, 1);
-            exit(1);
-        }
-
-        // Check if the path is a directory
-        if (stat(args[0], &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
-        {
-            ft_putstr_fd("minishell: ", 2);
-            ft_putstr_fd(args[0], 2);
-            ft_putstr_fd(": Is a directory\n", 2);
-            free(args[0]);
-            free(args);
-            free_all(data, 1);
-            exit(126);
-        }
-
-        // Check if the file exists
-        if (access(args[0], F_OK) != 0)
-        {
-            ft_putstr_fd("minishell: ", 2);
-            ft_putstr_fd(args[0], 2);
-            ft_putstr_fd(": No such file or directory\n", 2);
-            free(args[0]);
-            free(args);
-            free_all(data, 1);
-            exit(127);
-        }
-
-        // Check if the file is executable
-        if (access(args[0], X_OK) != 0)
-        {
-            ft_putstr_fd("minishell: ", 2);
-            ft_putstr_fd(args[0], 2);
-            ft_putstr_fd(": Permission denied\n", 2);
-            free(args[0]);
-            free(args);
-            free_all(data, 1);
-            exit(126);
-        }
-    }
-    else
-    {
-        // Command without path, search in PATH
-        args[0] = find_command_path(node->command[0], data);
-        if (!args[0] || ft_strlen(args[0]) == 0)
-        {
-            ft_putstr_fd("minishell: ", 2);
-            ft_putstr_fd(node->command[0], 2);
-            ft_putstr_fd(": command not found\n", 2);
-            free(args[0]);
-            free(args);
-            free_all(data, 1);
-            exit(127);
-        }
-    }
-
-    // Copy command arguments
-    i = 1;
-    while (node->command[i] != NULL)
-    {
-        args[i] = ft_strdup(node->command[i]);
-        if (!args[i])
-        {
-            free_2d_string(args);
-            free_all(data, 1);
-            exit(1);
-        }
-        i++;
-    }
-    args[i] = NULL;
-
-    // Get environment variables as strings
-    env_strings = get_env_strings(data->env);
-    if (!env_strings)
-    {
-        free_2d_string(args);
-        free_all(data, 1);
-        exit(1);
-    }
-
-    // Execute the command
-    exit_status = execve(args[0], args, env_strings);
-
-    // If execve returns, it means there was an error
-    ft_putstr_fd("minishell: ", 2);
-    ft_putstr_fd(node->command[0], 2);
-    ft_putstr_fd(": command not found\n", 2);
-
-    free_2d_string(args);
-    free_cmd(&env_strings);
-    free_all(data, 1);
-    exit(127);
+		i = 1;
+		while (i < data->args_count)
+		{
+			args[i] = ft_strdup(node->command[i]);
+			i++;
+		}
+		args[i] = NULL;
+		env_strings = get_env_strings(data->env);
+		exit_status = execve(args[0], args, env_strings);
+		if (exit_status == -1)
+		{
+				ft_putstr_fd(" command not found\n", 2);
+				free_2d_string(args);
+				free_cmd(&env_strings);
+				free_all(data, 1);
+				exit (127);
+		}
+		free_cmd(&env_strings);
+		free_2d_string(args);
+		exit(exit_status);
+	}
+	return (1);
 }
-
-/**
- * Handle file redirections
- * Supports input, output, append, and heredoc redirections
- */
-int execute_redirection(t_ast_node *node, t_minishell *data)
-{
-    int i = 0;
-    int fd = -1;
-
-    if (!node || !node->redirection || !data || !data->forking)
-        return (1);
-
-    // Count the number of redirections to ensure proper allocation
-    data->forking->redirection_count = 0;
-    while (node->redirection->types[data->forking->redirection_count] != -1 &&
-           node->redirection->files[data->forking->redirection_count] != NULL)
-    {
-        data->forking->redirection_count++;
-    }
-
-    // Allocate redirection_fds if not already allocated
-    if (data->forking->redirection_count > 0 && !data->forking->redirection_fds)
-    {
-        data->forking->redirection_fds = malloc(sizeof(int) * data->forking->redirection_count);
-        if (!data->forking->redirection_fds)
-        {
-            ft_putstr_fd("minishell: malloc error in redirection\n", 2);
-            return (1);
-        }
 
         // Initialize to -1
         for (i = 0; i < data->forking->redirection_count; i++)
             data->forking->redirection_fds[i] = -1;
     }
 
-    i = 0;
-    while (node->redirection->types[i] != -1 && node->redirection->files[i] != NULL)
-    {
-        // Handle OUTPUT redirection
-        if (node->redirection->types[i] == OUTPUT)
-        {
-            fd = open(node->redirection->files[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-            if (fd == -1)
-            {
-                ft_putstr_fd("minishell: ", 2);
-                ft_putstr_fd(node->redirection->files[i], 2);
-                ft_putstr_fd(": ", 2);
-                perror("");
-                return (1);
-            }
+	i = 0;
+	while (node->redirection->types[i] != -1 && node->redirection->files[i] != NULL)
+	{
+		if (access(node->redirection->files[i], F_OK) == 0)
+		{
+			if (node->redirection->types[i] == OUTPUT || node->redirection->types[i] == APPEND)
+			{
+				if (access(node->redirection->files[i], W_OK) == 0 && access(node->redirection->files[i], R_OK) == 0)
+				{
+					if (node->redirection->types[i] == OUTPUT)
+						data->forking->redirection_fds[i] = open(node->redirection->files[i],
+								O_WRONLY | O_CREAT | O_TRUNC, 0644);
+					else if (node->redirection->types[i] == APPEND)
+						data->forking->redirection_fds[i] = open(node->redirection->files[i],
+								O_WRONLY | O_CREAT | O_APPEND, 0644);
+					if (data->forking->redirection_fds[i] == -1)
+					{
+						perror("open output file");
+						// return (1);
+						exit(EXIT_FAILURE);
+					}
+					dup2(data->forking->redirection_fds[i], STDOUT_FILENO);
+					close(data->forking->redirection_fds[i]);
+				}
+				else
+				{
+					ft_putstr_fd(node->redirection->files[i], 2);
+					ft_putstr_fd(": Permission denied\n", 2);
+					// printf("%s denied permission\n", node->file);
+					// return (1);
+					exit(EXIT_FAILURE);
+				}
+			}
+			else if (node->redirection->types[i] == INPUT)
+			{
+				if (access(node->redirection->files[i], R_OK) == 0)
+				{
+					data->forking->redirection_fds[i] = open(node->redirection->files[i], O_RDONLY);
+					if (data->forking->redirection_fds[i] == -1)
+					{
+						perror("Error opening input file");
+						exit(EXIT_FAILURE);
+					}
+					dup2(data->forking->redirection_fds[i], STDIN_FILENO);
+					close(data->forking->redirection_fds[i]);
+				}
+				else
+				{
+					ft_putstr_fd(node->redirection->files[i], 2);
+					ft_putstr_fd(": Permission denied\n", 2);
+					// printf("%s denied permission\n", node->file);
+					// return (1);
+					exit(EXIT_FAILURE);
+				}
+			}
+			else if (node->redirection->types[i] == HEREDOC)
+			{
+				heredoc(data, node);
+			}
+		}
+		else
+		{
+			if (node->redirection->types[i] == OUTPUT || node->redirection->types[i] == APPEND)
+			{
 
-            if (i < data->forking->redirection_count)
-                data->forking->redirection_fds[i] = fd;
-
-            if (dup2(fd, STDOUT_FILENO) == -1)
-            {
-                ft_putstr_fd("minishell: dup2 error\n", 2);
-                close(fd);
-                return (1);
-            }
-            close(fd);
-        }
-        // Handle APPEND redirection
-        else if (node->redirection->types[i] == APPEND)
-        {
-            fd = open(node->redirection->files[i], O_WRONLY | O_CREAT | O_APPEND, 0644);
-            if (fd == -1)
-            {
-                ft_putstr_fd("minishell: ", 2);
-                ft_putstr_fd(node->redirection->files[i], 2);
-                ft_putstr_fd(": ", 2);
-                perror("");
-                return (1);
-            }
-
-            if (i < data->forking->redirection_count)
-                data->forking->redirection_fds[i] = fd;
-
-            if (dup2(fd, STDOUT_FILENO) == -1)
-            {
-                ft_putstr_fd("minishell: dup2 error\n", 2);
-                close(fd);
-                return (1);
-            }
-            close(fd);
-        }
-        // Handle INPUT redirection
-        else if (node->redirection->types[i] == INPUT)
-        {
-            if (access(node->redirection->files[i], F_OK) != 0)
-            {
-                ft_putstr_fd("minishell: ", 2);
-                ft_putstr_fd(node->redirection->files[i], 2);
-                ft_putstr_fd(": No such file or directory\n", 2);
-                return (1);
-            }
-
-            if (access(node->redirection->files[i], R_OK) != 0)
-            {
-                ft_putstr_fd("minishell: ", 2);
-                ft_putstr_fd(node->redirection->files[i], 2);
-                ft_putstr_fd(": Permission denied\n", 2);
-                return (1);
-            }
-
-            fd = open(node->redirection->files[i], O_RDONLY);
-            if (fd == -1)
-            {
-                ft_putstr_fd("minishell: ", 2);
-                ft_putstr_fd(node->redirection->files[i], 2);
-                ft_putstr_fd(": ", 2);
-                perror("");
-                return (1);
-            }
+					if (node->redirection->types[i] == OUTPUT)
+						data->forking->redirection_fds[i] = open(node->redirection->files[i],
+								O_WRONLY | O_CREAT | O_TRUNC, 0644);
+					else if (node->redirection->types[i] == APPEND)
+						data->forking->redirection_fds[i] = open(node->redirection->files[i],
+								O_WRONLY | O_CREAT | O_APPEND, 0644);
+					if (data->forking->redirection_fds[i] == -1)
+					{
+						perror("open output file");
+						// return (1);
+						exit(EXIT_FAILURE);
+					}
+					dup2(data->forking->redirection_fds[i], STDOUT_FILENO);
+					close(data->forking->redirection_fds[i]);
 
             if (i < data->forking->redirection_count)
                 data->forking->redirection_fds[i] = fd;
@@ -1576,138 +1597,90 @@ int execute_redirection(t_ast_node *node, t_minishell *data)
  */
 int execute_single_command(t_minishell *data, t_ast_node *node)
 {
-    int     pid;
-    int     exit_status = 0;
-    int     sig;
-    int     stdout_fd = -1;
-    int     stdin_fd = -1;
-    int     i = 0;
+	int		pid;
+	int		i;
+	int		exit_status;
+	int		sig;
+	int		stdout_fd;
+	int		stdin_fd;
 
-    // Null checks
-    if (!data || !node || !node->command || !node->redirection)
-        return (1);
-
-    if (node->command[0] == NULL || ft_strlen(node->command[0]) == 0)
-        return (0);
-
-    // Handle builtin commands
-    if (check_cmd(node->command[0]))
-    {
-        // Save original file descriptors
-        while (node->redirection->types[i] != -1 && node->redirection->files[i] != NULL)
-        {
-            if (node->redirection->types[i] == OUTPUT || node->redirection->types[i] == APPEND)
-            {
-                stdout_fd = dup(STDOUT_FILENO);
-                if (stdout_fd == -1)
-                {
-                    ft_putstr_fd("minishell: dup error\n", 2);
-                    return (1);
-                }
-            }
-            else if (node->redirection->types[i] == INPUT)
-            {
-                stdin_fd = dup(STDIN_FILENO);
-                if (stdin_fd == -1)
-                {
-                    if (stdout_fd != -1)
-                        close(stdout_fd);
-                    ft_putstr_fd("minishell: dup error\n", 2);
-                    return (1);
-                }
-            }
-            i++;
-        }
-
-        // Apply redirections
-        if (node->redirection->types[0] != -1)
-        {
-            if (execute_redirection(node, data))
-            {
-                // Restore original file descriptors
-                if (stdout_fd != -1)
-                {
-                    dup2(stdout_fd, STDOUT_FILENO);
-                    close(stdout_fd);
-                }
-                if (stdin_fd != -1)
-                {
-                    dup2(stdin_fd, STDIN_FILENO);
-                    close(stdin_fd);
-                }
-                return (1);
-            }
-        }
-
-        // Execute builtin
-        exit_status = ft_exec(data, node);
-
-        // Restore original file descriptors
-        if (stdout_fd != -1)
-        {
-            dup2(stdout_fd, STDOUT_FILENO);
-            close(stdout_fd);
-        }
-        if (stdin_fd != -1)
-        {
-            dup2(stdin_fd, STDIN_FILENO);
-            close(stdin_fd);
-        }
-    }
-    else
-    {
-        // Handle external commands by forking
-        signal(SIGINT, SIG_IGN);
-        signal(SIGQUIT, SIG_IGN);
-
-        pid = fork();
-        if (pid == -1)
-        {
-            ft_putstr_fd("minishell: fork error\n", 2);
-            return (1);
-        }
-        else if (pid == 0)
-        {
-            // Child process
-            signal(SIGINT, SIG_DFL);
-            signal(SIGQUIT, SIG_DFL);
-
-            if (node->redirection->types[0] != -1)
-            {
-                if (execute_redirection(node, data))
-                {
-                    exit(1);
-                }
-            }
-            execute_command(data, node);
-            // This should not be reached
-            exit(1);
-        }
-        else
-        {
-            // Parent process
-            waitpid(pid, &exit_status, 0);
-            if (WIFSIGNALED(exit_status))
-            {
-                sig = WTERMSIG(exit_status);
-                if (sig == SIGQUIT)
-                {
-                    write(1, "Quit: (Core dumped)\n", 20);
-                    exit_status = 128 + sig;
-                }
-                else if (sig == SIGINT)
-                {
-                    write(1, "\n", 1);
-                    exit_status = 128 + sig;
-                }
-            }
-            else if (WIFEXITED(exit_status))
-            {
-                exit_status = WEXITSTATUS(exit_status);
-            }
-        }
-    }
-    return (exit_status);
+	stdout_fd = -1;
+	stdin_fd = -1;
+	exit_status = 0;
+	i = 0;
+	// printf("%s\n", node->command[i]);
+	// printf("type: %d\n",node->redirection->types[0]);
+	// printf("args count: %d\n", data->args_count);
+	if (check_cmd(node->command[0]))
+	{
+		while (node->redirection->types[i] != -1 && node->redirection->files[i] != NULL)
+		{
+			if (node->redirection->types[i] == OUTPUT || node->redirection->types[i] == APPEND)
+				stdout_fd = dup(STDOUT_FILENO);
+			else if (node->redirection->types[i] == INPUT)
+				stdin_fd = dup(STDIN_FILENO);
+			i++;
+		}
+		if (node->redirection->types[0] != -1)
+		{
+			if (execute_redirection(node, data))
+				exit (1);
+		}
+		exit_status = ft_exec(data, node);
+		if (stdout_fd != -1)
+		{
+			dup2(stdout_fd, STDOUT_FILENO);
+			close(stdout_fd);
+		}
+		if (stdin_fd != -1)
+		{
+			dup2(stdin_fd, STDIN_FILENO);
+			close(stdin_fd);
+		}
+	}
+	else
+	{
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
+		pid = fork();
+		if (pid == -1)
+		{
+			perror("fork");
+			return (-1);
+		}
+		else if (pid == 0)
+		{
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
+			if (node->redirection->types[0] != -1)
+				if (execute_redirection(node, data))
+					exit (exit_status);
+			exit_status = execute_command(data, node);
+		}
+		else
+		{
+			wait(&exit_status);
+			if (WIFSIGNALED(exit_status))
+			{
+				sig = WTERMSIG(exit_status);
+				if (sig == SIGQUIT)
+				{
+					write(1, "Quit: (Core dumped)\n", 20);
+					exit_status = 128 + sig;
+				}
+				else if (sig == SIGINT)
+				{
+					write(1, "\n", 1);
+					exit_status = 128 + sig;
+				}
+			}
+			else if (WIFEXITED(exit_status))
+			{
+				exit_status = WEXITSTATUS(exit_status);
+			}
+		}
+	}
+	return (exit_status);
 }
 
 /**
@@ -1810,129 +1783,161 @@ int execute_pipe_command(t_minishell *data, t_ast_node *node)
     return (exit_status);
 }
 
-/**
- * Execute the command tree
- * Traverses the AST and executes commands
- */
-int tree_execution(t_ast_node *lowest_node, t_minishell *data)
+// int execute_pipe_command(t_minishell *data, t_ast_node *node)
+// {
+//     int pid;
+//     int i;
+//     char *args[256];
+//     int **fds;
+//     int exit_status;
+//     int sig;
+
+//     i = 0;
+//     fds = data->forking->fds;
+//     exit_status = 0;
+
+//     // init_pids(data);
+//     data->args_count = ft_count_tds(node->command);
+
+//     if (pipe(data->forking->fds[data->forking->i_fd]) == -1)
+//     {
+//         perror("pipe");
+//         exit(EXIT_FAILURE);
+//     }
+
+//     signal(SIGINT, SIG_IGN);
+//     signal(SIGQUIT, SIG_IGN);
+
+//     pid = fork();
+//     if (pid == -1)
+//     {
+//         perror("fork");
+//         return (-1);
+//     }
+//     else if (pid == 0)
+//     {
+//         signal(SIGINT, SIG_DFL);
+//         signal(SIGQUIT, SIG_DFL);
+
+//         // Apply redirections first
+//         if (node->redirection->types[0] != -1)
+//             if (execute_redirection(node, data))
+//                 exit(1);
+
+//         // Then set up pipes (which will override redirections if necessary)
+//         if (data->forking->completed_piping > 0)
+//             dup2(data->forking->fds[data->forking->i_fd - 1][0], STDIN_FILENO);
+//         if (data->forking->completed_piping < data->forking->pipe_count)
+//             dup2(data->forking->fds[data->forking->i_fd][1], STDOUT_FILENO);
+
+//         // Close all pipe file descriptors
+//         while (i <= data->forking->i_fd)
+//         {
+//             close(data->forking->fds[i][0]);
+//             close(data->forking->fds[i][1]);
+//             i++;
+//         }
+
+//         exit_status = execute_command(data, node);
+//         free_all(data, 0);
+//     }
+//     else
+//     {
+//         data->forking->completed_piping++;
+//         close(data->forking->fds[data->forking->i_fd][1]);
+//         // close(data->forking->fds[data->forking->i_fd][0]);
+//         data->forking->pids[data->forking->i_pid] = pid;
+//         data->forking->i_pid++;
+//         if (data->forking->i_fd > 0)
+//         {
+//             close(data->forking->fds[data->forking->i_fd - 1][0]);
+//         }
+//     }
+//     return (exit_status);
+// }
+
+int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 {
-    t_ast_node  *node;
-    t_ast_node  *temp_node;
-    int         i;
-    int         exit_status = 0;
-    int         sig;
+	t_ast_node	*node;
+	t_ast_node	*temp_node;
+	int			status;
+	int			i;
+	int			exit_status;
+	int			sig;
 
-    if (!data || !lowest_node)
-        return (1);
-
-    node = lowest_node;
-
-    // Initialize data structures
-    init_fds(data);
-
-    // Initialize PIDs array
-    if (data->forking->pipe_count > 0)
-    {
-        if (init_pids(data) == -1)
-        {
-            ft_putstr_fd("minishell: memory allocation error\n", 2);
-            return (1);
-        }
-    }
-
-    // Execute command nodes
-    while (node)
-    {
-        if (node->type == COMMAND)
-        {
-            if (node->parent && node->parent->type == PIPE)
-            {
-                data->status = execute_pipe_command(data, node);
-                data->forking->i_fd++;
-            }
-            else if (!node->parent)
-            {
-                data->status = execute_single_command(data, node);
-            }
-        }
-        else if (node->type == PIPE)
-        {
-            temp_node = node->right;
-            data->status = execute_pipe_command(data, temp_node);
-            data->forking->i_fd++;
-        }
-        node = node->parent;
-    }
-
-    // Wait for child processes to finish
-    for (i = 0; i < data->forking->completed_piping; i++)
-    {
-        if (data->forking->pids && i < data->forking->pipe_count + 1)
-            waitpid(data->forking->pids[i], &data->status, 0);
-    }
-
-    // Clean up file descriptors
-    if (data->forking->fds)
-    {
-        for (i = 0; i < data->forking->pipe_count + data->forking->heredoc_count + 1; i++)
-        {
-            if (data->forking->fds[i])
-            {
-                if (data->forking->fds[i][0] >= 0)
-                    close(data->forking->fds[i][0]);
-                if (data->forking->fds[i][1] >= 0)
-                    close(data->forking->fds[i][1]);
-            }
-        }
-    }
-
-    // Handle signals and exit status
-    if (data->forking->pipe_count == 0 && data->forking->heredoc_count == 0 && data->forking->redirection_count == 0)
-    {
-        if (WIFSIGNALED(data->status))
-        {
-            sig = WTERMSIG(data->status);
-            if (sig == SIGQUIT)
-            {
-                write(1, "Quit: (Core dumped)\n", 20);
-                data->status = 128 + sig;
-            }
-            else if (sig == SIGINT)
-            {
-                write(1, "\n", 1);
-                data->status = 128 + sig;
-            }
-        }
-        else if (WIFEXITED(data->status))
-        {
-            data->status = WEXITSTATUS(data->status);
-        }
-    }
-    else
-    {
-        if (WIFSIGNALED(data->status))
-        {
-            sig = WTERMSIG(data->status);
-            if (sig == SIGINT)
-            {
-                write(1, "\n", 1);
-                data->status = 130;
-            }
-            else if (sig == SIGQUIT)
-            {
-                write(1, "Quit: (Core dumped)\n", 20);
-                data->status = 131;
-            }
-        }
-        else if (WIFEXITED(data->status))
-        {
-            data->status = WEXITSTATUS(data->status);
-        }
-    }
-
-    // Restore signal handlers
-    signal(SIGINT, handle_sigint);
-    signal(SIGQUIT, handle_sigquit);
-
-    return (data->status);
+	exit_status = 0;
+	node = lowest_node;
+	init_fds(data);
+	init_pids(data);
+	while (node)
+	{
+		if (node->type == COMMAND)
+		{
+			if (node->parent && node->parent->type == PIPE)
+			{
+				data->status = execute_pipe_command(data, node);
+				data->forking->i_fd++;
+			}
+			else if (!node->parent)
+			{
+				data->status = execute_single_command(data, node);
+			}
+		}
+		else if (node->type == PIPE)
+		{
+			temp_node = node->right;
+			data->status = execute_pipe_command(data, temp_node);
+			data->forking->i_fd++;
+		}
+		node = node->parent;
+	}
+	i = 0;
+	while (i < data->forking->completed_piping)
+	{
+		// wait(&data->status);
+		// printf("pid %d => %d\n",i,data->forking->pids[i]);
+		waitpid(data->forking->pids[i], &data->status, 0);
+		i++;
+	}
+	if (data->forking->pipe_count == 0)
+	{
+		if (WIFSIGNALED(data->status))
+		{
+			sig = WTERMSIG(data->status);
+			if (sig == SIGQUIT)
+			{
+				write(1, "Quit: (Core dumped)\n", 20);
+				data->status = 128 + sig;
+			}
+			else if (sig == SIGINT)
+			{
+				write(1, "\n", 1);
+				data->status = 128 + sig;
+			}
+		}
+		else if (WIFEXITED(data->status))
+		{
+			exit_status = WEXITSTATUS(data->status);
+		}
+	}
+	else
+	{
+		if (WIFSIGNALED(data->status))
+		{
+			sig = WTERMSIG(data->status);
+			if (sig == SIGINT)
+				write(1, "\n", 1);
+				data->status = 0;
+		}
+		else if (WIFEXITED(data->status))
+		{
+			data->status = WEXITSTATUS(data->status);
+		}
+	}
+	//close(data->forking->fds[data->forking->i_fd - 2][1]);
+	//close(data->forking->fds[data->forking->i_fd][1]);
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
+	// printf("status: %d\n", data->status);
+	return (data->status);
 }

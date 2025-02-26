@@ -33,6 +33,11 @@ void handle_single_command(t_ast_node **head, char **cmd, t_minishell *data, int
 	else
     {
         temp = create_node(COMMAND, cmd, data, count);
+		// printf("head: %d\n", (*head)->type);
+		// printf("hi\n");
+		// if (temp == NULL)
+		// 	printf("node fucked\n");
+		// printf("cmd: %d\n", temp->type);
         add_left_node(head, temp);
         data->tree->lowest_node = temp;
 		temp = NULL;
