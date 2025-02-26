@@ -54,7 +54,6 @@ int	ft_export(t_minishell *data, t_ast_node *node)
 	{
 		if (ft_strchr(node->command[i], '='))
 		{
-
 			key_value = key_value_splitter(node->command[i], '=');
 			if (is_valid_var(key_value[0]) == 0)
 			{
@@ -73,6 +72,23 @@ int	ft_export(t_minishell *data, t_ast_node *node)
 			free(key_value[0]);
 			free(key_value[1]);
 			free(key_value);
+		}
+		else
+		{
+			key_value = key_value_splitter(node->command[i], '=');
+			if (is_valid_var(key_value[0]) == 0)
+			{
+				if (is_print == 0)
+				{
+					ft_putstr_fd(" not a valid identifier\n", 2);
+					return (1);
+				}
+				is_print = 1;
+				free(key_value[0]);
+				free(key_value[1]);
+				free(key_value);
+				continue ;
+			}
 		}
 	}
 	return (0);
