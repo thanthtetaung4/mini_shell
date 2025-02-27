@@ -95,6 +95,17 @@ typedef struct s_minishell
 	int empty_prev_node;
 } t_minishell;
 
+// Structure to hold parsing state
+typedef struct s_parse_state{
+	char	**args;
+	int		arg_count;
+	int		arg_capacity;
+	char	*buffer;
+	bool	in_single_quote;
+	bool	in_double_quote;
+	bool	error;
+} t_parse_state;
+
 // env functions
 t_list				*load_env(char **envp);
 char				**key_value_splitter(char *entry, char c);

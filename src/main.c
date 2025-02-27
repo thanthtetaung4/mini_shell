@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/27 23:50:57 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/28 00:10:34 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,9 +160,8 @@ int	main(int argc, char **argv, char **envp)
 			node = create_tree(&data);
 			// visualize_tree(node);
 			data.status = tree_execution(node, &data);
-			if (data.status != 0)
-				data.status = 1;
-
+			// if (data.status != 0)
+			// 	data.status = 1;
 			free_cmd(&data.args);
 			free_tree(node);
 			reset_forking_data(&data);

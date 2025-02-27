@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/02/27 23:44:39 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/28 00:50:05 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,28 @@ char	*interpret(t_minishell *data, char **cmd, t_list *env, char *found_dollar)
 	return (*cmd);
 }
 
-void	ft_interpret(t_minishell *data)
+void	handle_dollar_sign(t_minishell *data, int i, char *found_dollar)
+{
+	if (found_dollar && (ft_strlen(found_dollar) == 1 || (ft_isalnum(found_dollar[1]) == 0 && found_dollar[1] != '?')))
+	{
+		return ;
+	}
+	if (data->args_count > 1 && i > 0 && found_dollar &&
+		ft_strcmp(data->args[i - 1], "<<") != 0)
+	{
+		if (ft_strchr(found_dollar, '\''))
+		{
+			return ;
+		}
+		interpret(data, &data->args[i], data->env, found_dollar);
+	}
+	else
+	{
+		interpret(data, &data->args[i], data->env, found_dollar);
+	}
+}
+
+void	process_args(t_minishell *data)
 {
 	int		i;
 	char	*found_dollar;
@@ -88,30 +109,12 @@ void	ft_interpret(t_minishell *data)
 	while (data->args[i])
 	{
 		found_dollar = ft_strchr(data->args[i], '$');
-		if (found_dollar && (ft_strlen(found_dollar) == 1 || (ft_isalnum(found_dollar[1]) == 0 && found_dollar[1] != '?')))
-		{
-				i++;
-				continue ;
-		}
-		if (data->args_count > 1 && i > 0)
-		{
-			if (found_dollar != 0 && ft_strcmp(data->args[i - 1], "<<") != 0)
-			{
-				if (ft_strchr(found_dollar, '\''))
-				{
-					i++;
-					continue ;
-				}
-				interpret(data, &data->args[i], data->env, found_dollar);
-			}
-			else
-			{
-				i++;
-				continue;
-			}
-		}
-		interpret(data, &data->args[i], data->env, found_dollar);
+		handle_dollar_sign(data, i, found_dollar);
 		i++;
 	}
-	return ;
+}
+
+void	ft_interpret(t_minishell *data)
+{
+	process_args(data);
 }

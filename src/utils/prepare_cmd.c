@@ -19,131 +19,264 @@ int	count_pnr(char *input)
 }
 
 
-char	*ft_insert_spaces(char *input)
+void handle_quotes_state(char c, int *in_d_quotes, int *in_s_quotes)
 {
-    int		i;
-    int		j;
-    int		count;
-    int		in_d_quotes;
-    int		in_s_quotes;
-    char	*new_input;
+    if (c == '"' && !*in_s_quotes)
+        *in_d_quotes = !*in_d_quotes;
+    else if (c == '\'' && !*in_d_quotes)
+        *in_s_quotes = !*in_s_quotes;
+}
 
-    count = count_pnr(input);
-    i = 0;
-    j = 0;
-    in_d_quotes = 0;
-    in_s_quotes = 0;
-    new_input = malloc(ft_strlen(input) + (count * 2) + 1);
+void handle_special_char(char *input, int *i, char *new_input, int *j)
+{
+    new_input[(*j)++] = ' ';
+    new_input[(*j)++] = input[*i];
+
+    if ((input[*i] == '>' || input[*i] == '<') && input[*i + 1] == input[*i])
+        new_input[(*j)++] = input[++(*i)];
+
+    new_input[(*j)++] = ' ';
+    (*i)++;
+}
+
+char *ft_insert_spaces(char *input)
+{
+    int i = 0;
+    int j = 0;
+    int in_d_quotes = 0;
+    int in_s_quotes = 0;
+    char *new_input;
+
+    new_input = malloc(ft_strlen(input) + (count_pnr(input) * 2) + 1);
     if (!new_input)
         return (NULL);
+
     while (input[i])
     {
-        if (input[i] == '"' && !in_s_quotes)
-            in_d_quotes = !in_d_quotes;
-        else if (input[i] == '\'' && !in_d_quotes)
-            in_s_quotes = !in_s_quotes;
+        handle_quotes_state(input[i], &in_d_quotes, &in_s_quotes);
 
         if ((input[i] == '|' || input[i] == '>' || input[i] == '<') && !in_d_quotes && !in_s_quotes)
-        {
-            new_input[j++] = ' ';
-            new_input[j++] = input[i];
-            if ((input[i] == '>' || input[i] == '<') && input[i + 1] == input[i])
-                new_input[j++] = input[++i];
-            new_input[j++] = ' ';
-            i++;
-        }
+            handle_special_char(input, &i, new_input, &j);
         else
             new_input[j++] = input[i++];
     }
+
     new_input[j] = '\0';
     free(input);
     return (new_input);
 }
 
-char **split_args(const char *input) {
-    char **args;
-    int arg_count = 0;
-    int arg_capacity = 10;
-    char *buffer = strdup(input); // Make a mutable copy
-    if (!buffer) {
-        perror("strdup failed");
-        return NULL;
-    }
+void    init_helper(t_parse_state *state)
+{
+    state->arg_count = 0;
+    state->arg_capacity = 10;
+    state->in_single_quote = false;
+    state->in_double_quote = false;
+    state->error = false;
+}
+// Initialize parsing state
+t_parse_state *init_parse_state(const char *input)
+{
+    t_parse_state *state;
 
-    args = malloc(arg_capacity * sizeof(char *));
-    if (!args) {
+    state = malloc(sizeof(t_parse_state));
+    if (!state)
+    {
         perror("malloc failed");
-        free(buffer);
         return NULL;
     }
-
-    char *ptr = buffer;
-    bool in_single_quote = false, in_double_quote = false;
-
-    while (*ptr) {
-        while (*ptr == ' ') ptr++;  // Skip leading spaces
-        if (*ptr == '\0') break;    // End of input
-
-        char *token_start = ptr;
-        char *arg = malloc(strlen(ptr) + 1);  // Allocate memory for argument
-        if (!arg) {
-            perror("malloc failed");
-            free(buffer);
-            free(args);
-            return NULL;
-        }
-
-        char *arg_ptr = arg;
-
-        while (*ptr) {
-            if (*ptr == '\'' && !in_double_quote) {
-                in_single_quote = !in_single_quote;
-            } else if (*ptr == '\"' && !in_single_quote) {
-                in_double_quote = !in_double_quote;
-            } else if (*ptr == ' ' && !in_single_quote && !in_double_quote) {
-                break; // Space ends the argument
-            }
-            *arg_ptr++ = *ptr++; // Copy character
-        }
-
-        if (in_single_quote || in_double_quote) {
-            printf("Error: Mismatched quotes\n");
-            free(arg);
-            free(buffer);
-            for (int i = 0; i < arg_count; i++) free(args[i]);
-            free(args);
-            return NULL;
-        }
-
-        *arg_ptr = '\0'; // Null-terminate argument
-        if (*ptr) ptr++; // Skip space after argument
-
-        // Expand argument array if needed
-        if (arg_count >= arg_capacity) {
-            int new_capacity = arg_capacity * 2;
-            char **new_args = malloc(new_capacity * sizeof(char *));
-            if (!new_args) {
-                perror("malloc failed");
-                free(arg);
-                free(buffer);
-                for (int i = 0; i < arg_count; i++) free(args[i]);
-                free(args);
-                return NULL;
-            }
-            for (int i = 0; i < arg_count; i++) {
-                new_args[i] = args[i];
-            }
-            free(args);
-            args = new_args;
-            arg_capacity = new_capacity;
-        }
-
-        args[arg_count++] = arg; // Store argument
+    init_helper(state);
+    state->buffer = strdup(input);
+    if (!state->buffer)
+    {
+        perror("strdup failed");
+        free(state);
+        return NULL;
     }
+    state->args = malloc(state->arg_capacity * sizeof(char *));
+    if (!state->args)
+    {
+        perror("malloc failed");
+        free(state->buffer);
+        free(state);
+        return NULL;
+    }
+    return state;
+}
 
-    free(buffer);
-    args[arg_count] = NULL; // Null-terminate the args array
-    return args;
+// Clean up resources used by parse state
+void cleanup_parse_state(t_parse_state *state)
+{
+    int i;
+
+    if (!state)
+        return;
+    if (state->buffer)
+    {
+        free(state->buffer);
+    }
+    if (state->args)
+    {
+        i = 0;
+        while (i < state->arg_count)
+        {
+            free(state->args[i]);
+            i++;
+        }
+        free(state->args);
+    }
+    free(state);
+}
+
+// Resize arguments array when capacity is reached
+bool resize_args_array(t_parse_state *state)
+{
+    int new_capacity;
+    char **new_args;
+    int i;
+
+    new_capacity = state->arg_capacity * 2;
+    new_args = malloc(new_capacity * sizeof(char *));
+    if (!new_args)
+    {
+        perror("malloc failed");
+        return false;
+    }
+    i = 0;
+    while (i < state->arg_count)
+    {
+        new_args[i] = state->args[i];
+        i++;
+    }
+    free(state->args);
+    state->args = new_args;
+    state->arg_capacity = new_capacity;
+    return true;
+}
+
+// Skip spaces in the input string
+char *skip_spaces(char *ptr)
+{
+    while (*ptr == ' ') ptr++;
+    return ptr;
+}
+
+// Handle quotes in parsing
+void handle_quote(char c, t_parse_state *state)
+{
+    if (c == '\'' && !state->in_double_quote)
+    {
+        state->in_single_quote = !state->in_single_quote;
+    }
+    else if (c == '\"' && !state->in_single_quote)
+    {
+        state->in_double_quote = !state->in_double_quote;
+    }
+}
+
+// Check if current character should end the argument
+bool is_arg_end(char c, t_parse_state *state)
+{
+    return c == ' ' && !state->in_single_quote && !state->in_double_quote;
+}
+
+// Parse a single argument from the input string
+char *parse_argument(char **ptr, t_parse_state *state)
+{
+    char *token_start;
+    char *arg;
+    char *arg_ptr;
+
+    token_start = *ptr;
+    arg = malloc(strlen(token_start) + 1);
+    if (!arg)
+    {
+        perror("malloc failed");
+        state->error = true;
+        return NULL;
+    }
+    arg_ptr = arg;
+    while (**ptr)
+    {
+        if (is_arg_end(**ptr, state))
+            break;
+        handle_quote(**ptr, state);
+        *arg_ptr = **ptr;
+        arg_ptr++;
+        (*ptr)++;
+    }
+    *arg_ptr = '\0';
+    if (**ptr) (*ptr)++;
+    return arg;
+}
+
+// Validate quotes and handle errors
+bool validate_quotes(t_parse_state *state)
+{
+    if (state->in_single_quote || state->in_double_quote) {
+        printf("Error: Mismatched quotes\n");
+        return false;
+    }
+    return true;
+}
+
+// Process a single argument
+bool process_argument(char **ptr, t_parse_state *state)
+{
+    char *arg;
+
+    arg = parse_argument(ptr, state);
+    if (state->error || !arg)
+    {
+        if (arg) free(arg);
+        return false;
+    }
+    if (!validate_quotes(state))
+    {
+        free(arg);
+        return false;
+    }
+    if (state->arg_count >= state->arg_capacity)
+    {
+        if (!resize_args_array(state))
+        {
+            free(arg);
+            return false;
+        }
+    }
+    state->args[state->arg_count] = arg;
+    state->arg_count++;
+    return true;
+}
+
+// Main function to split arguments
+char **split_args(const char *input)
+{
+    t_parse_state *state;
+    char *ptr;
+    char **result;
+
+    state = init_parse_state(input);
+    if (!state)
+    {
+        return NULL;
+    }
+    ptr = state->buffer;
+    while (*ptr)
+    {
+        ptr = skip_spaces(ptr);
+        if (*ptr == '\0') break;
+        if (!process_argument(&ptr, state))
+        {
+            cleanup_parse_state(state);
+            return NULL;
+        }
+    }
+    result = state->args;
+    result[state->arg_count] = NULL; // Null-terminate the args array
+    state->args = NULL;     // Detach args from state so they're not freed
+    cleanup_parse_state(state);
+    return result;
 }
 
 void remove_cmd_outer_quote(t_minishell *data)
