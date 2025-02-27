@@ -700,6 +700,19 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
     	close(data->heredoc_backup);
 	if (data->heredoc_backup != -1)
 		close(data->stdin_backup);
+		i = 0;
+		// printf("pipe count %d\n", data->forking->i_fd);
+		while (i < data->forking->i_fd)
+		{
+			if (data->forking->fds[i])
+			{
+				// printf("closing pipe fd%d\n", data->forking->fds[i][0]);
+				// printf("closing pipe fd%d\n", data->forking->fds[i][1]);
+				close(data->forking->fds[i][0]);
+				close(data->forking->fds[i][1]);
+			}
+			i++;
+		}
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);
     return (data->status);
