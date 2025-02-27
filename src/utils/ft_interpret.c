@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/02/23 10:59:15 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/27 22:44:50 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,11 @@ void	ft_interpret(t_minishell *data)
 					continue ;
 				}
 				interpret(&data->args[i], data->env, found_dollar);
+			}
+			else
+			{
+				i++;
+				continue;
 			}
 		}
 		interpret(&data->args[i], data->env, found_dollar);

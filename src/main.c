@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/27 18:25:02 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/27 22:45:55 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,20 @@ int	is_valid_cmd(char *input)
 	return (1);
 }
 
+// int	find_heredoc(t_minishell *data)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (data->args[i])
+// 	{
+// 		if (ft_strcmp(data->args[i], "<<") == 0)
+// 			return (1);
+// 		i++;
+// 	}
+// 	return (0);
+// }
+
 void	handle_eof(t_minishell *data)
 {
 	write(1, "\nexit\n", 6);
@@ -134,6 +148,9 @@ int	main(int argc, char **argv, char **envp)
 			data.args_count = ft_count_tds(data.args);
 			//we can't do this here because this will make "ls | pwd" => args count 3 and when we execute pipe this is the problem
 			// printf("counted\n");
+			// printf("----------\n");
+			// ft_print_args(data.args);
+			// printf("----------\n");
 			ft_interpret(&data);
 			remove_cmd_quote(&data);
 			remove_empty_args(&data);
