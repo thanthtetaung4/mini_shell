@@ -92,7 +92,8 @@ typedef struct s_minishell
 	t_forking		*forking;
 	int heredoc_backup;
 	int stdin_backup;
-}					t_minishell;
+	int empty_prev_node;
+} t_minishell;
 
 // env functions
 t_list				*load_env(char **envp);

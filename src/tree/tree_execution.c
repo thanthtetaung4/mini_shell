@@ -136,10 +136,10 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	int		exit_status;
 
 	// printf("%s:exec\n", node->command[0]);
-	if (!node->command[0])
-	{
-		exit(1);
-	}
+	// if (!node->command[0])
+	// {
+	// 	exit(1);
+	// }
 	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
 		return (0);
 	if (check_cmd(node->command[0]) == 1)
@@ -200,7 +200,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 				exit (127);
 			}
 		}
-		args[0] = node->command[0];
+		args[0] = ft_strdup(node->command[0]);
 		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
 		&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
 		{
@@ -236,7 +236,6 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	else if (data->forking->pipe_count > 0)
 	{
 		args = malloc(sizeof(char *) * (data->args_count + 1));
-		args[0] = node->command[0];
 		if (node->command[0][0] == '.' && node->command[0][1] == '/')
 		{
 			if (stat(node->command[0], &path_stat) == 0)
@@ -284,6 +283,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 				exit (127);
 			}
 		}
+		args[0] = ft_strdup(node->command[0]);
 		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
 		&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
 		{
@@ -377,7 +377,9 @@ int	execute_redirection(t_ast_node *node, t_minishell *data, int inside_pipe)
 			else if (node->redirection->types[i] == HEREDOC)
 			{
 				dup2(data->heredoc_backup, STDIN_FILENO);
-				break;
+				close(data->heredoc_backup);
+				if (!node->redirection->types[i + 1])
+					break;
 			}
 		}
 		else
@@ -415,9 +417,11 @@ int	execute_redirection(t_ast_node *node, t_minishell *data, int inside_pipe)
 			}
 			else if (node->redirection->types[i] == HEREDOC)
 			{
+				// printf("dup\n");
 				dup2(data->heredoc_backup, STDIN_FILENO);
-				// heredoc(data, node, inside_pipe);
-				break;
+				close(data->heredoc_backup);
+				if (!node->redirection->types[i + 1])
+					break;
 			}
 			else
 			{
@@ -458,7 +462,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 					}
 				stdout_fd = dup(STDOUT_FILENO);
 			}
-			else if (node->redirection->types[i] == INPUT)
+			else if (node->redirection->types[i] == INPUT || node->redirection->types[i] == HEREDOC)
 			{
 				if (stdin_fd != -1)
 				{
@@ -566,10 +570,23 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	}
 	else if (pid == 0)
 	{
+		if (!node->command[0])
+		{
+			// dup2(data->heredoc_backup, data->forking->fds[data->forking->i_fd][0]);
+			// close(data->heredoc_backup);
+			free_all(data, 0);
+			exit(0);
+		}
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
-		if (data->forking->completed_piping > 0 )
+		if (data->forking->completed_piping > 0 && data->empty_prev_node == 0)
+		{
 			dup2(data->forking->fds[data->forking->i_fd - 1][0], STDIN_FILENO);
+		}
+		if (data->forking->completed_piping > 0 && data->empty_prev_node == 1)
+		{
+			dup2(data->heredoc_backup, STDIN_FILENO);
+		}
 		if ((data->forking->completed_piping < data->forking->pipe_count) )
 		{
 			dup2(data->forking->fds[data->forking->i_fd][1], STDOUT_FILENO);
@@ -595,6 +612,8 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	{
 		data->forking->completed_piping++;
 		close(data->forking->fds[data->forking->i_fd][1]);
+		if (!node->command[0] && data->forking->completed_piping == data->forking->pipe_count)
+			close(data->forking->fds[data->forking->i_fd][0]);
 		data->forking->pids[data->forking->i_pid] = pid;
 		data->forking->i_pid++;
 		if (data->forking->i_fd > 0)
@@ -602,6 +621,10 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 			close(data->forking->fds[data->forking->i_fd - 1][0]);
 		}
 	}
+	if (!node->command[0] && node->redirection->types[node->redirection->redirection_count + node->redirection->heredoc_count - 1] == HEREDOC)
+		data->empty_prev_node = 1;
+	else
+		data->empty_prev_node = 0;
 	return (exit_status);
 }
 
@@ -646,10 +669,10 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
 
         node = node->parent;
     }
-    if (has_heredoc)
-    {
-        dup2(data->stdin_backup, STDIN_FILENO);
-    }
+    // if (has_heredoc)
+    // {
+    //     dup2(data->stdin_backup, STDIN_FILENO);
+    // }
 
     // Second pass: Execute commands (potentially in parallel)
     node = lowest_node;
