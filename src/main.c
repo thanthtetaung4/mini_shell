@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/27 15:12:22 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/27 18:25:02 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,24 +32,15 @@ int	init_data(t_minishell *data, char **envp)
 int	check_syntax_errors(char *input)
 {
 	int	i;
+	int	len;
 
 	i = 0;
-	// while (input[i])
-	// {
-	// 	// if (ft_isalnum(input[i]) == 0 && input[i] != ' ' && input[i] != '/'
-	// 	// 	&& input[i] != '.' && input[i] != '=' && input[i] != '-'
-	// 	// 	&& input[i] != '_' && input[i] != '"' && input[i] != '\''
-	// 	// 	&& input[i] != '$' && input[i] != '>' && input[i] != '<'
-	// 	// 	&& input[i] != '|' && input[i] != '?' && input[i] != '!'
-	// 	// 	&& input[i] != '\n')
-	// 	if (input[i] == '&')
-	// 	{
-	// 		printf("minishell: syntax error near unexpected token `%c'\n",
-	// 			input[i]);
- 	// 		return (0);
-	// 	}
-	// 	i++;
-	// }
+	len =ft_strlen(input);
+	if (input[len - 1] == '>' ||input[len - 1] == '<'  || input[len - 1] == '>' && input[len - 2] == '>' || input[len - 1] == '>' && input[len - 2] == '>' )
+	{
+		ft_putstr_fd("invalid syntax\n",2);
+		return (0);
+	}
 	return (1);
 }
 
@@ -94,8 +85,8 @@ int	count_quotes(char *input)
 
 int	is_valid_cmd(char *input)
 {
-	// if (!check_syntax_errors(input))
-	// 	return (0);
+	if (!check_syntax_errors(input))
+		return (0);
 	if (!count_quotes(input))
 		return (0);
 	return (1);
@@ -131,6 +122,7 @@ int	main(int argc, char **argv, char **envp)
 			if (!is_valid_cmd(data.input))
 			{
 				g_shell_status = 1;
+				free(data.input);
 				continue;
 			}
 			add_history(data.input);

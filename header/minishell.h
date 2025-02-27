@@ -41,6 +41,7 @@ typedef struct s_redirections
 	int redirection_count;
 	int heredoc_count;
 } t_redirections;
+
 typedef struct s_ast
 {
 	int				type;

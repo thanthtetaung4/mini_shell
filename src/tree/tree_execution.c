@@ -138,7 +138,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	// printf("%s:exec\n", node->command[0]);
 	if (!node->command[0])
 	{
-		exit(0);
+		exit(1);
 	}
 	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
 		return (0);
@@ -446,9 +446,21 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 		while (node->redirection->types[i] != -1 && node->redirection->files[i] != NULL)
 		{
 			if (node->redirection->types[i] == OUTPUT || node->redirection->types[i] == APPEND)
+			{
+				if (stdout_fd != -1)
+					{
+						close(stdout_fd);
+					}
 				stdout_fd = dup(STDOUT_FILENO);
+			}
 			else if (node->redirection->types[i] == INPUT)
+			{
+				if (stdin_fd != -1)
+				{
+					close(stdin_fd);
+				}
 				stdin_fd = dup(STDIN_FILENO);
+			}
 			i++;
 		}
 		if (node->redirection->types[0] != -1)
@@ -493,7 +505,6 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 			if (node->redirection->types[0] != -1)
 				if (execute_redirection(node, data))
 				{
-
 					free_all(data, 1);
 					exit (1);
 				}
@@ -646,19 +657,19 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 			data->status = WEXITSTATUS(data->status);
 		}
 	}
-	// i = 0;
-	// while (i <= data->forking->i_fd)
-	// {
-	// 	close(data->forking->fds[i][0]);
-	// 	close(data->forking->fds[i][1]);
-	// 	i++;
-	// }
-	// i = 0;
-	// while (i < data->forking->redirection_count)
-	// {
-	// 	close(data->forking->redirection_fds[i]);
-	// 	i++;
-	// }
+	i = 0;
+	// printf("pipe count %d\n", data->forking->i_fd);
+	while (i < data->forking->i_fd)
+	{
+		if (data->forking->fds[i])
+		{
+			// printf("closing pipe fd%d\n", data->forking->fds[i][0]);
+			// printf("closing pipe fd%d\n", data->forking->fds[i][1]);
+			close(data->forking->fds[i][0]);
+			close(data->forking->fds[i][1]);
+		}
+		i++;
+	}
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);
 	return (data->status);
