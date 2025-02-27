@@ -1,6 +1,6 @@
 #include "../../header/minishell.h"
 
-int heredoc(t_minishell *data, t_ast_node *node)
+int heredoc(t_minishell *data, t_ast_node *node, int inside_pipe)
 {
     char *line;
     char **delimiters;
@@ -9,6 +9,8 @@ int heredoc(t_minishell *data, t_ast_node *node)
 
     i = 0;
     j = 0;
+    if (inside_pipe)
+        dup2(data->stdin_backup, STDIN_FILENO);
     line = NULL;
     delimiters = NULL;
     delimiters = malloc(sizeof(char *) * (node->redirection->heredoc_count + 1));
@@ -66,6 +68,7 @@ int heredoc(t_minishell *data, t_ast_node *node)
     }
     close(data->forking->fds[data->forking->i_fd][1]);
     dup2(data->forking->fds[data->forking->i_fd][0], STDIN_FILENO);
+    data->heredoc_backup = dup(data->forking->fds[data->forking->i_fd][0]);
     close(data->forking->fds[data->forking->i_fd][0]);
     return (0);
 }

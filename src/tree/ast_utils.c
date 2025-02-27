@@ -52,9 +52,9 @@ void init_redirection_data(t_minishell *data, t_ast_node *node, char **command)
 	node->redirection->redirection_count = 0;
 	node->redirection->heredoc_count = 0;
 	redirection_counter(data, node, command);
-	// node->redirection->file_fds = (int *)malloc(sizeof(int) * data->forking->redirection_count);
-	node->redirection->files = (char **)malloc(sizeof(char *) * (node->redirection->redirection_count + 1));
-	node->redirection->types = (int *)malloc(sizeof(int) * (node->redirection->redirection_count + 1));
+	// printf("count : %d\n", node->redirection->redirection_count);
+	node->redirection->files = (char **)malloc(sizeof(char *) * (node->redirection->redirection_count + 1 + node->redirection->heredoc_count));
+	node->redirection->types = (int *)malloc(sizeof(int) * (node->redirection->redirection_count + 1 + node->redirection->heredoc_count));
 	while (command[i])
 	{
 		type = check_redirection(command[i]);

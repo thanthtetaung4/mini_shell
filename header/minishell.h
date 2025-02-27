@@ -89,7 +89,7 @@ typedef struct s_minishell
 	int				args_count;
 	t_tree			*tree;
 	t_forking		*forking;
-	int stdout_backup;
+	int heredoc_backup;
 	int stdin_backup;
 }					t_minishell;
 
@@ -178,6 +178,6 @@ void				reset_forking_data(t_minishell *data);
 int					get_node_type(char **command);
 
 // redirections
-int heredoc(t_minishell *data, t_ast_node *node);
+int heredoc(t_minishell *data, t_ast_node *node, int inside_pipe);
 
 #endif
