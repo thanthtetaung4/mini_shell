@@ -138,7 +138,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	// printf("%s:exec\n", node->command[0]);
 	if (!node->command[0])
 	{
-		exit(0);
+		exit(1);
 	}
 	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
 		return (0);
@@ -447,9 +447,21 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 		while (node->redirection->types[i] != -1 && node->redirection->files[i] != NULL)
 		{
 			if (node->redirection->types[i] == OUTPUT || node->redirection->types[i] == APPEND)
+			{
+				if (stdout_fd != -1)
+					{
+						close(stdout_fd);
+					}
 				stdout_fd = dup(STDOUT_FILENO);
+			}
 			else if (node->redirection->types[i] == INPUT)
+			{
+				if (stdin_fd != -1)
+				{
+					close(stdin_fd);
+				}
 				stdin_fd = dup(STDIN_FILENO);
+			}
 			i++;
 		}
 		if (node->redirection->types[0] != -1)
@@ -609,31 +621,31 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	node = lowest_node;
     while (node)
     {
-        if ((node->type == COMMAND && node->redirection && 
+        if ((node->type == COMMAND && node->redirection &&
              node->redirection->heredoc_count > 0))
         {
             has_heredoc = 1;
 			heredoc(data, node, 0);
         }
-        
+
         if (node->type == PIPE)
         {
             temp_node = node->right;
-            if (temp_node->type == COMMAND && temp_node->redirection && 
+            if (temp_node->type == COMMAND && temp_node->redirection &&
                 temp_node->redirection->heredoc_count > 0)
             {
                 has_heredoc = 1;
                 heredoc(data, temp_node, 1);
 			}
 		}
-        
+
         node = node->parent;
     }
     if (has_heredoc)
     {
         dup2(data->stdin_backup, STDIN_FILENO);
     }
-    
+
     // Second pass: Execute commands (potentially in parallel)
     node = lowest_node;
     while (node)
@@ -658,7 +670,7 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
         }
         node = node->parent;
     }
-    
+
     // Wait for all children
     i = 0;
     while (i < data->forking->completed_piping)
@@ -666,7 +678,7 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
         waitpid(data->forking->pids[i], &data->status, 0);
         i++;
     }
-    
+
     // Handle signals and exit status
     if (data->forking->pipe_count > 0)
     {
