@@ -6,13 +6,13 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 07:22:20 by taung             #+#    #+#             */
-/*   Updated: 2025/02/23 01:07:46 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/27 23:38:12 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-int		g_shell_status;
+int		g_sig_status;
 
 void	handle_sigint(int sig)
 {
@@ -23,7 +23,7 @@ void	handle_sigint(int sig)
 	rl_on_new_line();       // Signal readline to expect a new line
 	rl_replace_line("", 0); // Clear the current line
 	rl_redisplay();         // Update the display
-	g_shell_status = 130;   // Set the status code to indicate Ctrl+C
+	g_sig_status = 1;   // Set the status code to indicate Ctrl+C
 }
 
 void	handle_sigquit(int sig)
@@ -32,7 +32,7 @@ void	handle_sigquit(int sig)
 	write(1, "\033[2K\r", 4);
 	rl_on_new_line();
 	rl_redisplay();
-	g_shell_status = 131;
+	// g_sig_status = 131;
 }
 
 
