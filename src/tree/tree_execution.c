@@ -136,6 +136,10 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	int		exit_status;
 
 	// printf("%s:exec\n", node->command[0]);
+	if (!node->command[0])
+	{
+		exit(0);
+	}
 	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
 		return (0);
 	if (check_cmd(node->command[0]) == 1)
@@ -312,6 +316,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 int	execute_redirection(t_ast_node *node, t_minishell *data)
 {
 	int i;
+	int pid;
 
 	i = 0;
 	while (node->redirection->types[i] != -1 && node->redirection->files[i] != NULL)
@@ -372,6 +377,7 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 			else if (node->redirection->types[i] == HEREDOC)
 			{
 				heredoc(data, node);
+				break;
 			}
 		}
 		else
@@ -410,6 +416,11 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 			else if (node->redirection->types[i] == HEREDOC)
 			{
 				heredoc(data, node);
+				break;
+			}
+			else
+			{
+				printf("fucked\n");
 			}
 		}
 		i++;
@@ -430,7 +441,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 	stdin_fd = -1;
 	exit_status = 0;
 	i = 0;
-	if (check_cmd(node->command[0]))
+	if (node->command[0] && check_cmd(node->command[0]))
 	{
 		while (node->redirection->types[i] != -1 && node->redirection->files[i] != NULL)
 		{
