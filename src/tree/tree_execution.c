@@ -200,13 +200,13 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 				exit (127);
 			}
 		}
+		args[0] = node->command[0];
 		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
 		&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
 		{
 			args[0] = find_command_path(node->command[0], data);
 			// printf("executed cmd: %s\n", args[0]);
 		}
-
 		i = 1;
 		while (node->command[i])
 		{
@@ -442,6 +442,10 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 	stdin_fd = -1;
 	exit_status = 0;
 	i = 0;
+	if (!node->command[0])
+	{
+		return (0);
+	}
 	if (node->command[0] && check_cmd(node->command[0]))
 	{
 		while (node->redirection->types[i] != -1 && node->redirection->files[i] != NULL)
@@ -617,13 +621,13 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
     init_pids(data);
 	data->stdin_backup = -1;
 	data->heredoc_backup = -1;
-	data->stdin_backup = dup(STDIN_FILENO);
 	node = lowest_node;
     while (node)
     {
         if ((node->type == COMMAND && node->redirection &&
              node->redirection->heredoc_count > 0))
         {
+			data->stdin_backup = dup(STDIN_FILENO);
             has_heredoc = 1;
 			heredoc(data, node, 0);
         }
@@ -634,6 +638,7 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
             if (temp_node->type == COMMAND && temp_node->redirection &&
                 temp_node->redirection->heredoc_count > 0)
             {
+				data->stdin_backup = dup(STDIN_FILENO);
                 has_heredoc = 1;
                 heredoc(data, temp_node, 1);
 			}
@@ -698,21 +703,21 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
     }
 	if (data->heredoc_backup != -1)
     	close(data->heredoc_backup);
-	if (data->heredoc_backup != -1)
+	if (data->stdin_backup != -1)
 		close(data->stdin_backup);
-		i = 0;
-		// printf("pipe count %d\n", data->forking->i_fd);
-		while (i < data->forking->i_fd)
+	i = 0;
+	// printf("pipe count %d\n", data->forking->i_fd);
+	while (i < data->forking->i_fd)
+	{
+		if (data->forking->fds[i])
 		{
-			if (data->forking->fds[i])
-			{
-				// printf("closing pipe fd%d\n", data->forking->fds[i][0]);
-				// printf("closing pipe fd%d\n", data->forking->fds[i][1]);
-				close(data->forking->fds[i][0]);
-				close(data->forking->fds[i][1]);
-			}
-			i++;
+			// printf("closing pipe fd%d\n", data->forking->fds[i][0]);
+			// printf("closing pipe fd%d\n", data->forking->fds[i][1]);
+			close(data->forking->fds[i][0]);
+			close(data->forking->fds[i][1]);
 		}
+		i++;
+	}
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);
     return (data->status);
