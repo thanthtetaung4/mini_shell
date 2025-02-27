@@ -1,5 +1,37 @@
 #include "../../header/minishell.h"
 
+void wrod_count_helper(char s, int *in_quotes, char *quote_char)
+{
+    if ((s == '\'' || s == '\"'))
+    {
+        if (!*in_quotes)
+        {
+            *in_quotes = 1;
+            *quote_char = s;
+        }
+        else if (s == *quote_char)
+        {
+            *in_quotes = 0;
+            *quote_char = 0;
+        }
+    }
+}
+// {
+//     if ((s[i] == '\'' || s[i] == '\"'))
+//     {
+//         if (!in_quotes)
+//         {
+//             in_quotes = 1;
+//             quote_char = s[i];
+//         }
+//         else if (s[i] == quote_char)
+//         {
+//             in_quotes = 0;
+//             quote_char = 0;
+//         }
+//     }
+// }
+
 static size_t	ft_word_count(char *s, char c)
 {
     size_t	i;
@@ -20,19 +52,7 @@ static size_t	ft_word_count(char *s, char c)
             count++;
             while (s[i] && (s[i] != c || in_quotes))
             {
-                if ((s[i] == '\'' || s[i] == '\"'))
-                {
-                    if (!in_quotes)
-                    {
-                        in_quotes = 1;
-                        quote_char = s[i];
-                    }
-                    else if (s[i] == quote_char)
-                    {
-                        in_quotes = 0;
-                        quote_char = 0;
-                    }
-                }
+                wrod_count_helper(s[i], &in_quotes, &quote_char);
                 i++;
             }
         }
@@ -54,6 +74,20 @@ static char	*ft_add_word(size_t start, size_t end, char *s)
     return (word);
 }
 
+void    make_word_helper(char s, int *in_quotes, char *quote_char)
+{
+        if (!*in_quotes)
+        {
+            *in_quotes = 1;
+            *quote_char = s;
+        }
+        else if (s == *quote_char)
+        {
+            *in_quotes = 0;
+            *quote_char = 0;
+        }
+}
+
 static char	*ft_make_word(char *s, char c, size_t *j)
 {
     size_t	start;
@@ -70,16 +104,7 @@ static char	*ft_make_word(char *s, char c, size_t *j)
     {
         if (s[*j] == '\'' || s[*j] == '\"')
         {
-            if (!in_quotes)
-            {
-                in_quotes = 1;
-                quote_char = s[*j];
-            }
-            else if (s[*j] == quote_char)
-            {
-                in_quotes = 0;
-                quote_char = 0;
-            }
+            make_word_helper(s[*j], &in_quotes, &quote_char);
         }
         else if (s[*j] == c && !in_quotes)
             break ;
