@@ -106,17 +106,6 @@ typedef struct s_parse_state{
 	bool	error;
 } t_parse_state;
 
-// Structure to hold parsing state
-typedef struct s_parse_state{
-	char	**args;
-	int		arg_count;
-	int		arg_capacity;
-	char	*buffer;
-	bool	in_single_quote;
-	bool	in_double_quote;
-	bool	error;
-} t_parse_state;
-
 // env functions
 t_list				*load_env(char **envp);
 char				**key_value_splitter(char *entry, char c);
