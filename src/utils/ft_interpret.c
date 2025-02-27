@@ -6,13 +6,13 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/02/27 22:44:50 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/27 23:44:39 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-extern int	g_shell_status;
+extern int	g_sig_status;
 
 char	*get_value_before_dollar(char *cmd, char *found_dollar)
 {
@@ -24,7 +24,7 @@ char	*get_value_before_dollar(char *cmd, char *found_dollar)
 	return (before_dollar);
 }
 
-char	*get_value(t_list *env, char *found_dollar, char **pos)
+char	*get_value(t_minishell *data, t_list *env, char *found_dollar, char **pos)
 {
 	int		i;
 	char	*value;
@@ -34,7 +34,7 @@ char	*get_value(t_list *env, char *found_dollar, char **pos)
 	if (found_dollar[i] == '?')
 	{
 		*pos += 2;
-		return (ft_itoa(g_shell_status));
+		return (ft_itoa(data->status));
 	}
 	while (ft_isalnum(found_dollar[i]) == 1 && found_dollar[i] != '\0')
 		i++;
@@ -52,7 +52,7 @@ char	*get_value_after_variable(char *cmd, char *pos)
 	after_dollar = ft_substr(cmd, pos - cmd, ft_strlen(cmd) - (pos - cmd));
 	return (after_dollar);
 }
-char	*interpret(char **cmd, t_list *env, char *found_dollar)
+char	*interpret(t_minishell *data, char **cmd, t_list *env, char *found_dollar)
 {
 	char	*before_dollar;
 	char	*after_dollar;
@@ -65,7 +65,7 @@ char	*interpret(char **cmd, t_list *env, char *found_dollar)
 		tmp = *cmd;
 		pos = found_dollar;
 		before_dollar = get_value_before_dollar(*cmd, found_dollar);
-		value = get_value(env, found_dollar, &pos);
+		value = get_value(data, env, found_dollar, &pos);
 		after_dollar = get_value_after_variable(*cmd, pos);
 		*cmd = ft_strjoin(before_dollar, value);
 		free(value);
@@ -102,7 +102,7 @@ void	ft_interpret(t_minishell *data)
 					i++;
 					continue ;
 				}
-				interpret(&data->args[i], data->env, found_dollar);
+				interpret(data, &data->args[i], data->env, found_dollar);
 			}
 			else
 			{
@@ -110,7 +110,7 @@ void	ft_interpret(t_minishell *data)
 				continue;
 			}
 		}
-		interpret(&data->args[i], data->env, found_dollar);
+		interpret(data, &data->args[i], data->env, found_dollar);
 		i++;
 	}
 	return ;

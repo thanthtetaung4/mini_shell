@@ -6,13 +6,13 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/02/27 22:45:55 by taung            ###   ########.fr       */
+/*   Updated: 2025/02/27 23:50:57 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/minishell.h"
 
-extern int	g_shell_status;
+extern int	g_sig_status;
 
 int	init_data(t_minishell *data, char **envp)
 {
@@ -118,24 +118,23 @@ int	main(int argc, char **argv, char **envp)
 	t_minishell	data;
 	t_ast_node	*node;
 
-	g_shell_status = 0;
 	init_data(&data, envp);
 	node = NULL;
 	while (1)
 	{
 		signal(SIGINT, handle_sigint);
 		signal(SIGQUIT, handle_sigquit);
-		if (!g_shell_status)
-			data.input = readline("minishell$ ");
-		else
-			data.input = readline("\033[31m✘\033[0m minishell$ ");
+		// printf("g_sig_status: %d\n", g_sig_status);
+		data.input = readline("minishell$ ");
+		if (g_sig_status)
+				data.status = 130;
 		if (data.input == NULL)
 			handle_eof(&data);
 		if (data.input && *data.input)
 		{
 			if (!is_valid_cmd(data.input))
 			{
-				g_shell_status = 1;
+				g_sig_status = 1;
 				free(data.input);
 				continue;
 			}
@@ -160,7 +159,10 @@ int	main(int argc, char **argv, char **envp)
 			// printf("args_count: %d\n", data.args_count);
 			node = create_tree(&data);
 			// visualize_tree(node);
-			g_shell_status = tree_execution(node, &data);
+			data.status = tree_execution(node, &data);
+			if (data.status != 0)
+				data.status = 1;
+
 			free_cmd(&data.args);
 			free_tree(node);
 			reset_forking_data(&data);
