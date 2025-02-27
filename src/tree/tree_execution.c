@@ -333,8 +333,8 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 					if (data->forking->redirection_fds[i] == -1)
 					{
 						perror("open output file");
-						free_all(data, 1);
-						exit(EXIT_FAILURE);
+						// free_all(data, 1);
+						return (EXIT_FAILURE);
 					}
 					dup2(data->forking->redirection_fds[i], STDOUT_FILENO);
 					close(data->forking->redirection_fds[i]);
@@ -343,8 +343,8 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 				{
 					ft_putstr_fd(node->redirection->files[i], 2);
 					ft_putstr_fd(": Permission denied\n", 2);
-					free_all(data, 1);
-					exit(EXIT_FAILURE);
+					// free_all(data, 1);
+					return(EXIT_FAILURE);
 				}
 			}
 			else if (node->redirection->types[i] == INPUT)
@@ -355,8 +355,8 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 					if (data->forking->redirection_fds[i] == -1)
 					{
 						perror("Error opening input file");
-						free_all(data, 1);
-						exit(EXIT_FAILURE);
+						// free_all(data, 1);
+						return(EXIT_FAILURE);
 					}
 					dup2(data->forking->redirection_fds[i], STDIN_FILENO);
 					close(data->forking->redirection_fds[i]);
@@ -365,8 +365,8 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 				{
 					ft_putstr_fd(node->redirection->files[i], 2);
 					ft_putstr_fd(": Permission denied\n", 2);
-					free_all(data, 1);
-					exit(EXIT_FAILURE);
+					// free_all(data, 1);
+					return(EXIT_FAILURE);
 				}
 			}
 			else if (node->redirection->types[i] == HEREDOC)
@@ -387,8 +387,8 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 					if (data->forking->redirection_fds[i] == -1)
 					{
 						ft_putstr_fd("cannot open output file\n",2);
-						free_all(data, 1);
-						exit(EXIT_FAILURE);
+						// free_all(data, 1);
+						return(EXIT_FAILURE);
 					}
 					dup2(data->forking->redirection_fds[i], STDOUT_FILENO);
 					close(data->forking->redirection_fds[i]);
@@ -396,15 +396,15 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 			else if (node->redirection->types[i] == INPUT)
 			{
 
-					data->forking->input_fd = open(node->redirection->files[i], O_RDONLY);
-					if (data->forking->input_fd == -1)
+				data->forking->redirection_fds[i] = open(node->redirection->files[i], O_RDONLY);
+					if (data->forking->redirection_fds[i] == -1)
 					{
 						perror("Error opening input file");
-						free_all(data, 1);
-						exit(EXIT_FAILURE);
+						// free_all(data, 1);
+						return(EXIT_FAILURE);
 					}
-					dup2(data->forking->input_fd, STDIN_FILENO);
-					close(data->forking->input_fd);
+					dup2(data->forking->redirection_fds[i], STDIN_FILENO);
+					close(data->forking->redirection_fds[i]);
 
 			}
 			else if (node->redirection->types[i] == HEREDOC)
@@ -443,7 +443,15 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 		if (node->redirection->types[0] != -1)
 		{
 			if (execute_redirection(node, data))
-				exit (1);
+			{
+				// free_all(data, 1);
+				// reset_forking_data(data);
+				dup2(stdout_fd, STDOUT_FILENO);
+				dup2(stdin_fd, STDIN_FILENO);
+				close(stdout_fd);
+				close(stdin_fd);
+				return (1);
+			}
 		}
 		exit_status = ft_exec(data, node);
 		if (stdout_fd != -1)
@@ -473,7 +481,11 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 			signal(SIGQUIT, SIG_DFL);
 			if (node->redirection->types[0] != -1)
 				if (execute_redirection(node, data))
-					exit (exit_status);
+				{
+
+					free_all(data, 1);
+					exit (1);
+				}
 			exit_status = execute_command(data, node);
 		}
 		else
@@ -545,6 +557,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 		{
 			if (execute_redirection(node, data))
 			{
+				free_all(data, 1);
 				exit(1);
 			}
 		}
