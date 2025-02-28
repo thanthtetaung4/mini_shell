@@ -621,7 +621,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 			close(data->forking->fds[data->forking->i_fd - 1][0]);
 		}
 	}
-	if (!node->command[0] && node->redirection->types[node->redirection->redirection_count + node->redirection->heredoc_count - 1] == HEREDOC)
+	if (node->command[0] && node->redirection->heredoc_count > 0 && node->redirection->redirection_count == 0)
 		data->empty_prev_node = 1;
 	else
 		data->empty_prev_node = 0;

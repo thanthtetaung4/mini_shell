@@ -35,32 +35,11 @@ void	handle_sigquit(int sig)
 	// g_sig_status = 131;
 }
 
-
-void	handle_sigint_child(int sig)
+void	handle_heredoc_sigint(int sig)
 {
 	(void)sig;
-	write(1, "\n", 1);
-	exit(130);
-}
-
-void	handle_sigquit_child(int sig)
-{
-	(void)sig;
-	write(1, "Quit: (core dumped)\n", 20);
-	exit(131);
-}
-
-void setup_child_signals(void)
-{
-    struct sigaction sa_int, sa_quit;
-
-    sa_int.sa_handler = handle_sigint_child;
-    sigemptyset(&sa_int.sa_mask);
-    sa_int.sa_flags = 0;
-    sigaction(SIGINT, &sa_int, NULL);
-
-    sa_quit.sa_handler = handle_sigquit_child;
-    sigemptyset(&sa_quit.sa_mask);
-    sa_quit.sa_flags = 0;
-    sigaction(SIGQUIT, &sa_quit, NULL);
+	// write(1, "\n", 1);
+	ioctl(STDOUT_FILENO, TIOCSTI, "\n");
+	rl_on_new_line();
+	g_sig_status = 1;
 }

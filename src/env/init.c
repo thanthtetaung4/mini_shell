@@ -12,7 +12,7 @@
 
 #include "../../header/minishell.h"
 
-char	**handle_shlvl(char **env_pair)
+void	handle_shlvl(char **env_pair)
 {
 	int	shlvl;
 

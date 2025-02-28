@@ -1,5 +1,7 @@
 #include "../../header/minishell.h"
 
+int extern g_sig_status;
+
 int heredoc(t_minishell *data, t_ast_node *node, int inside_pipe)
 {
     char *line;
@@ -30,10 +32,16 @@ int heredoc(t_minishell *data, t_ast_node *node, int inside_pipe)
         perror("pipe");
         return (EXIT_FAILURE);
     }
+    g_sig_status = 0;
+    signal(SIGINT,handle_heredoc_sigint);
     while (1)
     {
+        if (g_sig_status == 1)
+            break;
         // printf("hc %d, i %d\n", node->redirection->heredoc_count, i);
         line = readline("> ");
+        if (g_sig_status == 1)
+            break;
         if (!line)
             break;
         if (ft_strcmp(line, delimiters[i]) == 0)
@@ -74,6 +82,7 @@ int heredoc(t_minishell *data, t_ast_node *node, int inside_pipe)
     }
     data->heredoc_backup = dup(data->forking->fds[data->forking->i_fd][0]);
     close(data->forking->fds[data->forking->i_fd][0]);
+    signal(SIGINT, handle_sigint);
     return (0);
 }
 

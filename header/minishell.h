@@ -170,6 +170,7 @@ void				handle_sigquit(int sig);
 void				handle_sigquit_child(int sig);
 void				handle_sigint_child(int sig);
 void				setup_child_signals(void);
+void	handle_heredoc_sigint(int sig);
 
 // test utils
 void				ft_print_args(char **args);
