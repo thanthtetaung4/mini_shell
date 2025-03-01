@@ -36,9 +36,9 @@ void	init_fds(t_minishell *data)
 	int	i;
 
 	i = 0;
-	if (data->forking->pipe_count > 0 || data->forking->heredoc_count > 0)
+	if (data->forking->pipe_count > 0)
 	{
-		fds_count = data->forking->pipe_count + data->forking->heredoc_count + 1;
+		fds_count = data->forking->pipe_count + 1;
 		data->forking->fds = malloc(sizeof(int *) * fds_count);
 		if (!data->forking->fds)
 			return ;
@@ -106,6 +106,7 @@ char	*find_command_path(char *cmd, t_minishell *data)
 		if (!full_path)
 		{
 			free(path_dup);
+			free(cmd);
 			return (NULL); // Memory allocation failed
 		}
 		ft_strlcpy(full_path, dir[i], ft_strlen(dir[i]) + 1);
@@ -114,6 +115,7 @@ char	*find_command_path(char *cmd, t_minishell *data)
 		if (access(full_path, X_OK) == 0)
 		{ // Check if executable
 			free(path_dup);
+		free(cmd);
 			return (full_path);
 		}
 		free(dir[i]);
@@ -123,6 +125,7 @@ char	*find_command_path(char *cmd, t_minishell *data)
 	free(path_dup);
 	free(dir);
 	free(path_env);
+	free(cmd);
 	// printf("end\n");
 	return (ft_strdup(""));
 }
@@ -135,16 +138,11 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	struct stat path_stat;
 	int		exit_status;
 
-	// printf("%s:exec\n", node->command[0]);
-	// if (!node->command[0])
-	// {
-	// 	exit(1);
-	// }
 	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
 		return (0);
+	// if (node->redirection->heredoc_count)
 	if (check_cmd(node->command[0]) == 1)
 	{
-		// printf("builtin\n");
 		exit_status = ft_exec(data, node);
 		free_all(data, 1);
 		exit(exit_status);
@@ -152,7 +150,6 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	else if (data->forking->pipe_count == 0)
 	{
 		args = malloc(sizeof(char *) * (data->args_count + 1));
-		// args[0] = ft_strdup(node->command[0]);
 		if (node->command[0][0] == '.' && node->command[0][1] == '/')
 		{
 			if (stat(node->command[0], &path_stat) == 0)
@@ -204,7 +201,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
 		&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
 		{
-			args[0] = find_command_path(node->command[0], data);
+			args[0] = find_command_path(args[0], data);
 			// printf("executed cmd: %s\n", args[0]);
 		}
 		i = 1;
@@ -376,8 +373,8 @@ int	execute_redirection(t_ast_node *node, t_minishell *data, int inside_pipe)
 			}
 			else if (node->redirection->types[i] == HEREDOC)
 			{
-				dup2(data->heredoc_backup, STDIN_FILENO);
-				close(data->heredoc_backup);
+				dup2(node->redirection->heredoc_fd[0], STDIN_FILENO);
+				close(node->redirection->heredoc_fd[0]);
 				if (!node->redirection->types[i + 1])
 					break;
 			}
@@ -418,8 +415,8 @@ int	execute_redirection(t_ast_node *node, t_minishell *data, int inside_pipe)
 			else if (node->redirection->types[i] == HEREDOC)
 			{
 				// printf("dup\n");
-				dup2(data->heredoc_backup, STDIN_FILENO);
-				close(data->heredoc_backup);
+				dup2(node->redirection->heredoc_fd[0], STDIN_FILENO);
+				close(node->redirection->heredoc_fd[0]);
 				if (!node->redirection->types[i + 1])
 					break;
 			}
@@ -448,6 +445,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 	i = 0;
 	if (!node->command[0])
 	{
+		close(node->redirection->heredoc_fd[0]);
 		return (0);
 	}
 	if (node->command[0] && check_cmd(node->command[0]))
@@ -542,7 +540,60 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 			}
 		}
 	}
+	if (node->redirection->heredoc_count > 0)
+		close(node->redirection->heredoc_fd[0]);
 	return (exit_status);
+}
+
+void	close_heredoc_fds_c(t_minishell *data)
+{
+	t_ast_node *temp_node;
+
+	temp_node = data->tree->lowest_node;
+	while(temp_node)
+	{
+		if (temp_node->type == COMMAND)
+		{
+			// if (temp_node->redirection->heredoc_fd[0] != -1)
+				close(temp_node->redirection->heredoc_fd[0]);
+			// if ( temp_node->redirection->heredoc_fd[1] != -1)
+				close(temp_node->redirection->heredoc_fd[1]);
+		}
+		else if (temp_node->type == PIPE)
+		{
+			// if (temp_node->right->redirection->heredoc_fd[0] != -1)
+				close(temp_node->right->redirection->heredoc_fd[0]);
+			// if (temp_node->right->redirection->heredoc_fd[1] != -1)
+				close(temp_node->right->redirection->heredoc_fd[1]);
+		}
+
+		temp_node = temp_node->parent;
+	}
+}
+void close_heredoc_fds_p(t_minishell *data)
+{
+	t_ast_node *temp_node;
+
+	temp_node = data->tree->lowest_node;
+	while(temp_node)
+	{
+		if (temp_node->type == COMMAND)
+		{
+			if (temp_node->redirection->heredoc_fd[0] != -1)
+				close(temp_node->redirection->heredoc_fd[0]);
+			if ( temp_node->redirection->heredoc_fd[1] != -1)
+				close(temp_node->redirection->heredoc_fd[1]);
+		}
+		else if (temp_node->type == PIPE)
+		{
+			if (temp_node->right->redirection->heredoc_fd[0] != -1)
+				close(temp_node->right->redirection->heredoc_fd[0]);
+			if (temp_node->right->redirection->heredoc_fd[1] != -1)
+				close(temp_node->right->redirection->heredoc_fd[1]);
+		}
+
+		temp_node = temp_node->parent;
+	}
 }
 
 int	execute_pipe_command(t_minishell *data, t_ast_node *node)
@@ -570,25 +621,51 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	}
 	else if (pid == 0)
 	{
-		if (!node->command[0])
-		{
-			// dup2(data->heredoc_backup, data->forking->fds[data->forking->i_fd][0]);
-			// close(data->heredoc_backup);
-			free_all(data, 0);
-			exit(0);
-		}
+		// if (!node->command[0])
+		// {
+		// 	close(data->forking->fds[data->forking->i_fd][0]);
+		// 	close(data->forking->fds[data->forking->i_fd][1]);
+		// 	close(node->redirection->heredoc_fd[0]);
+		// 	close(node->redirection->heredoc_fd[1]);
+		// 	free_all(data, 1);
+		// 	exit(0);
+		// }
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
+		if (!node->command[0])
+		{
+			close(data->forking->fds[data->forking->i_fd][0]);
+			close(data->forking->fds[data->forking->i_fd][1]);
+			// if (node->redirection->heredoc_count > 0)
+			// {
+			// 	close(node->redirection->heredoc_fd[0]);
+			// 	close(node->redirection->heredoc_fd[1]);
+			// }
+			close_heredoc_fds_p(data);
+			free_all(data, 1);
+			exit(0);
+		}
 		if (data->forking->completed_piping > 0 && data->empty_prev_node == 0)
 		{
+			// printf("pid: %d,i_fd_I: %d\n", getpid(),data->forking->i_fd);
 			dup2(data->forking->fds[data->forking->i_fd - 1][0], STDIN_FILENO);
 		}
 		if (data->forking->completed_piping > 0 && data->empty_prev_node == 1)
 		{
-			dup2(data->heredoc_backup, STDIN_FILENO);
+			if (data->forking->pipe_count > 1)
+			{
+				dup2(node->parent->left->right->redirection->heredoc_fd[0], STDIN_FILENO);
+				close(node->parent->left->right->redirection->heredoc_fd[0]);
+			}
+			else if (data->forking->pipe_count == 1)
+			{
+				dup2(node->parent->left->redirection->heredoc_fd[0], STDIN_FILENO);
+				close(node->parent->left->redirection->heredoc_fd[0]);
+			}
 		}
 		if ((data->forking->completed_piping < data->forking->pipe_count) )
 		{
+			// printf("pid: %d,i_fd_O: %d\n", getpid(),data->forking->i_fd);
 			dup2(data->forking->fds[data->forking->i_fd][1], STDOUT_FILENO);
 		}
 		while (i <= data->forking->i_fd)
@@ -606,14 +683,27 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 			}
 		}
 		exit_status = execute_command(data, node);
-		free_all(data, 0);
+		if (node->redirection->heredoc_count > 0)
+			close_heredoc_fds_c(data);
+		free_all(data, 1);
 	}
 	else
 	{
-		data->forking->completed_piping++;
+		// data->forking->completed_piping++;
 		close(data->forking->fds[data->forking->i_fd][1]);
-		if (!node->command[0] && data->forking->completed_piping == data->forking->pipe_count)
+		if (!node->command[0] || data->forking->completed_piping == data->forking->pipe_count)
 			close(data->forking->fds[data->forking->i_fd][0]);
+		// if (!node->command[0] && node->parent == NULL)
+		// {
+		// 	close(node->redirection->heredoc_fd[1]);
+		// 	close(node->redirection->heredoc_fd[0]);
+		// }
+		// if (!node->command[0] && node->redirection->heredoc_count > 0)
+		// {
+		// 	close(node->redirection->heredoc_fd[1]);
+		// 	close(node->redirection->heredoc_fd[0]);
+		// }
+
 		data->forking->pids[data->forking->i_pid] = pid;
 		data->forking->i_pid++;
 		if (data->forking->i_fd > 0)
@@ -621,7 +711,7 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 			close(data->forking->fds[data->forking->i_fd - 1][0]);
 		}
 	}
-	if (node->command[0] && node->redirection->heredoc_count > 0 && node->redirection->redirection_count == 0)
+	if (!node->command[0] && node->redirection->heredoc_count > 0 && node->redirection->redirection_count == 0)
 		data->empty_prev_node = 1;
 	else
 		data->empty_prev_node = 0;
@@ -636,7 +726,6 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
     int i;
     int exit_status;
     int sig;
-    int has_heredoc = 0;
 
 	exit_status = 0;
     node = lowest_node;
@@ -645,36 +734,34 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	data->stdin_backup = -1;
 	data->heredoc_backup = -1;
 	node = lowest_node;
-    while (node)
+	sig = 0;
+    while (node && !sig)
     {
         if ((node->type == COMMAND && node->redirection &&
              node->redirection->heredoc_count > 0))
         {
-			data->stdin_backup = dup(STDIN_FILENO);
-            has_heredoc = 1;
-			heredoc(data, node, 0);
+			sig = heredoc(data, node, 0);
         }
-
         if (node->type == PIPE)
         {
             temp_node = node->right;
             if (temp_node->type == COMMAND && temp_node->redirection &&
                 temp_node->redirection->heredoc_count > 0)
             {
-				data->stdin_backup = dup(STDIN_FILENO);
-                has_heredoc = 1;
-                heredoc(data, temp_node, 1);
+                sig = heredoc(data, temp_node, 1);
 			}
 		}
-
-        node = node->parent;
+		if (node->parent)
+        	node = node->parent;
+		else
+			break;
     }
-    // if (has_heredoc)
-    // {
-    //     dup2(data->stdin_backup, STDIN_FILENO);
-    // }
-
-    // Second pass: Execute commands (potentially in parallel)
+	if (sig == 1)
+	{
+		// free_all(data, 1);
+		close_heredoc_fds_p(data);
+		return (1);
+	}
     node = lowest_node;
     while (node)
     {
@@ -684,6 +771,7 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
             {
                 data->status = execute_pipe_command(data, node);
                 data->forking->i_fd++;
+				data->forking->completed_piping++;
             }
             else if (!node->parent)
             {
@@ -695,8 +783,12 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
             temp_node = node->right;
             data->status = execute_pipe_command(data, temp_node);
             data->forking->i_fd++;
+			data->forking->completed_piping++;
         }
-        node = node->parent;
+        if (node->parent)
+        	node = node->parent;
+		else
+			break;
     }
 
     // Wait for all children
@@ -741,7 +833,13 @@ int tree_execution(t_ast_node *lowest_node, t_minishell *data)
 		}
 		i++;
 	}
+	// if (data->forking->heredoc_count > 0)
+	// {
+	// 	close(node->redirection->heredoc_fd[0]);
+	// 	close(node->redirection->heredoc_fd[1]);
+	// }
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);
+	close_heredoc_fds_p(data);
     return (data->status);
 }

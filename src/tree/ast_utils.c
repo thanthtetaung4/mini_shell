@@ -80,6 +80,8 @@ void init_redirection_data(t_minishell *data, t_ast_node *node, char **command)
     redirection_counter(data, node, command);
     allocate_redirection_memory(node);
     fill_redirection_data(data, node, command);
+    node->redirection->heredoc_fd[0] = -1;
+    node->redirection->heredoc_fd[1] = -1;
 }
 
 void print_strs(char **strs)

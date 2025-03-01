@@ -24,6 +24,7 @@ int	init_data(t_minishell *data, char **envp)
 	data->status = 0;
 	data->tree = malloc(sizeof(t_tree));
 	data->tree->lowest_node = NULL;
+	data->empty_prev_node = 0;
 	init_forking_data(data);
 	load_export_vars(data);
 	return (1);

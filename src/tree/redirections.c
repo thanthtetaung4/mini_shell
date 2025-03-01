@@ -2,6 +2,20 @@
 
 int extern g_sig_status;
 
+void    free_heredoc(char *line, char **delimiters)
+{
+    int i;
+
+    i = 0;
+    free(line);
+    while (delimiters[i])
+    {
+        free(delimiters[i]);
+        i++;
+    }
+    free(delimiters);
+}
+
 int heredoc(t_minishell *data, t_ast_node *node, int inside_pipe)
 {
     char *line;
@@ -11,8 +25,6 @@ int heredoc(t_minishell *data, t_ast_node *node, int inside_pipe)
 
     i = 0;
     j = 0;
-    // if (inside_pipe)
-    //     dup2(data->stdin_backup, STDIN_FILENO);
     line = NULL;
     delimiters = NULL;
     delimiters = malloc(sizeof(char *) * (node->redirection->heredoc_count + 1));
@@ -27,62 +39,50 @@ int heredoc(t_minishell *data, t_ast_node *node, int inside_pipe)
     }
     delimiters[j] = NULL;
     i = 0;
-    if (pipe(data->forking->fds[data->forking->i_fd]) == -1)
+    if (pipe(node->redirection->heredoc_fd) == -1)
     {
         perror("pipe");
         return (EXIT_FAILURE);
     }
     g_sig_status = 0;
-    signal(SIGINT,handle_heredoc_sigint);
+    // signal(SIGINT,handle_heredoc_sigint);
+    set_signals_heredoc();
     while (1)
     {
         if (g_sig_status == 1)
+        {
+            free_heredoc(line, delimiters);
             break;
-        // printf("hc %d, i %d\n", node->redirection->heredoc_count, i);
+        }
         line = readline("> ");
         if (g_sig_status == 1)
+        {
+            free_heredoc(line, delimiters);
             break;
+        }
         if (!line)
             break;
         if (ft_strcmp(line, delimiters[i]) == 0)
         {
             free(delimiters[i]);
-            free(line);
             i++;
             if (i == node->redirection->heredoc_count)
             {
                 free(delimiters);
+                free(line);
                 break;
             }
-            else
-            {
-                close(data->forking->fds[data->forking->i_fd][1]);
-                // dup2(data->forking->fds[data->forking->i_fd][0], STDIN_FILENO);
-                close(data->forking->fds[data->forking->i_fd][0]);
-                data->forking->i_fd++;
-                if (pipe(data->forking->fds[data->forking->i_fd]) == -1)
-                {
-                    perror("pipe");
-                    return (EXIT_FAILURE);
-                }
-            }
         }
-        else
+        else if ((i ==( node->redirection->heredoc_count - 1)) && ft_strcmp(line, delimiters[i]) != 0 && node->command[0])
         {
-            ft_putstr_fd(line, data->forking->fds[data->forking->i_fd][1]);
-            ft_putstr_fd("\n", data->forking->fds[data->forking->i_fd][1]);
-            free(line);
+            ft_putstr_fd(line, node->redirection->heredoc_fd[1]);
+            ft_putstr_fd("\n", node->redirection->heredoc_fd[1]);
+            // free(line);
         }
+        free(line);
     }
-    close(data->forking->fds[data->forking->i_fd][1]);
-    // dup2(data->forking->fds[data->forking->i_fd][0], STDIN_FILENO);
-    if (data->heredoc_backup != -1)
-    {
-        close(data->heredoc_backup);
-    }
-    data->heredoc_backup = dup(data->forking->fds[data->forking->i_fd][0]);
-    close(data->forking->fds[data->forking->i_fd][0]);
+    close(node->redirection->heredoc_fd[1]);
     signal(SIGINT, handle_sigint);
-    return (0);
+    return (g_sig_status);
 }
 

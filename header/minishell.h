@@ -35,11 +35,12 @@ typedef struct s_substring
 
 typedef struct s_redirections
 {
-	int *types;
-	char **files;
-	int *file_fds;
-	int redirection_count;
-	int heredoc_count;
+	int		*types;
+	char	**files;
+	int		*file_fds;
+	int		redirection_count;
+	int		heredoc_count;
+	int		heredoc_fd[2];
 } t_redirections;
 
 typedef struct s_ast
@@ -90,9 +91,9 @@ typedef struct s_minishell
 	int				args_count;
 	t_tree			*tree;
 	t_forking		*forking;
-	int heredoc_backup;
-	int stdin_backup;
-	int empty_prev_node;
+	int				heredoc_backup;
+	int				stdin_backup;
+	int				empty_prev_node;
 } t_minishell;
 
 // Structure to hold parsing state
@@ -170,7 +171,8 @@ void				handle_sigquit(int sig);
 void				handle_sigquit_child(int sig);
 void				handle_sigint_child(int sig);
 void				setup_child_signals(void);
-void	handle_heredoc_sigint(int sig);
+void				handle_heredoc_sigint(int sig);
+void				set_signals_heredoc(void);
 
 // test utils
 void				ft_print_args(char **args);
