@@ -1089,86 +1089,246 @@ int	execute_pipe_command(t_minishell *data, t_ast_node *node)
 	return (exit_status);
 }
 
-int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
-{
-	t_ast_node	*node;
-	t_ast_node	*temp_node;
-	int			status;
-	int			i;
-	int			exit_status;
-	int			sig;
+// int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
+// {
+// 	t_ast_node	*node;
+// 	t_ast_node	*temp_node;
+// 	int			status;
+// 	int			i;
+// 	int			exit_status;
+// 	int			sig;
 
-	exit_status = 0;
-	node = lowest_node;
+// 	exit_status = 0;
+// 	node = lowest_node;
+// 	init_fds(data);
+// 	init_pids(data);
+// 	data->stdin_backup = -1;
+// 	data->heredoc_backup = -1;
+// 	node = lowest_node;
+// 	sig = 0;
+// 	while (node && !sig)
+// 	{
+// 		if ((node->type == COMMAND && node->redirection
+// 				&& node->redirection->heredoc_count > 0))
+// 		{
+// 			sig = heredoc(data, node, 0);
+// 		}
+// 		if (node->type == PIPE)
+// 		{
+// 			temp_node = node->right;
+// 			if (temp_node->type == COMMAND && temp_node->redirection
+// 				&& temp_node->redirection->heredoc_count > 0)
+// 			{
+// 				sig = heredoc(data, temp_node, 1);
+// 			}
+// 		}
+// 		if (node->parent)
+// 			node = node->parent;
+// 		else
+// 			break ;
+// 	}
+// 	if (sig == 1)
+// 	{
+// 		close_heredoc_fds_p(data);
+// 		return (1);
+// 	}
+// 	node = lowest_node;
+// 	while (node)
+// 	{
+// 		if (node->type == COMMAND)
+// 		{
+// 			if (node->parent && node->parent->type == PIPE)
+// 			{
+// 				data->status = execute_pipe_command(data, node);
+// 				data->forking->i_fd++;
+// 				data->forking->completed_piping++;
+// 			}
+// 			else if (!node->parent)
+// 			{
+// 				data->status = execute_single_command(data, node);
+// 			}
+// 		}
+// 		else if (node->type == PIPE)
+// 		{
+// 			temp_node = node->right;
+// 			data->status = execute_pipe_command(data, temp_node);
+// 			data->forking->i_fd++;
+// 			data->forking->completed_piping++;
+// 		}
+// 		if (node->parent)
+// 			node = node->parent;
+// 		else
+// 			break ;
+// 	}
+// 	i = 0;
+// 	while (i < data->forking->completed_piping)
+// 	{
+// 		waitpid(data->forking->pids[i], &data->status, 0);
+// 		i++;
+// 	}
+// 	if (data->forking->pipe_count > 0)
+// 	{
+// 		if (WIFSIGNALED(data->status))
+// 		{
+// 			sig = WTERMSIG(data->status);
+// 			if (sig == SIGINT)
+// 			{
+// 				write(1, "\n", 1);
+// 				data->status = 0;
+// 			}
+// 		}
+// 		else if (WIFEXITED(data->status))
+// 		{
+// 			data->status = WEXITSTATUS(data->status);
+// 		}
+// 	}
+// 	if (data->heredoc_backup != -1)
+// 		close(data->heredoc_backup);
+// 	if (data->stdin_backup != -1)
+// 		close(data->stdin_backup);
+// 	i = 0;
+// 	while (i < data->forking->i_fd)
+// 	{
+// 		if (data->forking->fds[i])
+// 		{
+// 			close(data->forking->fds[i][0]);
+// 			close(data->forking->fds[i][1]);
+// 		}
+// 		i++;
+// 	}
+// 	signal(SIGINT, handle_sigint);
+// 	signal(SIGQUIT, handle_sigquit);
+// 	close_heredoc_fds_p(data);
+// 	return (data->status);
+// }
+static int	setup_execution_context(t_minishell *data)
+{
 	init_fds(data);
 	init_pids(data);
 	data->stdin_backup = -1;
 	data->heredoc_backup = -1;
+	return (0);
+}
+
+static int	handle_command_heredoc(t_minishell *data, t_ast_node *node)
+{
+	int	sig;
+
+	sig = 0;
+	if (node->type == COMMAND && node->redirection
+		&& node->redirection->heredoc_count > 0)
+	{
+		sig = heredoc(data, node, 0);
+	}
+	return (sig);
+}
+
+static int	handle_pipe_heredoc(t_minishell *data, t_ast_node *node)
+{
+	int			sig;
+	t_ast_node	*temp_node;
+
+	sig = 0;
+	if (node->type == PIPE)
+	{
+		temp_node = node->right;
+		if (temp_node->type == COMMAND && temp_node->redirection
+			&& temp_node->redirection->heredoc_count > 0)
+		{
+			sig = heredoc(data, temp_node, 1);
+		}
+	}
+	return (sig);
+}
+
+static int	process_heredocs(t_ast_node *lowest_node, t_minishell *data)
+{
+	t_ast_node	*node;
+	int			sig;
+
 	node = lowest_node;
 	sig = 0;
 	while (node && !sig)
 	{
-		if ((node->type == COMMAND && node->redirection
-				&& node->redirection->heredoc_count > 0))
-		{
-			sig = heredoc(data, node, 0);
-		}
-		if (node->type == PIPE)
-		{
-			temp_node = node->right;
-			if (temp_node->type == COMMAND && temp_node->redirection
-				&& temp_node->redirection->heredoc_count > 0)
-			{
-				sig = heredoc(data, temp_node, 1);
-			}
-		}
+		sig = handle_command_heredoc(data, node);
+		if (sig)
+			return (sig);
+		sig = handle_pipe_heredoc(data, node);
+		if (sig)
+			return (sig);
 		if (node->parent)
 			node = node->parent;
 		else
 			break ;
 	}
-	if (sig == 1)
+	return (sig);
+}
+
+static void	handle_command_execution(t_minishell *data, t_ast_node *node)
+{
+	if (node->parent && node->parent->type == PIPE)
 	{
-		// free_all(data, 1);
-		close_heredoc_fds_p(data);
-		return (1);
+		data->status = execute_pipe_command(data, node);
+		data->forking->i_fd++;
+		data->forking->completed_piping++;
 	}
+	else if (!node->parent)
+	{
+		data->status = execute_single_command(data, node);
+	}
+}
+
+static void	handle_pipe_execution(t_minishell *data, t_ast_node *node)
+{
+	t_ast_node	*temp_node;
+
+	if (node->type == PIPE)
+	{
+		temp_node = node->right;
+		data->status = execute_pipe_command(data, temp_node);
+		data->forking->i_fd++;
+		data->forking->completed_piping++;
+	}
+}
+
+static void	execute_commands(t_ast_node *lowest_node, t_minishell *data)
+{
+	t_ast_node	*node;
+
 	node = lowest_node;
 	while (node)
 	{
 		if (node->type == COMMAND)
 		{
-			if (node->parent && node->parent->type == PIPE)
-			{
-				data->status = execute_pipe_command(data, node);
-				data->forking->i_fd++;
-				data->forking->completed_piping++;
-			}
-			else if (!node->parent)
-			{
-				data->status = execute_single_command(data, node);
-			}
+			handle_command_execution(data, node);
 		}
-		else if (node->type == PIPE)
+		else
 		{
-			temp_node = node->right;
-			data->status = execute_pipe_command(data, temp_node);
-			data->forking->i_fd++;
-			data->forking->completed_piping++;
+			handle_pipe_execution(data, node);
 		}
 		if (node->parent)
 			node = node->parent;
 		else
 			break ;
 	}
-	// Wait for all children
+}
+
+static void	wait_for_children(t_minishell *data)
+{
+	int	i;
+
 	i = 0;
 	while (i < data->forking->completed_piping)
 	{
 		waitpid(data->forking->pids[i], &data->status, 0);
 		i++;
 	}
-	// Handle signals and exit status
+}
+
+static void	handle_signal_status(t_minishell *data)
+{
+	int	sig;
+
 	if (data->forking->pipe_count > 0)
 	{
 		if (WIFSIGNALED(data->status))
@@ -1185,30 +1345,55 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 			data->status = WEXITSTATUS(data->status);
 		}
 	}
+}
+
+static void	close_backup_fds(t_minishell *data)
+{
 	if (data->heredoc_backup != -1)
 		close(data->heredoc_backup);
 	if (data->stdin_backup != -1)
 		close(data->stdin_backup);
+}
+
+static void	close_pipe_fds(t_minishell *data)
+{
+	int	i;
+
 	i = 0;
-	// printf("pipe count %d\n", data->forking->i_fd);
 	while (i < data->forking->i_fd)
 	{
 		if (data->forking->fds[i])
 		{
-			// printf("closing pipe fd%d\n", data->forking->fds[i][0]);
-			// printf("closing pipe fd%d\n", data->forking->fds[i][1]);
 			close(data->forking->fds[i][0]);
 			close(data->forking->fds[i][1]);
 		}
 		i++;
 	}
-	// if (data->forking->heredoc_count > 0)
-	// {
-	// 	close(node->redirection->heredoc_fd[0]);
-	// 	close(node->redirection->heredoc_fd[1]);
-	// }
+}
+
+static void	restore_signals_and_cleanup(t_minishell *data)
+{
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);
 	close_heredoc_fds_p(data);
+}
+
+int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
+{
+	int	sig;
+
+	setup_execution_context(data);
+	sig = process_heredocs(lowest_node, data);
+	if (sig == 1)
+	{
+		close_heredoc_fds_p(data);
+		return (1);
+	}
+	execute_commands(lowest_node, data);
+	wait_for_children(data);
+	handle_signal_status(data);
+	close_backup_fds(data);
+	close_pipe_fds(data);
+	restore_signals_and_cleanup(data);
 	return (data->status);
 }
