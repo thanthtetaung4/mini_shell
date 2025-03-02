@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_free.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 06:32:07 by taung             #+#    #+#             */
-/*   Updated: 2025/01/27 09:01:42 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/02 15:46:07 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	free_cmd(char ***cmd)
 {
-	int	i;
+	int		i;
 	char	**tmp;
 
 	tmp = *cmd;

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free_tree.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/02 15:46:26 by taung             #+#    #+#             */
+/*   Updated: 2025/03/02 15:46:46 by taung            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../header/minishell.h"
 
 void	free_redirections(t_ast_node *node)
@@ -14,6 +26,7 @@ void	free_redirections(t_ast_node *node)
 	free(node->redirection->files);
 	free(node->redirection);
 }
+
 void	free_tree_helper(t_ast_node *node)
 {
 	int	i;
@@ -60,6 +73,7 @@ void	rest_helper(t_minishell *data)
 	data->forking->completed_piping = 0;
 	data->forking->heredoc_count = 0;
 }
+
 void	reset_forking_data(t_minishell *data)
 {
 	int	i;

@@ -6,25 +6,25 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/29 15:31:26 by taung             #+#    #+#             */
-/*   Updated: 2025/02/27 02:43:05 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/02 15:21:13 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-void free_2d_string(char **str)
+void	free_2d_string(char **str)
 {
-    int i;
+	int	i;
 
 	i = 0;
-    if (!str)
-        return;
-    while (str[i])
-    {
-        free(str[i]);
-        i++;
-    }
-    free(str);
+	if (!str)
+		return ;
+	while (str[i])
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
 }
 
 void	free_all(t_minishell *data, int free_execution_data)

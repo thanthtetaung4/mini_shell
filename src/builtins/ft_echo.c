@@ -6,36 +6,39 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 05:36:02 by taung             #+#    #+#             */
-/*   Updated: 2025/02/19 17:00:02 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/02 15:38:50 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-int	print_star()
+int	print_star(void)
 {
-	struct dirent *entry;
-    DIR *dir = opendir(".");
-	int i;
+	struct dirent	*entry;
+	DIR				*dir;
+	int				i;
 
+	dir = opendir(".");
 	i = 0;
-    if (dir == NULL) {
-        perror("Unable to open directory");
-        return EXIT_FAILURE;
-    }
-
-    while ((entry = readdir(dir)) != NULL) {
+	if (dir == NULL)
+	{
+		perror("Unable to open directory");
+		return (EXIT_FAILURE);
+	}
+	entry = readdir(dir);
+	while (entry != NULL)
+	{
 		if (entry->d_name[0] != '.')
 		{
 			if (i > 0)
 				ft_putstr_fd(" ", 1);
-        	ft_putstr_fd(entry->d_name, 1);
+			ft_putstr_fd(entry->d_name, 1);
 			i++;
 		}
-
-    }
-    closedir(dir);
-    return EXIT_SUCCESS;
+		entry = readdir(dir);
+	}
+	closedir(dir);
+	return (EXIT_SUCCESS);
 }
 
 int	ft_echo(t_minishell *data, t_ast_node *node)

@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 07:14:05 by taung             #+#    #+#             */
-/*   Updated: 2025/01/22 05:55:26 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/02 15:36:58 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,24 +23,25 @@ void	update_export_var(t_minishell *data, char *value, int index)
 		{
 			free(((t_env *)current->content)->value);
 			((t_env *)current->content)->value = ft_strdup(value);
-			return;
+			return ;
 		}
 		current = current->next;
 		index--;
 	}
-	return;
+	return ;
 }
+
 char	*extract_key(char *str)
 {
 	char	*replace_str;
 
 	replace_str = ft_strchr(str, '$');
-		if (!replace_str)
-			return NULL;
+	if (!replace_str)
+		return (NULL);
 	return (ft_strdup(replace_str + 1));
 }
 
-char *get_env_value(t_list *env, char *key)
+char	*get_env_value(t_list *env, char *key)
 {
 	t_list	*current;
 

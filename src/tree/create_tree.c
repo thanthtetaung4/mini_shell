@@ -1,44 +1,47 @@
 #include "../../header/minishell.h"
 
-void handle_pipe_node(t_ast_node **head, char **cmd ,t_minishell *data, int count)
+void	handle_pipe_node(t_ast_node **head, char **cmd, t_minishell *data,
+		int count)
 {
-    t_ast_node *temp;
-    t_ast_node *temp_head;
-    char *temp_input;
+	t_ast_node	*temp;
+	t_ast_node	*temp_head;
+	char		*temp_input;
 
-    if (!(*head))
-    {
-        *head = create_node(PIPE, NULL, data, 1);
-        temp = create_node(COMMAND, cmd, data, count);
-        add_right_node(head, temp);
-        return;
-    }
+	if (!(*head))
+	{
+		*head = create_node(PIPE, NULL, data, 1);
+		temp = create_node(COMMAND, cmd, data, count);
+		add_right_node(head, temp);
+		return ;
+	}
 	temp_head = create_node(PIPE, NULL, data, 1);
 	temp = create_node(COMMAND, cmd, data, count);
-    add_left_node(head, temp_head);
-    *head = temp_head;
-    add_right_node(head, temp);
+	add_left_node(head, temp_head);
+	*head = temp_head;
+	add_right_node(head, temp);
 }
 
-void handle_single_command(t_ast_node **head, char **cmd, t_minishell *data, int count)
+void	handle_single_command(t_ast_node **head, char **cmd, t_minishell *data,
+		int count)
 {
-    t_ast_node *temp;
-    if (!(*(head)))
+	t_ast_node	*temp;
+
+	if (!(*(head)))
 	{
-        *head = create_node(COMMAND, cmd, data, count);
+		*head = create_node(COMMAND, cmd, data, count);
 		data->tree->lowest_node = *head;
 	}
 	else
-    {
-        temp = create_node(COMMAND, cmd, data, count);
-        add_left_node(head, temp);
-        data->tree->lowest_node = temp;
+	{
+		temp = create_node(COMMAND, cmd, data, count);
+		add_left_node(head, temp);
+		data->tree->lowest_node = temp;
 		temp = NULL;
-    }
+	}
 }
-void reset_args(char **args, int counter)
+void	reset_args(char **args, int counter)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < counter)
@@ -48,58 +51,62 @@ void reset_args(char **args, int counter)
 	}
 }
 
-void process_pipe_node(t_ast_node **head, t_minishell *data, int *counter, int i)
+void	process_pipe_node(t_ast_node **head, t_minishell *data, int *counter,
+		int i)
 {
-    char *cmd[256];
-    int j = 0;
+	char	*cmd[256];
+	int		j;
 
-    while (j < *counter - 1)
-    {
-        cmd[j] = data->args[i + j + 1];
-        j++;
-    }
-    cmd[j] = NULL;
-    handle_pipe_node(head, cmd, data, *counter - 1);
-    *counter = 0;
-    data->forking->pipe_count += 1;
+	j = 0;
+	while (j < *counter - 1)
+	{
+		cmd[j] = data->args[i + j + 1];
+		j++;
+	}
+	cmd[j] = NULL;
+	handle_pipe_node(head, cmd, data, *counter - 1);
+	*counter = 0;
+	data->forking->pipe_count += 1;
 }
 
-void process_single_command(t_ast_node **head, t_minishell *data, int *counter, int i)
+void	process_single_command(t_ast_node **head, t_minishell *data,
+		int *counter, int i)
 {
-    char *cmd[256];
-    int j = 0;
+	char	*cmd[256];
+	int		j;
 
-    while (j <= *counter)
-    {
-        cmd[j] = data->args[i + j];
-        j++;
-    }
-    cmd[j] = NULL;
-    handle_single_command(head, cmd, data, *counter);
-    *counter = 0;
+	j = 0;
+	while (j <= *counter)
+	{
+		cmd[j] = data->args[i + j];
+		j++;
+	}
+	cmd[j] = NULL;
+	handle_single_command(head, cmd, data, *counter);
+	*counter = 0;
 }
 
-t_ast_node *create_tree(t_minishell *data)
+t_ast_node	*create_tree(t_minishell *data)
 {
-    t_ast_node *head;
-    int i;
-    int counter;
+	t_ast_node	*head;
+	int			i;
+	int			counter;
 
-    i = data->args_count - 1;
-    counter = 0;
-    head = NULL;
-    while (i >= 0)
-    {
-        counter++;
-        if (ft_strcmp(data->args[i], "|") == 0)
-        {
-            process_pipe_node(&head, data, &counter, i);
-        }
-        else if (i == 0)
-        {
-            process_single_command(&head, data, &counter, i);
-        }
-        i--;
-    }
-    return (data->tree->lowest_node);
+	i = data->args_count - 1;
+	counter = 0;
+	head = NULL;
+	while (i >= 0)
+	{
+		counter++;
+		if (ft_strcmp(data->args[i], "|") == 0)
+		{
+			process_pipe_node(&head, data, &counter, i);
+		}
+		else if (i == 0)
+		{
+			process_single_command(&head, data, &counter, i);
+		}
+		i--;
+	}
+	return (data->tree->lowest_node);
 }

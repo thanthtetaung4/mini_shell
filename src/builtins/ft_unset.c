@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/08 06:46:44 by taung             #+#    #+#             */
-/*   Updated: 2025/02/19 15:23:39 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/02 15:37:27 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ void	ft_lstremove(t_list **lst, int index)
 
 int	ft_unset(t_minishell *data)
 {
-	int i;
-	int index;
+	int	i;
+	int	index;
 
 	i = 0;
 	while (data->args[++i])

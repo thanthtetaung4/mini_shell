@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 19:34:14 by taung             #+#    #+#             */
-/*   Updated: 2025/02/25 01:07:36 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/02 15:44:59 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 #include "string.h"
 
 // return the number of env entries
-int count_env(char **env)
+int	count_env(char **env)
 {
-	int n;
-	int i;
+	int	n;
+	int	i;
 
 	i = 0;
 	n = 0;
@@ -29,9 +29,9 @@ int count_env(char **env)
 	return (n);
 }
 
-char **allocate_and_copy(char *entry, char *ptr, int len)
+char	**allocate_and_copy(char *entry, char *ptr, int len)
 {
-	char **strs;
+	char	**strs;
 
 	strs = malloc(sizeof(char *) * 2);
 	if (!strs)
@@ -56,11 +56,11 @@ char **allocate_and_copy(char *entry, char *ptr, int len)
 	return (strs);
 }
 
-char **key_value_splitter(char *entry, char c)
+char	**key_value_splitter(char *entry, char c)
 {
-	char *ptr;
-	int len;
-	char **result;
+	char	*ptr;
+	int		len;
+	char	**result;
 
 	if (!entry)
 		return (NULL);
@@ -75,20 +75,21 @@ char **key_value_splitter(char *entry, char c)
 		return (result);
 	}
 	len = ptr - entry;
-	return allocate_and_copy(entry, ptr, len);
+	return (allocate_and_copy(entry, ptr, len));
 }
 
 void	print_env(t_list **env)
 {
-	t_list *current;
+	t_list	*current;
 
 	current = *env;
 	while (current)
 	{
-		printf("%s=%s\n", ((t_env *)current->content)->key, ((t_env *)current->content)->value);
+		printf("%s=%s\n", ((t_env *)current->content)->key,
+			((t_env *)current->content)->value);
 		current = current->next;
 	}
-	return;
+	return ;
 }
 
 char	**get_env_strings(t_list *env)

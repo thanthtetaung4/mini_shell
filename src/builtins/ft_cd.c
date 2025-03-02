@@ -6,25 +6,11 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 08:12:59 by taung             #+#    #+#             */
-/*   Updated: 2025/02/28 00:09:37 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/02 15:41:52 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
-
-void	update_prev_dir(t_minishell *data, char *prev_dir)
-{
-	export_add_var(data, "OLDPWD", prev_dir);
-}
-
-void	update_env_pwd(t_minishell *data)
-{
-	char	*pwd;
-
-	pwd = getcwd(NULL, 0);
-	export_add_var(data, "PWD", pwd);
-	free(pwd);
-}
 
 int	cd_to_home(t_minishell *data, char *pwd)
 {
@@ -71,55 +57,48 @@ int	cd_to_prev(t_minishell *data, char *pwd)
 	return (status);
 }
 
-int	handle_cd_error(char *pwd, const char *message)
-{
-    ft_putstr_fd((char *)message, 2);
-    free(pwd);
-    return (1);
-}
-
 int	change_directory(t_minishell *data, char *pwd, const char *path)
 {
-    if (access(path, F_OK) == 0)
-    {
-        if (access(path, R_OK) == 0)
-        {
-            if (chdir(path) == -1)
-                return handle_cd_error(pwd, "No such file or directory\n");
-            else
-            {
-                update_env_pwd(data);
-                update_prev_dir(data, pwd);
-            }
-        }
-        else
-            return handle_cd_error(pwd, "No permission\n");
-    }
-    else
-        return handle_cd_error(pwd, "No such file or directory\n");
-    return (0);
+	if (access(path, F_OK) == 0)
+	{
+		if (access(path, R_OK) == 0)
+		{
+			if (chdir(path) == -1)
+				return (handle_cd_error(pwd, "No such file or directory\n"));
+			else
+			{
+				update_env_pwd(data);
+				update_prev_dir(data, pwd);
+			}
+		}
+		else
+			return (handle_cd_error(pwd, "No permission\n"));
+	}
+	else
+		return (handle_cd_error(pwd, "No such file or directory\n"));
+	return (0);
 }
 
 int	handle_cd_args(t_minishell *data, char *pwd)
 {
-    if (ft_strcmp(data->args[1], "~") == 0)
-        return (cd_to_home(data, pwd));
-    if (ft_strcmp(data->args[1], "-") == 0)
-        return (cd_to_prev(data, pwd));
-    return change_directory(data, pwd, data->args[1]);
+	if (ft_strcmp(data->args[1], "~") == 0)
+		return (cd_to_home(data, pwd));
+	if (ft_strcmp(data->args[1], "-") == 0)
+		return (cd_to_prev(data, pwd));
+	return (change_directory(data, pwd, data->args[1]));
 }
 
 int	ft_cd(t_minishell *data)
 {
-    char	*pwd;
+	char	*pwd;
 
-    pwd = getcwd(NULL, 0);
-    if (data->args_count == 2)
-        return handle_cd_args(data, pwd);
-    else if (data->args_count == 1)
-        return (cd_to_home(data, pwd));
-    else
-        return handle_cd_error(pwd, "too many arguments\n");
-    free(pwd);
-    return (0);
+	pwd = getcwd(NULL, 0);
+	if (data->args_count == 2)
+		return (handle_cd_args(data, pwd));
+	else if (data->args_count == 1)
+		return (cd_to_home(data, pwd));
+	else
+		return (handle_cd_error(pwd, "too many arguments\n"));
+	free(pwd);
+	return (0);
 }

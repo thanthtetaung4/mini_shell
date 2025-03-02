@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 04:15:51 by taung             #+#    #+#             */
-/*   Updated: 2025/01/19 04:23:27 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/02 16:13:51 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*ft_strrchr(const char *s, int c)
 	while (i >= 0)
 	{
 		if (s[i] == c)
-			return (((char*)&s[i]));
+			return ((char *)&s[i]);
 		i--;
 	}
 	return (0);

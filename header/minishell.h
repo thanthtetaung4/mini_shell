@@ -1,5 +1,17 @@
-#ifndef MINI_SHELL_H
-# define MINI_SHELL_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/02 16:33:51 by taung             #+#    #+#             */
+/*   Updated: 2025/03/02 16:33:52 by taung            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef MINISHELL_H
+# define MINISHELL_H
 # include "../libft/libft.h"
 # include <dirent.h>
 # include <errno.h>
@@ -17,7 +29,7 @@
 # include <termios.h>
 # include <unistd.h>
 
-typedef enum
+typedef enum s_node_type
 {
 	PIPE,
 	HEREDOC,
@@ -115,7 +127,7 @@ typedef struct s_f_cmd_path
 	char			**dir;
 	char			*full_path;
 	int				i;
-}				t_f_cmd_path;
+}					t_f_cmd_path;
 
 // env functions
 t_list				*load_env(char **envp);
@@ -155,6 +167,10 @@ void				ft_exit(t_minishell *data);
 int					ft_pwd(void);
 int					ft_cd(t_minishell *data);
 int					ft_echo(t_minishell *data, t_ast_node *node);
+// cd utils
+int					handle_cd_error(char *pwd, const char *message);
+void				update_prev_dir(t_minishell *data, char *prev_dir);
+void				update_env_pwd(t_minishell *data);
 
 // free functions
 void				free_all(t_minishell *data, int free_execution_data);
@@ -172,9 +188,20 @@ int					ft_strnchr(char *str, int n, int c);
 void				ft_interpret(t_minishell *data);
 char				*ft_insert_spaces(char *input);
 char				**split_args(const char *input);
-int					ft_check_perm(char *path);
 void				remove_empty_args(t_minishell *data);
 char				*find_command_path(char *cmd, t_minishell *data);
+void				init_helper(t_parse_state *state);
+t_parse_state		*init_parse_state(const char *input);
+void				cleanup_parse_state(t_parse_state *state);
+bool				resize_args_array(t_parse_state *state);
+char				*skip_spaces(char *ptr);
+void				handle_quote(char c, t_parse_state *state);
+char				*get_value_before_dollar(char *cmd, char *found_dollar);
+char				*get_value_after_variable(char *cmd, char *pos);
+char				*get_value(t_minishell *data, t_list *env,
+						char *found_dollar, char **pos);
+void				wrod_count_helper(char s, int *in_quotes, char *quote_char);
+size_t				ft_word_count(char *s, char c);
 
 // signal functions
 void				handle_sigint(int sig);

@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/28 19:31:04 by taung             #+#    #+#             */
-/*   Updated: 2025/02/24 23:05:55 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/02 15:44:51 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ t_list	*ft_envnew(char *key, char *value)
 
 void	ft_add_env(t_list **env, t_list *new_node)
 {
-	if (new_node && ft_strlen(((t_env*)new_node->content)->value) > 0)
+	if (new_node && ft_strlen(((t_env *)new_node->content)->value) > 0)
 		ft_lstadd_back(env, new_node);
 }
 
@@ -45,7 +45,8 @@ void	ft_update_env(t_list **env, t_list *new_node)
 	prev = NULL;
 	while (current)
 	{
-		if (ft_strcmp(((t_env *)current->content)->key, ((t_env *)new_node->content)->key) == 0)
+		if (ft_strcmp(((t_env *)current->content)->key,
+				((t_env *)new_node->content)->key) == 0)
 		{
 			if (prev)
 				prev->next = new_node;
@@ -56,7 +57,7 @@ void	ft_update_env(t_list **env, t_list *new_node)
 			free(((t_env *)current->content)->value);
 			free(current->content);
 			free(current);
-			return;
+			return ;
 		}
 		prev = current;
 		current = current->next;

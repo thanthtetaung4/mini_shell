@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 06:09:05 by taung             #+#    #+#             */
-/*   Updated: 2025/02/22 23:08:37 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/02 16:12:42 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	remove_quotes_export(t_minishell *data)
 	char	*new_str;
 
 	z = 0;
-	while(data->args[z])
+	while (data->args[z])
 	{
 		i = 0;
 		j = 0;
