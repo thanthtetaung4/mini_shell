@@ -2,20 +2,20 @@
 # define MINI_SHELL_H
 # include "../libft/libft.h"
 # include <dirent.h>
+# include <errno.h>
 # include <fcntl.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/ioctl.h>
+# include <sys/stat.h>
 # include <sys/types.h>
+# include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
-# include <stdbool.h>
-# include <sys/stat.h>
-# include <sys/wait.h>
-# include <errno.h>
 
 typedef enum
 {
@@ -35,13 +35,13 @@ typedef struct s_substring
 
 typedef struct s_redirections
 {
-	int		*types;
-	char	**files;
-	int		*file_fds;
-	int		redirection_count;
-	int		heredoc_count;
-	int		heredoc_fd[2];
-} t_redirections;
+	int				*types;
+	char			**files;
+	int				*file_fds;
+	int				redirection_count;
+	int				heredoc_count;
+	int				heredoc_fd[2];
+}					t_redirections;
 
 typedef struct s_ast
 {
@@ -49,7 +49,7 @@ typedef struct s_ast
 	struct s_ast	*parent;
 	struct s_ast	*left;
 	struct s_ast	*right;
-	t_redirections *redirection;
+	t_redirections	*redirection;
 	char			**command;
 	int				executed;
 }					t_ast_node;
@@ -94,18 +94,28 @@ typedef struct s_minishell
 	int				heredoc_backup;
 	int				stdin_backup;
 	int				empty_prev_node;
-} t_minishell;
+}					t_minishell;
 
 // Structure to hold parsing state
-typedef struct s_parse_state{
-	char	**args;
-	int		arg_count;
-	int		arg_capacity;
-	char	*buffer;
-	bool	in_single_quote;
-	bool	in_double_quote;
-	bool	error;
-} t_parse_state;
+typedef struct s_parse_state
+{
+	char			**args;
+	int				arg_count;
+	int				arg_capacity;
+	char			*buffer;
+	bool			in_single_quote;
+	bool			in_double_quote;
+	bool			error;
+}					t_parse_state;
+
+typedef struct s_f_cmd_path
+{
+	char			*path_env;
+	char			*path_dup;
+	char			**dir;
+	char			*full_path;
+	int				i;
+}				t_f_cmd_path;
 
 // env functions
 t_list				*load_env(char **envp);
@@ -138,9 +148,9 @@ char				*get_env_value(t_list *env, char *key);
 int					ft_exec(t_minishell *data, t_ast_node *node);
 
 // builtins functions
-int				ft_env(t_env **env);
-int				ft_export(t_minishell *data, t_ast_node *node);
-int				ft_unset(t_minishell *data);
+int					ft_env(t_env **env);
+int					ft_export(t_minishell *data, t_ast_node *node);
+int					ft_unset(t_minishell *data);
 void				ft_exit(t_minishell *data);
 int					ft_pwd(void);
 int					ft_cd(t_minishell *data);
@@ -151,7 +161,7 @@ void				free_all(t_minishell *data, int free_execution_data);
 void				free_cmd(char ***cmd);
 void				env_free(void *env);
 void				free_tree(t_ast_node *node);
-void free_2d_string(char **str);
+void				free_2d_string(char **str);
 
 // utils functions
 int					ft_strcmp(const char *s1, const char *s2);
@@ -161,9 +171,10 @@ char				*ft_strrchr(const char *s, int c);
 int					ft_strnchr(char *str, int n, int c);
 void				ft_interpret(t_minishell *data);
 char				*ft_insert_spaces(char *input);
-char **split_args(const char *input);
-int	ft_check_perm(char *path);
-void    remove_empty_args(t_minishell *data);
+char				**split_args(const char *input);
+int					ft_check_perm(char *path);
+void				remove_empty_args(t_minishell *data);
+char				*find_command_path(char *cmd, t_minishell *data);
 
 // signal functions
 void				handle_sigint(int sig);
@@ -194,6 +205,7 @@ void				reset_forking_data(t_minishell *data);
 int					get_node_type(char **command);
 
 // redirections
-int heredoc(t_minishell *data, t_ast_node *node, int inside_pipe);
+int					heredoc(t_minishell *data, t_ast_node *node,
+						int inside_pipe);
 
 #endif

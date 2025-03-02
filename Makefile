@@ -39,7 +39,7 @@ SRCS = $(SRCS_PATH)/main.c $(TREE_PATH)/create_tree.c $(TREE_PATH)/visualizer.c 
 		$(SRCS_PATH)$(BUILTINS_PATH)/ft_cd.c $(SRCS_PATH)$(UTIL_PATH)/ft_strrchr.c $(SRCS_PATH)$(BUILTINS_PATH)/ft_echo.c \
 		$(SRCS_PATH)$(UTIL_PATH)/ft_strnchr.c $(SRCS_PATH)$(UTIL_PATH)/ft_interpret.c $(SRCS_PATH)$(UTIL_PATH)/test_utils.c \
 		$(SRCS_PATH)$(UTIL_PATH)/ft_cmd_utils.c $(SRCS_PATH)$(SIGNAL_PATH)/ft_handle_sig.c $(SRCS_PATH)$(UTIL_PATH)/prepare_cmd.c \
-		$(SRCS_PATH)$(UTIL_PATH)/ft_check_perm.c
+		$(SRCS_PATH)$(UTIL_PATH)/ft_check_perm.c $(SRCS_PATH)$(UTIL_PATH)/ft_find_cmd_path.c
 
 
 OBJS = ${SRCS:.c=.o}
