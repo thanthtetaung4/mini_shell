@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/03/03 13:17:28 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 13:44:00 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ char	*interpret(t_minishell *data, char **cmd, t_list *env,
 	char	*pos;
 	char	*tmp;
 
+	while ((found_dollar = ft_strchr(*cmd, '$')))
 	while ((found_dollar = ft_strchr(*cmd, '$')))
 	{
 		tmp = *cmd;
@@ -58,8 +59,20 @@ void	ft_should_interpret(t_minishell *data, int i, char *found_dollar)
 			interpret(data, &data->args[i], data->env, found_dollar);
 		}
 		return ;
+	if (data->args_count > 1 && i > 0)
+	{
+		if (found_dollar != 0 && ft_strcmp(data->args[i - 1], "<<") != 0)
+		{
+			if (ft_strchr(found_dollar, '\''))
+			{
+				return ;
+			}
+			interpret(data, &data->args[i], data->env, found_dollar);
+		}
+		return ;
 	}
 	interpret(data, &data->args[i], data->env, found_dollar);
+}
 }
 
 void	ft_interpret(t_minishell *data)
