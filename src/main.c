@@ -3,32 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/03/02 16:34:11 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 11:57:33 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/minishell.h"
 
 extern int	g_sig_status;
-
-int	init_data(t_minishell *data, char **envp)
-{
-	data->env = NULL;
-	data->input = NULL;
-	data->export = NULL;
-	data->env = (load_env(envp));
-	data->args = NULL;
-	data->status = 0;
-	data->tree = malloc(sizeof(t_tree));
-	data->tree->lowest_node = NULL;
-	data->empty_prev_node = 0;
-	init_forking_data(data);
-	load_export_vars(data);
-	return (1);
-}
 
 int	check_syntax_errors(char *input)
 {
@@ -46,6 +30,29 @@ int	check_syntax_errors(char *input)
 	}
 	return (1);
 }
+void	init_count_quotes(int *s_quote_count,int *d_quote_count, int *in_d_quotes, int *in_s_quotes)
+{
+	s_quote_count = 0;
+	d_quote_count = 0;
+	in_d_quotes = 0;
+	in_s_quotes = 0;
+}
+
+int	print_err(int s_quote_count, int d_quote_count)
+{
+	if (s_quote_count % 2 != 0)
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token `' || \"\n",
+			2);
+		return (0);
+	}
+	if (d_quote_count % 2 != 0)
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token `\"\n", 2);
+		return (0);
+	}
+	return (1);
+}
 
 int	count_quotes(char *input)
 {
@@ -56,10 +63,7 @@ int	count_quotes(char *input)
 	int	in_s_quotes;
 
 	i = -1;
-	s_quote_count = 0;
-	d_quote_count = 0;
-	in_d_quotes = 0;
-	in_s_quotes = 0;
+	init_count_quotes(&s_quote_count, &d_quote_count, &in_d_quotes, &in_s_quotes);
 	while (input[++i])
 	{
 		if (input[i] == '"' && !in_s_quotes)
@@ -73,17 +77,7 @@ int	count_quotes(char *input)
 			in_s_quotes = !in_s_quotes;
 		}
 	}
-	if (s_quote_count % 2 != 0)
-	{
-		ft_putstr_fd("minishell: syntax error near unexpected token `' || \"\n", 2);
-		return (0);
-	}
-	if (d_quote_count % 2 != 0)
-	{
-		ft_putstr_fd("minishell: syntax error near unexpected token `\"\n", 2);
-		return (0);
-	}
-	return (1);
+	return (print_err(s_quote_count, d_quote_count));
 }
 
 int	is_valid_cmd(char *input)
@@ -94,20 +88,6 @@ int	is_valid_cmd(char *input)
 		return (0);
 	return (1);
 }
-
-// int	find_heredoc(t_minishell *data)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (data->args[i])
-// 	{
-// 		if (ft_strcmp(data->args[i], "<<") == 0)
-// 			return (1);
-// 		i++;
-// 	}
-// 	return (0);
-// }
 
 void	handle_eof(t_minishell *data)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 16:33:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/02 16:33:52 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 11:48:26 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,24 +215,124 @@ void				set_signals_heredoc(void);
 // test utils
 void				ft_print_args(char **args);
 
-// tree functions
+// redirection functions
+char				**get_heredoc_delimiters(t_ast_node *node);
+int					setup_heredoc_pipe(t_ast_node *node);
+int					process_delimiter_match(char *line, char **delimiters,
+						int *current_delimiter, int heredoc_count);
+void				write_to_heredoc(char *line, t_ast_node *node,
+						int current_delimiter);
+int					read_heredoc_input(t_ast_node *node, char **delimiters);
+int					heredoc(t_minishell *data, t_ast_node *node,
+						int inside_pipe);
+// ast functions
+int					check_redirection(char *arg);
+void				redirection_counter(t_minishell *data, t_ast_node *node,
+						char **command);
+void				allocate_redirection_memory(t_ast_node *node);
+void				fill_redirection_data(t_minishell *data, t_ast_node *node,
+						char **command);
+void				init_redirection_data(t_minishell *data, t_ast_node *node,
+						char **command);
+t_ast_node			*allocate_node(int type);
+void				fill_command_data(t_ast_node *node, char **command,
+						int count);
 t_ast_node			*create_node(int type, char **command, t_minishell *data,
 						int count);
 void				add_right_node(t_ast_node **parent_node, t_ast_node *node);
 void				add_left_node(t_ast_node **parent_node, t_ast_node *node);
+
+// redirection_handling
+int					handle_output_redirection(t_ast_node *node,
+						t_minishell *data, int i);
+int					handle_input_redirection(t_ast_node *node,
+						t_minishell *data, int i);
+int					handle_heredoc_redirection(t_ast_node *node);
+int					handle_existing_file_redirection(t_ast_node *node,
+						t_minishell *data, int i);
+int					handle_new_file_redirection(t_ast_node *node,
+						t_minishell *data, int i);
+// inits
+void				init_forking_data(t_minishell *data);
+int					init_pids(t_minishell *data);
+void				init_fds(t_minishell *data);
+int					init_data(t_minishell *data, char **envp);
+// tree functions
 t_ast_node			*create_tree(t_minishell *data);
-void				visualize_tree(t_ast_node *lowest_node);
 int					tree_execution(t_ast_node *lowest_node, t_minishell *data);
 int					ft_count_tds(char **str);
 char				*ft_strrchr(const char *s, int c);
 void				init_forking_data(t_minishell *data);
 void				reset_forking_data(t_minishell *data);
-
+int					execute_command(t_minishell *data, t_ast_node *node);
+void				free_heredoc(char *line, char **delimiters);
+// execution_utils
+int					execute_external_cmd(t_minishell *data, t_ast_node *node);
+int					execute_single_command(t_minishell *data, t_ast_node *node);
+void				execute_pipe_child(t_minishell *data, t_ast_node *node);
+int					execute_pipe_command(t_minishell *data, t_ast_node *node);
+int					setup_execution_context(t_minishell *data);
 // tree utils
-int					get_node_type(char **command);
+int					check_cmd(char *cmd);
+void				save_std_fds(t_ast_node *node, int *stdout_fd,
+						int *stdin_fd);
+void				restore_std_fds(int stdout_fd, int stdin_fd);
+// execute_redirection
+int					handle_heredoc_if_needed(t_ast_node *node, int i);
+int					process_file_redirection(t_ast_node *node,
+						t_minishell *data, int i);
+int					execute_redirection(t_ast_node *node, t_minishell *data);
+int					execute_builtin_with_redirections(t_minishell *data,
+						t_ast_node *node, int stdout_fd, int stdin_fd);
+// pipe_utils
+void				setup_stdin_for_pipe(t_minishell *data, t_ast_node *node);
+void				setup_stdout_for_pipe(t_minishell *data);
+void				handle_pipe_parent(t_minishell *data, t_ast_node *node,
+						int pid);
+void				handle_pipe_execution(t_minishell *data, t_ast_node *node);
+int					handle_pipe_heredoc(t_minishell *data, t_ast_node *node);
 
-// redirections
-int					heredoc(t_minishell *data, t_ast_node *node,
-						int inside_pipe);
+// heredoc_utils
+char				**get_heredoc_delimiters(t_ast_node *node);
+int					setup_heredoc_pipe(t_ast_node *node);
+int					process_delimiter_match(char *line, char **delimiters,
+						int *current_delimiter, int heredoc_count);
+void				write_to_heredoc(char *line, t_ast_node *node,
+						int current_delimiter);
+int					read_heredoc_input(t_ast_node *node, char **delimiters);
 
+// execution_utils_2
+void				setup_child_process(t_minishell *data, t_ast_node *node);
+int					handle_child_exit_status(int exit_status);
+void				handle_empty_command_child(t_minishell *data);
+void				update_empty_prev_node(t_minishell *data, t_ast_node *node);
+int					handle_command_heredoc(t_minishell *data, t_ast_node *node);
+
+// execution_utils_3
+int					process_heredocs(t_ast_node *lowest_node,
+						t_minishell *data);
+void				handle_command_execution(t_minishell *data,
+						t_ast_node *node);
+void				execute_commands(t_ast_node *lowest_node,
+						t_minishell *data);
+void				wait_for_children(t_minishell *data);
+void				handle_signal_status(t_minishell *data);
+// tree_creation_utils
+void				handle_pipe_node(t_ast_node **head, char **cmd,
+						t_minishell *data, int count);
+void				handle_single_command(t_ast_node **head, char **cmd,
+						t_minishell *data, int count);
+void				reset_args(char **args, int counter);
+void				process_pipe_node(t_ast_node **head, t_minishell *data,
+						int *counter, int i);
+void				process_single_command(t_ast_node **head, t_minishell *data,
+						int *counter, int i);
+// fd
+void				close_heredoc_fds_c(t_minishell *data);
+void				close_heredoc_fds_p(t_minishell *data);
+void				setup_pipe_fds(t_minishell *data);
+void				close_all_pipe_fds(t_minishell *data);
+// fd_utils
+void				close_backup_fds(t_minishell *data);
+void				close_pipe_fds(t_minishell *data);
 #endif
