@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 16:33:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/02 16:33:52 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 13:37:15 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,15 @@ typedef struct s_heredoc
 	char			*line;
 }					t_heredoc;
 
+typedef struct s_interpret
+{
+	char			*before_dollar;
+	char			*after_dollar;
+	char			*value;
+	char			*pos;
+	char			*tmp;
+}					t_interpret;
+
 // env functions
 t_list				*load_env(char **envp);
 char				**key_value_splitter(char *entry, char c);
@@ -209,10 +218,11 @@ char				*get_value(t_minishell *data, t_list *env,
 						char *found_dollar, char **pos);
 void				wrod_count_helper(char s, int *in_quotes, char *quote_char);
 size_t				ft_word_count(char *s, char c);
-char *ft_interpret_str(t_minishell *data, char *line);
+char				*ft_interpret_str(t_minishell *data, char *line);
+char	*get_value_before_dollar_str(char *cmd, char *found_dollar);
 
-// signal functions
-void				handle_sigint(int sig);
+	// signal functions
+	void handle_sigint(int sig);
 void				handle_sigquit(int sig);
 void				handle_sigquit_child(int sig);
 void				handle_sigint_child(int sig);

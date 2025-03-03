@@ -6,13 +6,14 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/03/02 16:12:15 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 13:17:28 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-char	*interpret(t_minishell *data, char **cmd, t_list *env, char *found_dollar)
+char	*interpret(t_minishell *data, char **cmd, t_list *env,
+		char *found_dollar)
 {
 	char	*before_dollar;
 	char	*after_dollar;
@@ -39,38 +40,38 @@ char	*interpret(t_minishell *data, char **cmd, t_list *env, char *found_dollar)
 	return (*cmd);
 }
 
-void ft_should_interpret(t_minishell *data, int i, char *found_dollar)
+void	ft_should_interpret(t_minishell *data, int i, char *found_dollar)
 {
-    if (found_dollar && (ft_strlen(found_dollar) == 1 ||
-        (ft_isalnum(found_dollar[1]) == 0 && found_dollar[1] != '?')))
-    {
-        return;
-    }
-    if (data->args_count > 1 && i > 0)
-    {
-        if (found_dollar != 0 && ft_strcmp(data->args[i - 1], "<<") != 0)
-        {
-            if (ft_strchr(found_dollar, '\''))
-            {
-                return;
-            }
-            interpret(data, &data->args[i], data->env, found_dollar);
-        }
-        return;
-    }
-    interpret(data, &data->args[i], data->env, found_dollar);
+	if (found_dollar && (ft_strlen(found_dollar) == 1
+			|| (ft_isalnum(found_dollar[1]) == 0 && found_dollar[1] != '?')))
+	{
+		return ;
+	}
+	if (data->args_count > 1 && i > 0)
+	{
+		if (found_dollar != 0 && ft_strcmp(data->args[i - 1], "<<") != 0)
+		{
+			if (ft_strchr(found_dollar, '\''))
+			{
+				return ;
+			}
+			interpret(data, &data->args[i], data->env, found_dollar);
+		}
+		return ;
+	}
+	interpret(data, &data->args[i], data->env, found_dollar);
 }
 
-void ft_interpret(t_minishell *data)
+void	ft_interpret(t_minishell *data)
 {
-    int i;
-    char *found_dollar;
+	int		i;
+	char	*found_dollar;
 
-    i = 0;
-    while (data->args[i])
-    {
-        found_dollar = ft_strchr(data->args[i], '$');
-        ft_should_interpret(data, i, found_dollar);
-        i++;
-    }
+	i = 0;
+	while (data->args[i])
+	{
+		found_dollar = ft_strchr(data->args[i], '$');
+		ft_should_interpret(data, i, found_dollar);
+		i++;
+	}
 }

@@ -1,30 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_interpret.c                                     :+:      :+:    :+:   */
+/*   ft_interpret_str.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/02/28 00:50:05 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 13:37:24 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-extern int	g_sig_status;
-
-char	*get_value_before_dollar_str(char *cmd, char *found_dollar)
-{
-	char	*before_dollar;
-
-	if (found_dollar - cmd <= 0)
-		return (ft_strdup(""));
-	before_dollar = ft_substr(cmd, 0, found_dollar - cmd);
-	return (before_dollar);
-}
-
-char	*get_value_str(t_minishell *data, t_list *env, char *found_dollar, char **pos)
+char	*get_value_str(t_minishell *data, t_list *env, char *found_dollar,
+		char **pos)
 {
 	int		i;
 	char	*value;
@@ -56,66 +45,63 @@ char	*get_value_after_variable_str(char *cmd, char *pos)
 /**
  * Helper function to check if the variable after $ sign is valid
  */
-static int is_valid_variable(char *found_dollar)
+static int	is_valid_variable(char *found_dollar)
 {
-    if (ft_strlen(found_dollar) == 1)
-        return (0);
-    if ((ft_isalnum(found_dollar[1]) == 0 && found_dollar[1] != '?'))
-        return (0);
-    return (1);
+	if (ft_strlen(found_dollar) == 1)
+		return (0);
+	if ((ft_isalnum(found_dollar[1]) == 0 && found_dollar[1] != '?'))
+		return (0);
+	return (1);
 }
 
 /**
  * Helper function to expand a single variable occurrence
  */
-static char *expand_variable(t_minishell *data, char *result, char *found_dollar)
+static char	*expand_variable(t_minishell *data, char *result,
+		char *found_dollar)
 {
-    char *before_dollar;
-    char *after_dollar;
-    char *value;
-    char *pos;
-    char *tmp;
-    char *new_result;
+	t_interpret	*interpret;
+	char		*new_result;
 
-    pos = found_dollar;
-    before_dollar = get_value_before_dollar_str(result, found_dollar);
-    value = get_value_str(data, data->env, found_dollar, &pos);
-    after_dollar = get_value_after_variable_str(result, pos);
-
-    tmp = ft_strjoin(before_dollar, value);
-    new_result = ft_strjoin(tmp, after_dollar);
-
-    free(value);
-    free(before_dollar);
-    free(after_dollar);
-    free(tmp);
-
-    return (new_result);
+	interpret = malloc(sizeof(t_interpret));
+	interpret->pos = found_dollar;
+	interpret->before_dollar = get_value_before_dollar_str(result,
+			found_dollar);
+	interpret->value = get_value_str(data, data->env, found_dollar,
+			&(interpret->pos));
+	interpret->after_dollar = get_value_after_variable_str(result,
+			interpret->pos);
+	interpret->tmp = ft_strjoin(interpret->before_dollar, interpret->value);
+	new_result = ft_strjoin(interpret->tmp, interpret->after_dollar);
+	free(interpret->value);
+	free(interpret->before_dollar);
+	free(interpret->after_dollar);
+	free(interpret->tmp);
+	free(interpret);
+	return (new_result);
 }
 
 /**
  * Main function to interpret and expand environment variables in a string
  */
-char *ft_interpret_str(t_minishell *data, char *line)
+char	*ft_interpret_str(t_minishell *data, char *line)
 {
-    char *found_dollar;
-    char *result;
-    char *tmp;
+	char	*found_dollar;
+	char	*result;
+	char	*tmp;
 
-    if (!line)
-        return (NULL);
-
-    result = ft_strdup(line);
-    found_dollar = ft_strchr(result, '$');
-    while (found_dollar)
-    {
-        if (!is_valid_variable(found_dollar))
-            break;
-
-        tmp = result;
-        result = expand_variable(data, result, found_dollar);
-        free(tmp);
-        found_dollar = ft_strchr(result, '$');
-    }
-    return (result);
+	if (!line)
+		return (NULL);
+	result = ft_strdup(line);
+	found_dollar = ft_strchr(result, '$');
+	while (found_dollar)
+	{
+		if (!is_valid_variable(found_dollar))
+			break ;
+		tmp = result;
+		result = expand_variable(data, result, found_dollar);
+		free(tmp);
+		found_dollar = ft_strchr(result, '$');
+	}
+	return (result);
 }
