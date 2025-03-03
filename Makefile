@@ -42,7 +42,7 @@ SRCS = $(SRCS_PATH)/main.c $(TREE_PATH)/create_tree.c $(TREE_PATH)/visualizer.c 
 		$(SRCS_PATH)$(UTIL_PATH)/ft_find_cmd_path.c $(SRCS_PATH)$(BUILTINS_PATH)$(EXPORT_PATH)/export_utils2.c \
 		$(SRCS_PATH)$(UTIL_PATH)/ft_insert_quotes.c $(SRCS_PATH)$(UTIL_PATH)/ft_remove_empty_args.c $(SRCS_PATH)$(UTIL_PATH)/prepare_cmd2.c \
 		$(SRCS_PATH)$(UTIL_PATH)/ft_interpret_utils.c $(SRCS_PATH)$(UTIL_PATH)/prepare_cmd_helper.c $(SRCS_PATH)$(UTIL_PATH)/prepare_cmd_helper2.c \
-		$(SRCS_PATH)$(UTIL_PATH)/ft_split_quoted_utils.c
+		$(SRCS_PATH)$(UTIL_PATH)/ft_split_quoted_utils.c $(SRCS_PATH)$(UTIL_PATH)/ft_interpret_str.c
 
 
 

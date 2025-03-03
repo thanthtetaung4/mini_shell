@@ -19,13 +19,11 @@ static char	*handle_path_not_found(char *cmd)
 	return (ft_strdup(""));
 }
 
-static void	free_path_resources(char *path_dup, char **dir, char *path_env,
-		char *cmd)
+static void	free_path_resources(char *path_dup, char **dir, char *path_env)
 {
 	free(path_dup);
 	free(dir);
 	free(path_env);
-	free(cmd);
 }
 
 static char	*try_path_directory(char *dir_path, char *cmd)
@@ -70,6 +68,6 @@ char	*find_command_path(char *cmd, t_minishell *data)
 		free(f.dir[f.i]);
 		f.i++;
 	}
-	free_path_resources(f.path_dup, f.dir, f.path_env, cmd);
+	free_path_resources(f.path_dup, f.dir, f.path_env);
 	return (ft_strdup(""));
 }

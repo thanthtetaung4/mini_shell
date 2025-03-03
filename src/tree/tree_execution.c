@@ -222,12 +222,14 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 				exit(127);
 			}
 		}
-		args[0] = ft_strdup(node->command[0]);
+
 		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
 			&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
 		{
 			args[0] = find_command_path(node->command[0], data);
 		}
+		else
+			args[0] = ft_strdup(node->command[0]);
 		i = 1;
 		while (i < data->args_count)
 		{

@@ -129,6 +129,13 @@ typedef struct s_f_cmd_path
 	int				i;
 }					t_f_cmd_path;
 
+typedef struct s_heredoc
+{
+	char			**delimiter;
+	int				current_delimiter;
+	char			*line;
+}					t_heredoc;
+
 // env functions
 t_list				*load_env(char **envp);
 char				**key_value_splitter(char *entry, char c);
@@ -202,6 +209,7 @@ char				*get_value(t_minishell *data, t_list *env,
 						char *found_dollar, char **pos);
 void				wrod_count_helper(char s, int *in_quotes, char *quote_char);
 size_t				ft_word_count(char *s, char c);
+char *ft_interpret_str(t_minishell *data, char *line);
 
 // signal functions
 void				handle_sigint(int sig);
