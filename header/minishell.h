@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 16:33:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/03 13:53:55 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 15:04:07 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,7 +182,7 @@ int					ft_unset(t_minishell *data);
 void				ft_exit(t_minishell *data);
 int					ft_pwd(void);
 int					ft_cd(t_minishell *data);
-int					ft_echo(t_minishell *data, t_ast_node *node);
+int					ft_echo(t_ast_node *node);
 // cd utils
 int					handle_cd_error(char *pwd, const char *message);
 void				update_prev_dir(t_minishell *data, char *prev_dir);
@@ -240,8 +240,7 @@ int					process_delimiter_match(char *line, char **delimiters,
 void				write_to_heredoc(char *line, t_ast_node *node,
 						int current_delimiter);
 int					read_heredoc_input(t_ast_node *node, char **delimiters);
-int					heredoc(t_minishell *data, t_ast_node *node,
-						int inside_pipe);
+int					heredoc(t_minishell *data, t_ast_node *node);
 // ast functions
 int					check_redirection(char *arg);
 void				redirection_counter(t_minishell *data, t_ast_node *node,

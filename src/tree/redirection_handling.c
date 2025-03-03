@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_handling.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:29:52 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 11:39:28 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/03 15:00:18 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,9 @@ int	handle_output_redirection(t_ast_node *node, t_minishell *data, int i)
 		ft_putstr_fd("cannot open output file\n", 2);
 		return (EXIT_FAILURE);
 	}
+	// printf("%d\n", data->forking->redirection_fds[i]);
 	data->forking->redirection_fds[i] = file_fd;
+	// printf("%d\n", data->forking->redirection_fds[i]);
 	dup2(file_fd, STDOUT_FILENO);
 	close(file_fd);
 	return (0);

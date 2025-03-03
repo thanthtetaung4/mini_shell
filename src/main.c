@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/03/03 13:55:56 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 14:56:32 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,11 @@ extern int	g_sig_status;
 
 int	check_syntax_errors(char *input)
 {
-	int	i;
 	int	len;
 
-	i = 0;
 	len = ft_strlen(input);
-	if (input[len - 1] == '>' || input[len - 1] == '<' || input[len - 1] == '>'
-		&& input[len - 2] == '>' || input[len - 1] == '>' && input[len
+	if ((input[len - 1] == '>' || input[len - 1] == '<' || input[len - 1] == '>')
+		&& (input[len - 2] == '>' || input[len - 1] == '>') && input[len
 		- 2] == '>')
 	{
 		ft_putstr_fd("invalid syntax\n", 2);
@@ -101,13 +99,14 @@ int	main(int argc, char **argv, char **envp)
 	t_minishell	data;
 	t_ast_node	*node;
 
+	(void)argc;
+	(void)argv;
 	init_data(&data, envp);
 	node = NULL;
 	while (1)
 	{
 		signal(SIGINT, handle_sigint);
 		signal(SIGQUIT, handle_sigquit);
-		// printf("g_sig_status: %d\n", g_sig_status);
 		data.input = readline("minishell$ ");
 		if (g_sig_status)
 			data.status = 130;

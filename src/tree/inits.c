@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   inits.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:38:24 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 11:48:12 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/03 14:21:57 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	init_fds(t_minishell *data)
 	}
 	else
 		data->forking->fds = NULL;
+	// printf("rc: %d\n", data->forking->redirection_count);
 	if (data->forking->redirection_count > 0)
 		data->forking->redirection_fds = malloc(sizeof(int)
 				* data->forking->redirection_count);

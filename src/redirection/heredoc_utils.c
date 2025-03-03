@@ -6,13 +6,13 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 05:52:50 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 13:52:15 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 15:05:15 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-int extern	g_sig_status;
+extern	int	g_sig_status;
 
 void	free_heredoc(char *line, char **delimiters)
 {

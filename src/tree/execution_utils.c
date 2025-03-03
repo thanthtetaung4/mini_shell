@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 10:37:58 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 11:38:53 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/03 15:06:59 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,6 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 
 void	execute_pipe_child(t_minishell *data, t_ast_node *node)
 {
-	int	exit_status;
-
-	exit_status = 0;
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (!node->command[0])
@@ -89,7 +86,7 @@ void	execute_pipe_child(t_minishell *data, t_ast_node *node)
 			exit(1);
 		}
 	}
-	exit_status = execute_command(data, node);
+	execute_command(data, node);
 	if (node->redirection->heredoc_count > 0)
 		close_heredoc_fds_c(data);
 	free_all(data, 1);

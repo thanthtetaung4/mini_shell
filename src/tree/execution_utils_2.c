@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_utils_2.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 11:03:50 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 11:38:19 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/03 15:07:21 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int	handle_command_heredoc(t_minishell *data, t_ast_node *node)
 	if (node->type == COMMAND && node->redirection
 		&& node->redirection->heredoc_count > 0)
 	{
-		sig = heredoc(data, node, 0);
+		sig = heredoc(data, node);
 	}
 	return (sig);
 }

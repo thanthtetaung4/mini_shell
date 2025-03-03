@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 08:12:59 by taung             #+#    #+#             */
-/*   Updated: 2025/03/02 15:41:52 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 15:01:31 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int	cd_to_prev(t_minishell *data, char *pwd)
 	int		status;
 	char	*tmp;
 
+	status = 0;
 	tmp = get_env_value(data->env, "OLDPWD");
 	if (ft_strlen(tmp) == 0)
 	{

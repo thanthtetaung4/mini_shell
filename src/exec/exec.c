@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/29 15:27:47 by taung             #+#    #+#             */
-/*   Updated: 2025/03/02 15:45:24 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 15:03:52 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,6 @@ int	ft_exec(t_minishell *data, t_ast_node *node)
 	if (ft_strncmp(node->command[0], "cd", ft_strlen(node->command[0])) == 0)
 		return (ft_cd(data));
 	if (ft_strncmp(node->command[0], "echo", ft_strlen(node->command[0])) == 0)
-		return (ft_echo(data, node));
+		return (ft_echo(node));
 	return (0);
 }

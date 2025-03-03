@@ -6,13 +6,13 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 05:50:46 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 13:52:27 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 15:00:26 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-int extern	g_sig_status;
+extern int	g_sig_status;
 
 void	handle_heredoc_input(t_minishell *data, t_ast_node *node,
 		t_heredoc *heredoc)
@@ -42,7 +42,7 @@ void	handle_heredoc_input(t_minishell *data, t_ast_node *node,
 	free_heredoc(NULL, heredoc->delimiter);
 }
 
-int	heredoc(t_minishell *data, t_ast_node *node, int inside_pipe)
+int	heredoc(t_minishell *data, t_ast_node *node)
 {
 	t_heredoc	*heredoc;
 

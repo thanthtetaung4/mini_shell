@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 07:15:04 by taung             #+#    #+#             */
-/*   Updated: 2025/03/02 15:25:03 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 15:01:06 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 void	export_add_var(t_minishell *data, char *key, char *value)
 {
-	t_list	*current_export;
-
 	if (!data->export)
 	{
 		data->export = ft_envnew(key, value);

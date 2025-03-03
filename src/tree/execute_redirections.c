@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_redirections.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 10:44:44 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 11:37:56 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/03 15:05:59 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,14 @@ int	handle_heredoc_if_needed(t_ast_node *node, int i)
 {
 	int	result;
 
+	result = 0;
 	if (node->redirection->types[i] == HEREDOC)
 	{
 		result = handle_heredoc_redirection(node);
 		if (!node->redirection->types[i + 1])
 			return (-1);
 	}
-	return (0);
+	return (result);
 }
 
 int	process_file_redirection(t_ast_node *node, t_minishell *data, int i)

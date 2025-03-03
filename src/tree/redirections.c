@@ -1,5 +1,7 @@
 #include "../../header/minishell.h"
 
+extern int	g_sig_status;
+
 void	free_heredoc(char *line, char **delimiters)
 {
 	int	i;
@@ -70,7 +72,7 @@ void	handle_heredoc_input(t_minishell *data, t_ast_node *node,
 		heredoc->line = readline("> ");
 		if (g_sig_status == 1)
 		{
-			free_heredoc(heredoc->line, heredoc->delimiter);
+			free(heredoc->line);
 			break ;
 		}
 		if (!(heredoc->line))
@@ -79,6 +81,7 @@ void	handle_heredoc_input(t_minishell *data, t_ast_node *node,
 				- 1)
 			{
 				(heredoc->current_delimiter)++;
+				ft_putstr_fd("\n", 1);
 				continue ;
 			}
 			break ;
@@ -96,7 +99,7 @@ void	init_heredoc(t_heredoc *heredoc)
 	heredoc->line = NULL;
 }
 
-int	heredoc(t_minishell *data, t_ast_node *node, int inside_pipe)
+int	heredoc(t_minishell *data, t_ast_node *node)
 {
 	t_heredoc	*heredoc;
 

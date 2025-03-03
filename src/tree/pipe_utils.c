@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 10:59:39 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 11:39:12 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/03 15:07:43 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int	handle_pipe_heredoc(t_minishell *data, t_ast_node *node)
 		if (temp_node->type == COMMAND && temp_node->redirection
 			&& temp_node->redirection->heredoc_count > 0)
 		{
-			sig = heredoc(data, temp_node, 1);
+			sig = heredoc(data, temp_node);
 		}
 	}
 	return (sig);

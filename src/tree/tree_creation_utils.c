@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tree_creation_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:09:08 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 06:09:09 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/03 15:08:36 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	handle_pipe_node(t_ast_node **head, char **cmd, t_minishell *data,
 {
 	t_ast_node	*temp;
 	t_ast_node	*temp_head;
-	char		*temp_input;
 
 	if (!(*head))
 	{

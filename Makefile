@@ -2,8 +2,8 @@ NAME = minishell
 
 CC = cc
 
-# CFLAGS = -g -Wall -Wextra -Werror
-CFLAGS=
+CFLAGS = -g -Wall -Wextra -Werror
+# CFLAGS=
 
 HEADER = -I ft_printf -I libft
 
@@ -32,7 +32,7 @@ SRCS = $(SRCS_PATH)/main.c $(TREE_PATH)/create_tree.c $(REDIRECTION_PATH)/redire
 		$(SRCS_PATH)$(BUILTINS_PATH)$(EXPORT_PATH)/export_add_utils.c $(SRCS_PATH)$(UTIL_PATH)/ft_strcmp.c \
 		$(SRCS_PATH)$(UTIL_PATH)/ft_split_quoted.c $(SRCS_PATH)$(FREE_PATH)/cmd_free.c $(SRCS_PATH)$(BUILTINS_PATH)/ft_unset.c \
 		$(SRCS_PATH)$(BUILTINS_PATH)/ft_exit.c $(SRCS_PATH)$(BUILTINS_PATH)/ft_pwd.c $(SRCS_PATH)$(UTIL_PATH)/count_tds.c \
-		$(SRCS_PATH)$(BUILTINS_PATH)/ft_cd.c $(SRCS_PATH)$(BUILTINS_PATH)/ft_cd_utils.c $(SRCS_PATH)$(UTIL_PATH)/ft_strrchr.c $(SRCS_PATH)$(BUILTINS_PATH)/ft_echo.c \
+		$(SRCS_PATH)$(BUILTINS_PATH)/ft_cd.c $(SRCS_PATH)$(BUILTINS_PATH)/ft_cd_utils.c $(SRCS_PATH)$(BUILTINS_PATH)/ft_echo.c \
 		$(SRCS_PATH)$(UTIL_PATH)/ft_strnchr.c $(SRCS_PATH)$(UTIL_PATH)/ft_interpret.c $(SRCS_PATH)$(UTIL_PATH)/test_utils.c \
 		$(SRCS_PATH)$(UTIL_PATH)/ft_cmd_utils.c $(SRCS_PATH)$(SIGNAL_PATH)/ft_handle_sig.c $(SRCS_PATH)$(UTIL_PATH)/prepare_cmd.c \
 		$(SRCS_PATH)$(UTIL_PATH)/ft_find_cmd_path.c $(SRCS_PATH)$(BUILTINS_PATH)$(EXPORT_PATH)/export_utils2.c \

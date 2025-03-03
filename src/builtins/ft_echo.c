@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 05:36:02 by taung             #+#    #+#             */
-/*   Updated: 2025/03/02 15:38:50 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/03 15:03:37 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	print_star(void)
 	return (EXIT_SUCCESS);
 }
 
-int	ft_echo(t_minishell *data, t_ast_node *node)
+int	ft_echo(t_ast_node *node)
 {
 	int	i;
 	int	n_flag;
