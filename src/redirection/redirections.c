@@ -22,7 +22,7 @@ void	handle_heredoc_input(t_minishell *data, t_ast_node *node,
 		heredoc->line = readline("> ");
 		if (g_sig_status == 1)
 		{
-			free_heredoc(heredoc->line, heredoc->delimiter);
+			free(heredoc->line);
 			break ;
 		}
 		if (!(heredoc->line))

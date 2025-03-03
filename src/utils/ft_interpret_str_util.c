@@ -14,7 +14,7 @@
 
 char	*get_value_before_dollar_str(char *cmd, char *found_dollar)
 {
-	char *before_dollar;
+	char	*before_dollar;
 
 	if (found_dollar - cmd <= 0)
 		return (ft_strdup(""));

@@ -12,7 +12,7 @@
 
 #include "../../header/minishell.h"
 
-extern	int	g_sig_status;
+extern int	g_sig_status;
 
 void	free_heredoc(char *line, char **delimiters)
 {

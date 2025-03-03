@@ -27,9 +27,7 @@ int	handle_output_redirection(t_ast_node *node, t_minishell *data, int i)
 		ft_putstr_fd("cannot open output file\n", 2);
 		return (EXIT_FAILURE);
 	}
-	// printf("%d\n", data->forking->redirection_fds[i]);
 	data->forking->redirection_fds[i] = file_fd;
-	// printf("%d\n", data->forking->redirection_fds[i]);
 	dup2(file_fd, STDOUT_FILENO);
 	close(file_fd);
 	return (0);

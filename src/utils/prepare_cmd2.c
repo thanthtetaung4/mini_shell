@@ -16,6 +16,7 @@ void	remove_cmd_outer_quote(t_minishell *data)
 {
 	int	i;
 	int	str_len;
+	char *tmp;
 
 	i = 0;
 	while (data->args[i])
@@ -23,11 +24,15 @@ void	remove_cmd_outer_quote(t_minishell *data)
 		str_len = ft_strlen(data->args[i]);
 		if (data->args[i][0] == '\"' || data->args[i][str_len] == '\"')
 		{
+			tmp = data->args[i];
 			data->args[i] = ft_strtrim(data->args[i], "\"");
+			free(tmp);
 		}
 		else if (data->args[i][0] == '\'' || data->args[i][str_len] == '\'')
 		{
+			tmp = data->args[i];
 			data->args[i] = ft_strtrim(data->args[i], "\'");
+			free(tmp);
 		}
 		i++;
 	}

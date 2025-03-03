@@ -21,6 +21,8 @@ int	cd_to_home(t_minishell *data, char *pwd)
 	if (ft_strlen(home_dir) == 0)
 	{
 		ft_putstr_fd("HOME is not set\n", 2);
+		free(home_dir);
+		free(pwd);
 		return (1);
 	}
 	status = chdir(home_dir);
@@ -44,7 +46,10 @@ int	cd_to_prev(t_minishell *data, char *pwd)
 	if (ft_strlen(tmp) == 0)
 	{
 		ft_putstr_fd("OLDPWD is not set\n", 2);
-		return (status);
+		free(tmp);
+		free(pwd);
+		// printf("%s\n", pwd);
+		return (1);
 	}
 	status = chdir(tmp);
 	if (status != -1)
@@ -77,6 +82,7 @@ int	change_directory(t_minishell *data, char *pwd, const char *path)
 	}
 	else
 		return (handle_cd_error(pwd, "No such file or directory\n"));
+	free(pwd);
 	return (0);
 }
 

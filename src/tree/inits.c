@@ -60,9 +60,8 @@ void	init_fds(t_minishell *data)
 	}
 	else
 		data->forking->fds = NULL;
-	// printf("rc: %d\n", data->forking->redirection_count);
 	if (data->forking->redirection_count > 0)
-		data->forking->redirection_fds = malloc(sizeof(int)
+		data->forking->redirection_fds = malloc(sizeof(int *)
 				* data->forking->redirection_count);
 	else
 		data->forking->redirection_fds = NULL;

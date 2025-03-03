@@ -259,10 +259,12 @@ static char	**prepare_args_no_pipe(t_ast_node *node, t_minishell *data)
 		validate_command_path(node->command[0], args, data);
 	if (node->command[0][0] == '/')
 		validate_command_path(node->command[0], args, data);
-	args[0] = ft_strdup(node->command[0]);
+
 	if ((node->command[0][0] != '.' && node->command[0][1] != '/')
 		&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
-		args[0] = find_command_path(args[0], data);
+		args[0] = find_command_path(node->command[0], data);
+	else
+		args[0] = ft_strdup(node->command[0]);
 	i = 1;
 	while (node->command[i])
 	{
@@ -335,6 +337,8 @@ static int	execute_with_pipe(t_minishell *data, t_ast_node *node)
 		handle_command_not_found(args, env_strings, data);
 	free_cmd(&env_strings);
 	free_2d_string(args);
+	// free_all(data, 1);
+	// free_cmd(&data->args);
 	exit(exit_status);
 	return (exit_status);
 }

@@ -34,6 +34,13 @@ void	ft_add_env(t_list **env, t_list *new_node)
 {
 	if (new_node && ft_strlen(((t_env *)new_node->content)->value) > 0)
 		ft_lstadd_back(env, new_node);
+	else
+	{
+		free(((t_env *)new_node->content)->key);
+		free(((t_env *)new_node->content)->value);
+		free(new_node->content);
+		free(new_node);
+	}
 }
 
 void	ft_update_env(t_list **env, t_list *new_node)

@@ -21,7 +21,8 @@ char	*interpret(t_minishell *data, char **cmd, t_list *env,
 	char	*pos;
 	char	*tmp;
 
-	while ((found_dollar = ft_strchr(*cmd, '$')))
+	found_dollar = ft_strchr(*cmd, '$');
+	while (found_dollar)
 	{
 		tmp = *cmd;
 		pos = found_dollar;
@@ -36,6 +37,7 @@ char	*interpret(t_minishell *data, char **cmd, t_list *env,
 		*cmd = ft_strjoin(*cmd, after_dollar);
 		free(tmp);
 		free(after_dollar);
+		found_dollar = ft_strchr(*cmd, '$');
 	}
 	return (*cmd);
 }
