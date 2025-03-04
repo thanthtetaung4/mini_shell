@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 10:37:58 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/04 21:48:12 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 22:11:44 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,7 @@ void	execute_pipe_child(t_minishell *data, t_ast_node *node)
 		}
 	}
 	execute_command(data, node);
-	if (node->redirection->heredoc_count > 0)
-		close_heredoc_fds_c(data);
+	close_heredoc_fds_p(data);
 	free_all(data, 1);
 }
 
