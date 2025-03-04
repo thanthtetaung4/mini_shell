@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 11:03:50 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 15:07:21 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 21:31:08 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,7 @@ void	handle_empty_command_child(t_minishell *data)
 
 void	update_empty_prev_node(t_minishell *data, t_ast_node *node)
 {
-	if (!node->command[0] && node->redirection->heredoc_count > 0
-		&& node->redirection->redirection_count == 0)
+	if (!node->command[0] && node->redirection->heredoc_count > 0)
 		data->empty_prev_node = 1;
 	else
 		data->empty_prev_node = 0;
