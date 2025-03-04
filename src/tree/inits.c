@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:38:24 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 14:21:57 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 19:49:44 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,18 @@ int	init_pids(t_minishell *data)
 	return (num_of_pids);
 }
 
+void	init_fds_helper(t_minishell *data)
+{
+	int i;
+
+	i = 0;
+	while(i < data->forking->redirection_count)
+	{
+		data->forking->redirection_fds[i] = -1;
+		i++;
+	}
+}
+
 void	init_fds(t_minishell *data)
 {
 	int	fds_count;
@@ -61,8 +73,9 @@ void	init_fds(t_minishell *data)
 	else
 		data->forking->fds = NULL;
 	if (data->forking->redirection_count > 0)
-		data->forking->redirection_fds = malloc(sizeof(int *)
-				* data->forking->redirection_count);
+	{
+		data->forking->redirection_fds = malloc((sizeof(int) * data->forking->redirection_count));
+	}
 	else
 		data->forking->redirection_fds = NULL;
 }

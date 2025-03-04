@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_utils_3.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 11:05:08 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 11:38:36 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/04 19:24:17 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ void	wait_for_children(t_minishell *data)
 	while (i < data->forking->completed_piping)
 	{
 		waitpid(data->forking->pids[i], &data->status, 0);
+		handle_signal_status(data);
 		i++;
 	}
 }
@@ -95,7 +96,12 @@ void	handle_signal_status(t_minishell *data)
 			if (sig == SIGINT)
 			{
 				write(1, "\n", 1);
-				data->status = 0;
+				data->status = 130;
+			}
+			else if (sig == SIGQUIT)
+			{
+				write(1, "Quit: (Core dumped)\n", 20);
+				data->status = 131;
 			}
 		}
 		else if (WIFEXITED(data->status))
