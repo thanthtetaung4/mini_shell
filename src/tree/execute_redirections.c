@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 10:44:44 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 15:05:59 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 19:38:50 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,10 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 {
 	int	i;
 	int	result;
+	int	j;
 
 	i = 0;
+	j = 0;
 	while (node->redirection->types[i] != -1
 		&& node->redirection->files[i] != NULL)
 	{
@@ -51,6 +53,8 @@ int	execute_redirection(t_ast_node *node, t_minishell *data)
 		result = process_file_redirection(node, data, i);
 		if (result != 0)
 			return (result);
+		if (node->redirection->types[i] != HEREDOC)
+			j++;
 		i++;
 	}
 	return (0);

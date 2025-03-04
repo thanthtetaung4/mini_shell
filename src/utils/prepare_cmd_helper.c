@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 15:57:14 by taung             #+#    #+#             */
-/*   Updated: 2025/03/02 15:58:06 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 19:11:21 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ t_parse_state	*init_parse_state(const char *input)
 		free(state);
 		return (NULL);
 	}
-	state->args = malloc(state->arg_capacity * sizeof(char *));
+	state->args = malloc(((state->arg_capacity + 1) * sizeof(char *) ));
 	if (!state->args)
 	{
 		perror("malloc failed");

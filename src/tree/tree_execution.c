@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:41:36 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 14:53:08 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 19:17:07 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -382,11 +382,10 @@ int	tree_execution(t_ast_node *lowest_node, t_minishell *data)
 	if (sig == 1)
 	{
 		close_heredoc_fds_p(data);
-		return (1);
+		return (130);
 	}
 	execute_commands(lowest_node, data);
 	wait_for_children(data);
-	handle_signal_status(data);
 	close_backup_fds(data);
 	close_pipe_fds(data);
 	restore_signals_and_cleanup(data);

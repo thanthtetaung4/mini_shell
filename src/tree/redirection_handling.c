@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:29:52 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 15:00:18 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 19:40:38 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 int	handle_output_redirection(t_ast_node *node, t_minishell *data, int i)
 {
 	int	file_fd;
-
 	if (node->redirection->types[i] == OUTPUT)
 		file_fd = open(node->redirection->files[i],
 				O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -87,6 +86,7 @@ int	handle_existing_file_redirection(t_ast_node *node, t_minishell *data, int i)
 
 int	handle_new_file_redirection(t_ast_node *node, t_minishell *data, int i)
 {
+	// printf("hg\n");
 	if (node->redirection->types[i] == OUTPUT
 		|| node->redirection->types[i] == APPEND)
 	{
@@ -96,5 +96,6 @@ int	handle_new_file_redirection(t_ast_node *node, t_minishell *data, int i)
 	{
 		return (handle_input_redirection(node, data, i));
 	}
+	// printf("j\n");
 	return (0);
 }

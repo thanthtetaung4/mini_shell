@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/03/03 14:56:32 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 18:08:12 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,11 @@ int	check_syntax_errors(char *input)
 			|| input[len - 1] == '>') && input[len - 2] == '>')
 	{
 		ft_putstr_fd("invalid syntax\n", 2);
+		return (0);
+	}
+	if (input[0] == '|')
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
 		return (0);
 	}
 	return (1);
@@ -162,6 +167,7 @@ void	main_loop(t_minishell *data, t_ast_node *node)
 {
 	while (1)
 	{
+		g_sig_status = 0;
 		signal(SIGINT, handle_sigint);
 		signal(SIGQUIT, handle_sigquit);
 		data->input = readline("minishell$ ");
