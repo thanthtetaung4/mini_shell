@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prepare_cmd2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 15:55:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/03 15:04:47 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 14:27:28 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	remove_cmd_outer_quote(t_minishell *data)
 {
-	int	i;
-	int	str_len;
-	char *tmp;
+	int		i;
+	int		str_len;
+	char	*tmp;
 
 	i = 0;
 	while (data->args[i])
@@ -79,9 +79,9 @@ char	*rm_match_char(char *str, char c)
 
 void	remove_cmd_quote(t_minishell *data)
 {
-	int		i;
-	int		s_quote_count;
-	int		d_quote_count;
+	int	i;
+	int	s_quote_count;
+	int	d_quote_count;
 
 	remove_cmd_outer_quote(data);
 	i = 0;

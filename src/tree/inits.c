@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   inits.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:38:24 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/04 21:20:16 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 14:40:48 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ int	init_pids(t_minishell *data)
 
 void	init_fds_helper(t_minishell *data)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while(i < data->forking->redirection_count)
+	while (i < data->forking->redirection_count)
 	{
 		data->forking->redirection_fds[i] = -1;
 		i++;
@@ -74,11 +74,13 @@ void	init_fds(t_minishell *data)
 		data->forking->fds = NULL;
 	if (data->forking->redirection_count > 0)
 	{
-		data->forking->redirection_fds = malloc((sizeof(int) * data->forking->redirection_count));
+		data->forking->redirection_fds = malloc((sizeof(int)
+					* data->forking->redirection_count));
 	}
 	else
 		data->forking->redirection_fds = NULL;
 }
+
 int	init_data(t_minishell *data, char **envp)
 {
 	data->env = NULL;

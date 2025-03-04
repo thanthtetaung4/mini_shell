@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 16:33:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/03 15:04:07 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 15:03:37 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include <termios.h>
 # include <unistd.h>
 
+extern int			g_sig_status;
 typedef enum s_node_type
 {
 	PIPE,
@@ -224,9 +225,10 @@ char				*get_value_before_dollar_str(char *cmd, char *found_dollar);
 // signal functions
 void				handle_sigint(int sig);
 void				handle_sigquit(int sig);
-void				handle_sigquit_child(int sig);
-void				handle_sigint_child(int sig);
-void				setup_child_signals(void);
+// void				handle_sigquit_child(int sig);
+// void				handle_sigint_child(int sig);
+// void				setup_child_signals(void);
+void				signal_print_newline(int signal);
 void				handle_heredoc_sigint(int sig);
 void				set_signals_heredoc(void);
 
@@ -319,10 +321,10 @@ int					read_heredoc_input(t_ast_node *node, char **delimiters);
 void				handle_heredoc_input_helper(t_heredoc *heredoc,
 						t_ast_node *node, t_minishell *data);
 void				init_delimiters(t_ast_node *node, t_heredoc *heredoc);
-void	init_heredoc(t_heredoc *heredoc);
+void				init_heredoc(t_heredoc *heredoc);
 
-	// execution_utils_2
-	void setup_child_process(t_minishell *data, t_ast_node *node);
+// execution_utils_2
+void				setup_child_process(t_minishell *data, t_ast_node *node);
 int					handle_child_exit_status(int exit_status);
 void				handle_empty_command_child(t_minishell *data);
 void				update_empty_prev_node(t_minishell *data, t_ast_node *node);
@@ -355,4 +357,27 @@ void				close_all_pipe_fds(t_minishell *data);
 // fd_utils
 void				close_backup_fds(t_minishell *data);
 void				close_pipe_fds(t_minishell *data);
+
+// cmd_utils
+void				check_directory_permissions(char *cmd_path, char **args,
+						t_minishell *data);
+void				check_file_exists(char *cmd_path, char **args,
+						t_minishell *data);
+void				check_execute_permission(char *cmd_path, char **args,
+						t_minishell *data);
+void				validate_command_path(char *cmd_path, char **args,
+						t_minishell *data);
+void				handle_command_not_found(char **args, char **env_strings,
+						t_minishell *data);
+
+// arg_utils
+char				**prepare_args_no_pipe(t_ast_node *node, t_minishell *data);
+char				**prepare_args_with_pipe(t_ast_node *node,
+						t_minishell *data);
+// main utils
+int					check_syntax_errors(char *input);
+void				init_count_quotes(int *s_quote_count, int *d_quote_count,
+						int *in_d_quotes, int *in_s_quotes);
+int					print_err(int *s_quote_count, int *d_quote_count);
+int					count_quotes(char *input);
 #endif

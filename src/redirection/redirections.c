@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 05:50:46 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/04 18:04:28 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 14:56:16 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
-
-extern int	g_sig_status;
 
 void	handle_heredoc_input(t_minishell *data, t_ast_node *node,
 		t_heredoc *heredoc)

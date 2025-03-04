@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 10:59:39 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/04 21:42:47 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 14:32:14 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ void	setup_stdin_for_pipe(t_minishell *data, t_ast_node *node)
 	}
 	else if (data->forking->completed_piping > 0 && data->empty_prev_node == 1)
 	{
-		if (data->forking->pipe_count > 1 && data->forking->completed_piping == 1)
+		if (data->forking->pipe_count > 1
+			&& data->forking->completed_piping == 1)
 		{
-			dup2(node->parent->left->redirection->heredoc_fd[0],
-				STDIN_FILENO);
+			dup2(node->parent->left->redirection->heredoc_fd[0], STDIN_FILENO);
 			close(node->parent->left->redirection->heredoc_fd[0]);
 		}
 		else if (data->forking->pipe_count > 1)

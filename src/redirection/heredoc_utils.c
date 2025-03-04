@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 05:52:50 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 15:05:15 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 14:56:24 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
-
-extern int	g_sig_status;
 
 void	free_heredoc(char *line, char **delimiters)
 {

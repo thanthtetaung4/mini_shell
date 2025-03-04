@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 08:12:59 by taung             #+#    #+#             */
-/*   Updated: 2025/03/03 15:01:31 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 14:24:49 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ int	cd_to_prev(t_minishell *data, char *pwd)
 		ft_putstr_fd("OLDPWD is not set\n", 2);
 		free(tmp);
 		free(pwd);
-		// printf("%s\n", pwd);
 		return (1);
 	}
 	status = chdir(tmp);

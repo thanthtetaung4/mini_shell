@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_handling.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:29:52 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/04 20:48:23 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 14:41:23 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	handle_output_redirection(t_ast_node *node, t_minishell *data, int i)
 {
 	int	file_fd;
+
 	if (node->redirection->types[i] == OUTPUT)
 		file_fd = open(node->redirection->files[i],
 				O_WRONLY | O_CREAT | O_TRUNC, 0644);

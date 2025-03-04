@@ -3,306 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   tree_execution.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:41:36 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/04 19:17:07 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 15:06:23 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
 
-// int	execute_command(t_minishell *data, t_ast_node *node)
-// {
-// 	int			i;
-// 	char		**args;
-// 	char		**env_strings;
-// 	struct stat	path_stat;
-// 	int			exit_status;
-
-// 	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
-// 		return (0);
-// 	if (check_cmd(node->command[0]) == 1)
-// 	{
-// 		exit_status = ft_exec(data, node);
-// 		free_all(data, 1);
-// 		exit(exit_status);
-// 	}
-// 	else if (data->forking->pipe_count == 0)
-// 	{
-// 		args = malloc(sizeof(char *) * (data->args_count + 1));
-// 		if (node->command[0][0] == '.' && node->command[0][1] == '/')
-// 		{
-// 			if (stat(node->command[0], &path_stat) == 0)
-// 			{
-// 				if (S_ISDIR(path_stat.st_mode))
-// 				{
-// 					ft_putstr_fd(" Is a directory\n", 2);
-// 					free(args);
-// 					free_all(data, 1);
-// 					exit(126);
-// 				}
-// 			}
-// 			if (access(node->command[0], F_OK) != 0)
-// 			{
-// 				ft_putstr_fd(" No such file or directory\n", 2);
-// 				free(args);
-// 				free_all(data, 1);
-// 				exit(127);
-// 			}
-// 			if (access(node->command[0], X_OK) != 0)
-// 			{
-// 				ft_putstr_fd(" Permission denied\n", 2);
-// 				free(args);
-// 				free_all(data, 1);
-// 				exit(126);
-// 			}
-// 		}
-// 		if (node->command[0][0] == '/')
-// 		{
-// 			if (stat(node->command[0], &path_stat) == 0)
-// 			{
-// 				if (S_ISDIR(path_stat.st_mode))
-// 				{
-// 					ft_putstr_fd(" Is a directory\n", 2);
-// 					free(args);
-// 					free_all(data, 1);
-// 					exit(126);
-// 				}
-// 			}
-// 			if (access(node->command[0], F_OK) != 0)
-// 			{
-// 				ft_putstr_fd(" No such file or directory\n", 2);
-// 				free(args);
-// 				free_all(data, 1);
-// 				exit(127);
-// 			}
-// 		}
-// 		args[0] = ft_strdup(node->command[0]);
-// 		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
-// 			&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
-// 		{
-// 			args[0] = find_command_path(args[0], data);
-// 		}
-// 		i = 1;
-// 		while (node->command[i])
-// 		{
-// 			args[i] = ft_strdup(node->command[i]);
-// 			i++;
-// 		}
-// 		args[i] = NULL;
-// 		env_strings = get_env_strings(data->env);
-// 		exit_status = execve(args[0], args, env_strings);
-// 		if (exit_status == -1)
-// 		{
-// 			ft_putstr_fd(" command not found\n", 2);
-// 			free_2d_string(args);
-// 			free_cmd(&env_strings);
-// 			free_all(data, 1);
-// 			exit(127);
-// 		}
-// 		free_cmd(&env_strings);
-// 		free_2d_string(args);
-// 		free_all(data, 1);
-// 		exit(exit_status);
-// 	}
-// 	else if (data->forking->pipe_count > 0)
-// 	{
-// 		args = malloc(sizeof(char *) * (data->args_count + 1));
-// 		if (node->command[0][0] == '.' && node->command[0][1] == '/')
-// 		{
-// 			if (stat(node->command[0], &path_stat) == 0)
-// 			{
-// 				if (S_ISDIR(path_stat.st_mode))
-// 				{
-// 					ft_putstr_fd(" Is a directory\n", 2);
-// 					free(args);
-// 					free_all(data, 1);
-// 					exit(126);
-// 				}
-// 			}
-// 			if (access(node->command[0], F_OK) != 0)
-// 			{
-// 				ft_putstr_fd(" No such file or directory\n", 2);
-// 				free(args);
-// 				free_all(data, 1);
-// 				exit(127);
-// 			}
-// 			if (access(node->command[0], X_OK) != 0)
-// 			{
-// 				ft_putstr_fd(" Permission denied\n", 2);
-// 				free(args);
-// 				free_all(data, 1);
-// 				exit(126);
-// 			}
-// 		}
-// 		if (node->command[0][0] == '/')
-// 		{
-// 			if (stat(node->command[0], &path_stat) == 0)
-// 			{
-// 				if (S_ISDIR(path_stat.st_mode))
-// 				{
-// 					ft_putstr_fd(" Is a directory\n", 2);
-// 					free(args);
-// 					free_all(data, 1);
-// 					exit(126);
-// 				}
-// 			}
-// 			if (access(node->command[0], F_OK) != 0)
-// 			{
-// 				ft_putstr_fd(" No such file or directory\n", 2);
-// 				free(args);
-// 				free_all(data, 1);
-// 				exit(127);
-// 			}
-// 		}
-
-// 		if ((node->command[0][0] != '.' && node->command[0][1] != '/')
-// 			&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
-// 		{
-// 			args[0] = find_command_path(node->command[0], data);
-// 		}
-// 		else
-// 			args[0] = ft_strdup(node->command[0]);
-// 		i = 1;
-// 		while (i < data->args_count)
-// 		{
-// 			args[i] = ft_strdup(node->command[i]);
-// 			i++;
-// 		}
-// 		args[i] = NULL;
-// 		env_strings = get_env_strings(data->env);
-// 		exit_status = execve(args[0], args, env_strings);
-// 		if (exit_status == -1)
-// 		{
-// 			ft_putstr_fd(" command not found\n", 2);
-// 			free_2d_string(args);
-// 			free_cmd(&env_strings);
-// 			free_all(data, 1);
-// 			exit(127);
-// 		}
-// 		free_cmd(&env_strings);
-// 		free_2d_string(args);
-// 		exit(exit_status);
-// 	}
-// 	return (1);
-// }
-
-static void	check_directory_permissions(char *cmd_path, char **args,
-		t_minishell *data)
-{
-	struct stat	path_stat;
-
-	if (stat(cmd_path, &path_stat) == 0)
-	{
-		if (S_ISDIR(path_stat.st_mode))
-		{
-			ft_putstr_fd(" Is a directory\n", 2);
-			free(args);
-			free_all(data, 1);
-			exit(126);
-		}
-	}
-}
-
-static void	check_file_exists(char *cmd_path, char **args, t_minishell *data)
-{
-	if (access(cmd_path, F_OK) != 0)
-	{
-		ft_putstr_fd(" No such file or directory\n", 2);
-		free(args);
-		free_all(data, 1);
-		exit(127);
-	}
-}
-
-static void	check_execute_permission(char *cmd_path, char **args,
-		t_minishell *data)
-{
-	if (cmd_path[0] == '.' && cmd_path[1] == '/' && access(cmd_path, X_OK) != 0)
-	{
-		ft_putstr_fd(" Permission denied\n", 2);
-		free(args);
-		free_all(data, 1);
-		exit(126);
-	}
-}
-
-static void	validate_command_path(char *cmd_path, char **args,
-		t_minishell *data)
-{
-	check_directory_permissions(cmd_path, args, data);
-	check_file_exists(cmd_path, args, data);
-	if (cmd_path[0] == '.' && cmd_path[1] == '/')
-		check_execute_permission(cmd_path, args, data);
-}
-
-static void	handle_command_not_found(char **args, char **env_strings,
-		t_minishell *data)
-{
-	ft_putstr_fd(" command not found\n", 2);
-	free_2d_string(args);
-	free_cmd(&env_strings);
-	free_all(data, 1);
-	exit(127);
-}
-
-static char	**prepare_args_no_pipe(t_ast_node *node, t_minishell *data)
-{
-	char	**args;
-	int		i;
-
-	args = malloc(sizeof(char *) * (data->args_count + 1));
-	if (!args)
-		return (NULL);
-	if (node->command[0][0] == '.' && node->command[0][1] == '/')
-		validate_command_path(node->command[0], args, data);
-	if (node->command[0][0] == '/')
-		validate_command_path(node->command[0], args, data);
-
-	if ((node->command[0][0] != '.' && node->command[0][1] != '/')
-		&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
-		args[0] = find_command_path(node->command[0], data);
-	else
-		args[0] = ft_strdup(node->command[0]);
-	i = 1;
-	while (node->command[i])
-	{
-		args[i] = ft_strdup(node->command[i]);
-		i++;
-	}
-	args[i] = NULL;
-	return (args);
-}
-
-static char	**prepare_args_with_pipe(t_ast_node *node, t_minishell *data)
-{
-	char	**args;
-	int		i;
-
-	args = malloc(sizeof(char *) * (data->args_count + 1));
-	if (!args)
-		return (NULL);
-	if (node->command[0][0] == '.' && node->command[0][1] == '/')
-		validate_command_path(node->command[0], args, data);
-	if (node->command[0][0] == '/')
-		validate_command_path(node->command[0], args, data);
-	if ((node->command[0][0] != '.' && node->command[0][1] != '/')
-		&& ft_strncmp(node->command[0], "/bin/", 5) != 0)
-		args[0] = find_command_path(node->command[0], data);
-	else
-		args[0] = ft_strdup(node->command[0]);
-	i = 1;
-	while (i < data->args_count)
-	{
-		args[i] = ft_strdup(node->command[i]);
-		i++;
-	}
-	args[i] = NULL;
-	return (args);
-}
-
-static int	execute_without_pipe(t_minishell *data, t_ast_node *node)
+int	execute_without_pipe(t_minishell *data, t_ast_node *node)
 {
 	char	**args;
 	char	**env_strings;
@@ -322,7 +32,7 @@ static int	execute_without_pipe(t_minishell *data, t_ast_node *node)
 	return (exit_status);
 }
 
-static int	execute_with_pipe(t_minishell *data, t_ast_node *node)
+int	execute_with_pipe(t_minishell *data, t_ast_node *node)
 {
 	char	**args;
 	char	**env_strings;
@@ -337,8 +47,6 @@ static int	execute_with_pipe(t_minishell *data, t_ast_node *node)
 		handle_command_not_found(args, env_strings, data);
 	free_cmd(&env_strings);
 	free_2d_string(args);
-	// free_all(data, 1);
-	// free_cmd(&data->args);
 	exit(exit_status);
 	return (exit_status);
 }
@@ -366,7 +74,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	return (1);
 }
 
-static void	restore_signals_and_cleanup(t_minishell *data)
+void	restore_signals_and_cleanup(t_minishell *data)
 {
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);

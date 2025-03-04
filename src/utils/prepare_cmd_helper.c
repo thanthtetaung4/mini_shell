@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prepare_cmd_helper.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 15:57:14 by taung             #+#    #+#             */
-/*   Updated: 2025/03/04 19:11:21 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 14:25:47 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ t_parse_state	*init_parse_state(const char *input)
 		free(state);
 		return (NULL);
 	}
-	state->args = malloc(((state->arg_capacity + 1) * sizeof(char *) ));
+	state->args = malloc(((state->arg_capacity + 1) * sizeof(char *)));
 	if (!state->args)
 	{
 		perror("malloc failed");

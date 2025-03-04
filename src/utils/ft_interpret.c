@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_interpret.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/03/03 14:50:06 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/04 14:28:38 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ char	*interpret(t_minishell *data, char **cmd, t_list *env,
 	char	*pos;
 	char	*tmp;
 
-	while ((found_dollar = ft_strchr(*cmd, '$')))
+	found_dollar = ft_strchr(*cmd, '$');
+	while (found_dollar)
 	{
 		tmp = *cmd;
 		pos = found_dollar;
@@ -36,6 +37,7 @@ char	*interpret(t_minishell *data, char **cmd, t_list *env,
 		*cmd = ft_strjoin(*cmd, after_dollar);
 		free(tmp);
 		free(after_dollar);
+		found_dollar = ft_strchr(*cmd, '$');
 	}
 	return (*cmd);
 }
