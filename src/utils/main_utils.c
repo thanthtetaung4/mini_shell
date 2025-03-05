@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 14:52:05 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/04 14:55:55 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/05 03:48:09 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	check_syntax_errors(char *input)
 		ft_putstr_fd("invalid syntax\n", 2);
 		return (0);
 	}
-	if (input[0] == '|')
+	if (input[0] == '|' || input[len - 1] == '|')
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
 		return (0);
