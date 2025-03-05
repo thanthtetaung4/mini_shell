@@ -43,6 +43,13 @@ static char	*try_path_directory(char *dir_path, char *cmd)
 	return (NULL);
 }
 
+void	find_command_path_helper(t_f_cmd_path *f)
+{
+	f->path_dup = ft_strdup(f->path_env);
+	f->dir = ft_split(f->path_dup, ':');
+	f->i = 0;
+}
+
 char	*find_command_path(char *cmd, t_minishell *data)
 {
 	t_f_cmd_path	f;
@@ -52,12 +59,10 @@ char	*find_command_path(char *cmd, t_minishell *data)
 	f.path_env = get_env_value(data->env, "PATH");
 	if (!f.path_env || ft_strlen(f.path_env) == 0)
 	{
-		free(f.path_env);	
+		free(f.path_env);
 		return (handle_path_not_found());
 	}
-	f.path_dup = ft_strdup(f.path_env);
-	f.dir = ft_split(f.path_dup, ':');
-	f.i = 0;
+	find_command_path_helper(&f);
 	while (f.dir[f.i])
 	{
 		f.full_path = try_path_directory(f.dir[f.i], cmd);

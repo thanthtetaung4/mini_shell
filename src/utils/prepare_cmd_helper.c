@@ -24,7 +24,7 @@ t_parse_state	*init_parse_state(const char *input)
 		return (NULL);
 	}
 	init_helper(state);
-	state->buffer = strdup(input);
+	state->buffer = ft_strdup(input);
 	if (!state->buffer)
 	{
 		perror("strdup failed");

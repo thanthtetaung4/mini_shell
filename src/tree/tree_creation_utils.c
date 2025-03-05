@@ -49,6 +49,7 @@ void	handle_single_command(t_ast_node **head, char **cmd, t_minishell *data,
 		data->tree->lowest_node = temp;
 		temp = NULL;
 	}
+	free(cmd);
 }
 
 void	reset_args(char **args, int counter)
@@ -66,10 +67,11 @@ void	reset_args(char **args, int counter)
 void	process_pipe_node(t_ast_node **head, t_minishell *data, int *counter,
 		int i)
 {
-	char	*cmd[256];
+	char	**cmd;
 	int		j;
 
 	j = 0;
+	cmd = malloc((sizeof(char *) * (*counter)));
 	while (j < *counter - 1)
 	{
 		cmd[j] = data->args[i + j + 1];
@@ -77,6 +79,7 @@ void	process_pipe_node(t_ast_node **head, t_minishell *data, int *counter,
 	}
 	cmd[j] = NULL;
 	handle_pipe_node(head, cmd, data, *counter - 1);
+	free(cmd);
 	*counter = 0;
 	data->forking->pipe_count += 1;
 }
@@ -84,10 +87,11 @@ void	process_pipe_node(t_ast_node **head, t_minishell *data, int *counter,
 void	process_single_command(t_ast_node **head, t_minishell *data,
 		int *counter, int i)
 {
-	char	*cmd[256];
+	char	**cmd;
 	int		j;
 
 	j = 0;
+	cmd = malloc((sizeof(char *) * (*counter + 2)));
 	while (j <= *counter)
 	{
 		cmd[j] = data->args[i + j];

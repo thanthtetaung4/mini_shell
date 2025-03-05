@@ -28,7 +28,7 @@ int	check_cmd(char *cmd)
 	bultins[7] = NULL;
 	while (bultins[i] != NULL)
 	{
-		if (strcmp(bultins[i], cmd) == 0)
+		if (ft_strcmp(bultins[i], cmd) == 0)
 			return (1);
 		i++;
 	}

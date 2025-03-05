@@ -70,3 +70,11 @@ int	is_valid_var(char *key)
 	}
 	return (0);
 }
+
+void	handle_invalid_export(char **key_value)
+{
+	free(key_value[0]);
+	free(key_value[1]);
+	free(key_value);
+	ft_putstr_fd(" not a valid identifier\n", 2);
+}

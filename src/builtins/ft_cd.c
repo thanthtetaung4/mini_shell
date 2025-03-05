@@ -85,23 +85,25 @@ int	change_directory(t_minishell *data, char *pwd, const char *path)
 	return (0);
 }
 
-int	handle_cd_args(t_minishell *data, char *pwd)
+int	handle_cd_args(t_minishell *data, char *pwd, t_ast_node *node)
 {
-	if (ft_strcmp(data->args[1], "~") == 0)
+	if (ft_strcmp(node->command[1], "~") == 0)
 		return (cd_to_home(data, pwd));
-	if (ft_strcmp(data->args[1], "-") == 0)
+	if (ft_strcmp(node->command[1], "-") == 0)
 		return (cd_to_prev(data, pwd));
-	return (change_directory(data, pwd, data->args[1]));
+	return (change_directory(data, pwd, node->command[1]));
 }
 
-int	ft_cd(t_minishell *data)
+int	ft_cd(t_minishell *data, t_ast_node *node)
 {
 	char	*pwd;
+	int		cmd_count;
 
+	cmd_count = ft_count_tds(node->command);
 	pwd = getcwd(NULL, 0);
-	if (data->args_count == 2)
-		return (handle_cd_args(data, pwd));
-	else if (data->args_count == 1)
+	if (cmd_count == 2)
+		return (handle_cd_args(data, pwd, node));
+	else if (cmd_count == 1)
 		return (cd_to_home(data, pwd));
 	else
 		return (handle_cd_error(pwd, "too many arguments\n"));

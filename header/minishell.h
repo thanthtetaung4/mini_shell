@@ -171,6 +171,7 @@ void				remove_cmd_quote(t_minishell *data);
 void				replace_with_env_value(t_minishell *data, char **value);
 void				replace_with_env_value(t_minishell *data, char **value);
 char				*get_env_value(t_list *env, char *key);
+void				handle_invalid_export(char **key_value);
 
 // exec functions
 int					ft_exec(t_minishell *data, t_ast_node *node);
@@ -179,9 +180,9 @@ int					ft_exec(t_minishell *data, t_ast_node *node);
 int					ft_env(t_env **env);
 int					ft_export(t_minishell *data, t_ast_node *node);
 int					ft_unset(t_minishell *data);
-void				ft_exit(t_minishell *data);
+void				ft_exit(t_minishell *data, t_ast_node *node);
 int					ft_pwd(void);
-int					ft_cd(t_minishell *data);
+int					ft_cd(t_minishell *data, t_ast_node *node);
 int					ft_echo(t_ast_node *node);
 // cd utils
 int					handle_cd_error(char *pwd, const char *message);

@@ -14,6 +14,7 @@
 
 int	ft_exec(t_minishell *data, t_ast_node *node)
 {
+	signal(SIGPIPE, SIG_IGN);
 	if (ft_strncmp(node->command[0], "env", ft_strlen(node->command[0])) == 0)
 		print_env(&data->env);
 	if (ft_strncmp(node->command[0], "export",
@@ -23,14 +24,15 @@ int	ft_exec(t_minishell *data, t_ast_node *node)
 		return (ft_unset(data));
 	if (ft_strncmp(node->command[0], "exit", ft_strlen(node->command[0])) == 0)
 	{
-		ft_exit(data);
+		ft_exit(data, node);
 		return (1);
 	}
 	if (ft_strncmp(node->command[0], "pwd", ft_strlen(node->command[0])) == 0)
 		return (ft_pwd());
 	if (ft_strncmp(node->command[0], "cd", ft_strlen(node->command[0])) == 0)
-		return (ft_cd(data));
+		return (ft_cd(data, node));
 	if (ft_strncmp(node->command[0], "echo", ft_strlen(node->command[0])) == 0)
 		return (ft_echo(node));
+	signal(SIGPIPE, SIG_DFL);
 	return (0);
 }

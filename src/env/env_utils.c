@@ -70,8 +70,8 @@ char	**key_value_splitter(char *entry, char c)
 		result = (char **)malloc(2 * sizeof(char *));
 		if (!result)
 			return (NULL);
-		result[0] = strdup(entry);
-		result[1] = strdup("");
+		result[0] = ft_strdup(entry);
+		result[1] = ft_strdup("");
 		return (result);
 	}
 	len = ptr - entry;

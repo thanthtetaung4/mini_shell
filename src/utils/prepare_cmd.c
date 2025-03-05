@@ -26,7 +26,7 @@ char	*parse_argument(char **ptr, t_parse_state *state)
 	char	*arg_ptr;
 
 	token_start = *ptr;
-	arg = malloc(strlen(token_start) + 1);
+	arg = malloc(ft_strlen(token_start) + 1);
 	if (!arg)
 	{
 		state->error = true;

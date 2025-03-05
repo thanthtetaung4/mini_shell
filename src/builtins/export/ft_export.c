@@ -77,9 +77,11 @@ int	handle_export_command(t_minishell *data, t_ast_node *node, int *is_print)
 		else
 		{
 			key_value = key_value_splitter(node->command[i], '=');
-			status = process_key_value(data, key_value, is_print);
-			if (status == 1)
+			if (is_valid_var(key_value[0]) == 0)
+			{
+				handle_invalid_export(key_value);
 				return (1);
+			}
 		}
 	}
 	return (0);
