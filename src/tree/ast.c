@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:10:44 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/06 01:31:38 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/06 01:47:31 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ void	fill_command_data(t_minishell *data,t_ast_node *node, char **command, int c
 			i++;
 		else if (check_redirection(command[i]) == -1)
 		{
-			if (is_only_quotes(command[i]))
+			// printf("%d,%s\n", i , command[i]);
+			if (is_only_quotes(command[i]) && command[i + 1])
 				node->command[j] = ft_strdup(" ");
 			else
 				node->command[j] = ft_strdup(command[i]);
