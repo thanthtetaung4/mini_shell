@@ -12,10 +12,9 @@
 
 #include "../header/minishell.h"
 
-static char	*handle_path_not_found(char *cmd)
+static char	*handle_path_not_found(void)
 {
 	ft_putstr_fd("minishell: PATH not set\n", 2);
-	free(cmd);
 	return (ft_strdup(""));
 }
 
@@ -52,7 +51,10 @@ char	*find_command_path(char *cmd, t_minishell *data)
 		return (cmd);
 	f.path_env = get_env_value(data->env, "PATH");
 	if (!f.path_env || ft_strlen(f.path_env) == 0)
-		return (handle_path_not_found(cmd));
+	{
+		free(f.path_env);	
+		return (handle_path_not_found());
+	}
 	f.path_dup = ft_strdup(f.path_env);
 	f.dir = ft_split(f.path_dup, ':');
 	f.i = 0;

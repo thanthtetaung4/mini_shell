@@ -12,7 +12,7 @@
 
 #include "../../header/minishell.h"
 
-int			g_sig_status;
+extern int			g_sig_status;
 
 static int	check_sig(void)
 {

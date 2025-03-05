@@ -29,7 +29,6 @@
 # include <termios.h>
 # include <unistd.h>
 
-extern int			g_sig_status;
 typedef enum s_node_type
 {
 	PIPE,
