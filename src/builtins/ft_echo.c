@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 05:36:02 by taung             #+#    #+#             */
-/*   Updated: 2025/03/06 00:41:48 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/06 00:45:36 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	ft_echo(t_ast_node *node)
 
 	i = 1;
 	n_flag = 0;
-	if (node->command[i] && ft_strcmp(node->command[i], "-n") == 0)
+	if (node->command[i] && ft_strncmp(node->command[i], "-n", 2) == 0)
 	{
 		n_flag = 1;
 		i++;
