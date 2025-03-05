@@ -65,6 +65,7 @@ int	handle_export_command(t_minishell *data, t_ast_node *node, int *is_print)
 	int		status;
 
 	i = 0;
+	status = 0;
 	while (node->command[++i])
 	{
 		if (ft_strchr(node->command[i], '='))
@@ -77,14 +78,10 @@ int	handle_export_command(t_minishell *data, t_ast_node *node, int *is_print)
 		else
 		{
 			key_value = key_value_splitter(node->command[i], '=');
-			if (is_valid_var(key_value[0]) == 0)
-			{
-				handle_invalid_export(key_value);
-				return (1);
-			}
+			status = process_key_value2(data, key_value, is_print);
 		}
 	}
-	return (0);
+	return (status);
 }
 
 int	ft_export(t_minishell *data, t_ast_node *node)

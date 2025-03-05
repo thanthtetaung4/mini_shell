@@ -63,6 +63,7 @@ char	*ft_insert_spaces(char *input)
 	j = 0;
 	in_d_quotes = 0;
 	in_s_quotes = 0;
+	// printf("%d",ft_strlen(input) + (count_pnr(input) * 2) + 1);
 	new_input = malloc(ft_strlen(input) + (count_pnr(input) * 2) + 1);
 	if (!new_input)
 		return (NULL);

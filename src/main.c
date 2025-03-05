@@ -33,12 +33,13 @@ void	handle_eof(t_minishell *data)
 void	main_loop_helper(t_minishell *data, t_ast_node *node)
 {
 	add_history(data->input);
+	data->input = ft_remove_tabs(data->input);
 	data->input = ft_insert_spaces(data->input);
 	data->args = split_args(data->input);
 	data->args_count = ft_count_tds(data->args);
-	ft_interpret(data);
-	remove_cmd_quote(data);
-	remove_empty_args(data);
+	// ft_interpret(data);
+	// remove_cmd_quote(data);
+	// remove_empty_args(data);
 	node = create_tree(data);
 	data->status = tree_execution(node, data);
 	free_cmd(&data->args);

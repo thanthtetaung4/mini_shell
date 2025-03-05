@@ -64,6 +64,7 @@ typedef struct s_ast
 	t_redirections	*redirection;
 	char			**command;
 	int				executed;
+	int				cmd_count;
 }					t_ast_node;
 
 typedef struct s_tree
@@ -167,11 +168,15 @@ void				update_export_var(t_minishell *data, char *value,
 						int index);
 void				add_var(t_minishell *data, t_list *new_node);
 int					is_valid_var(char *key);
-void				remove_cmd_quote(t_minishell *data);
+void				remove_cmd_quote(t_ast_node *node);
 void				replace_with_env_value(t_minishell *data, char **value);
 void				replace_with_env_value(t_minishell *data, char **value);
 char				*get_env_value(t_list *env, char *key);
 void				handle_invalid_export(char **key_value);
+int					process_key_value2(t_minishell *data, char **key_value, int *is_print);
+void				export_add_var2(t_minishell *data, char *key, char *value);
+int					handle_invalid_identifier(char **key_value, int *is_print);
+
 
 // exec functions
 int					ft_exec(t_minishell *data, t_ast_node *node);
@@ -202,10 +207,10 @@ char				**ft_split_quoted(char const *s, char c);
 int					ft_count_tds(char **str);
 char				*ft_strrchr(const char *s, int c);
 int					ft_strnchr(char *str, int n, int c);
-void				ft_interpret(t_minishell *data);
+void				ft_interpret(t_minishell *data, t_ast_node *node);
 char				*ft_insert_spaces(char *input);
 char				**split_args(const char *input);
-void				remove_empty_args(t_minishell *data);
+void				remove_empty_args(t_ast_node *node);
 char				*find_command_path(char *cmd, t_minishell *data);
 void				init_helper(t_parse_state *state);
 t_parse_state		*init_parse_state(const char *input);
@@ -221,6 +226,7 @@ void				wrod_count_helper(char s, int *in_quotes, char *quote_char);
 size_t				ft_word_count(char *s, char c);
 char				*ft_interpret_str(t_minishell *data, char *line);
 char				*get_value_before_dollar_str(char *cmd, char *found_dollar);
+char				*ft_remove_tabs(char *input);
 
 // signal functions
 void				handle_sigint(int sig);
@@ -253,7 +259,7 @@ void				fill_redirection_data(t_minishell *data, t_ast_node *node,
 void				init_redirection_data(t_minishell *data, t_ast_node *node,
 						char **command);
 t_ast_node			*allocate_node(int type);
-void				fill_command_data(t_ast_node *node, char **command,
+void				fill_command_data(t_minishell *data,t_ast_node *node, char **command,
 						int count);
 t_ast_node			*create_node(int type, char **command, t_minishell *data,
 						int count);
@@ -357,6 +363,7 @@ void				close_all_pipe_fds(t_minishell *data);
 // fd_utils
 void				close_backup_fds(t_minishell *data);
 void				close_pipe_fds(t_minishell *data);
+void				open_file_empty_cmd(t_ast_node *node);
 
 // cmd_utils
 void				check_directory_permissions(char *cmd_path, char **args,

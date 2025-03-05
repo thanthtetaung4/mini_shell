@@ -38,6 +38,25 @@ int	execute_external_cmd(t_minishell *data, t_ast_node *node)
 	return (exit_status);
 }
 
+void	open_file_empty_cmd(t_ast_node *node)
+{
+	int	i;
+	int	fd;
+
+	i = 0;
+	while(node->redirection->files[i])
+	{
+		if (node->redirection->types[i] == APPEND || node->redirection->types[i] == OUTPUT)
+		{
+			fd = open(node->redirection->files[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd != -1)
+				close(fd);
+		}
+
+		i++;
+	}
+}
+
 int	execute_single_command(t_minishell *data, t_ast_node *node)
 {
 	int	stdout_fd;
@@ -49,7 +68,10 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 	exit_status = 0;
 	if (!node->command[0])
 	{
-		close(node->redirection->heredoc_fd[0]);
+		if (node->redirection->heredoc_count > 0)
+			close(node->redirection->heredoc_fd[0]);
+		if (node->redirection->redirection_count > 0)
+			open_file_empty_cmd(node);
 		return (0);
 	}
 	if (node->command[0] && check_cmd(node->command[0]))
@@ -73,6 +95,8 @@ void	execute_pipe_child(t_minishell *data, t_ast_node *node)
 	signal(SIGQUIT, SIG_DFL);
 	if (!node->command[0])
 	{
+		if (node->redirection->redirection_count > 0)
+			open_file_empty_cmd(node);
 		handle_empty_command_child(data);
 	}
 	setup_stdin_for_pipe(data, node);

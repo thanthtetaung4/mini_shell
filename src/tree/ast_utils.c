@@ -59,6 +59,50 @@ void	allocate_redirection_memory(t_ast_node *node)
 				+ node->redirection->heredoc_count));
 }
 
+int	file_quote_count(char *file)
+{
+	int	i;
+	int	c;
+
+	i = 0;
+	c = 0;
+	while(file[i])
+	{
+		if (file[i] == '\'' || file[i] == '"')
+			c++;
+		i++;
+	}
+	return c;
+}
+
+char	*remove_quote(char *file)
+{
+	char	*new_file;
+	int		i;
+	int		j;
+	int		q_c;
+
+	i = 0;
+	j = 0;
+
+	q_c = file_quote_count(file);
+	if (q_c > 0)
+		new_file = malloc(sizeof(char *) * (ft_strlen(file) - q_c + 1));
+	else
+		return ft_strdup(file);
+	while(file[i])
+	{
+		if (file[i] != '\'' && file[i] != '"')
+		{
+			new_file[j] = file[i];
+			j++;
+		}
+		i++;
+	}
+	new_file[j] = '\0';
+	return new_file;
+}
+
 void	fill_redirection_data(t_minishell *data, t_ast_node *node,
 		char **command)
 {
@@ -76,7 +120,7 @@ void	fill_redirection_data(t_minishell *data, t_ast_node *node,
 			node->redirection->types[j] = type;
 			if (data->args[i + 1])
 			{
-				node->redirection->files[j] = ft_strdup(command[i + 1]);
+				node->redirection->files[j] = remove_quote(command[i + 1]);
 				i++;
 			}
 			else

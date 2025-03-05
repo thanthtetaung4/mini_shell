@@ -32,7 +32,7 @@ t_list	*ft_envnew(char *key, char *value)
 
 void	ft_add_env(t_list **env, t_list *new_node)
 {
-	if (new_node && ft_strlen(((t_env *)new_node->content)->value) > 0)
+	if (new_node)
 		ft_lstadd_back(env, new_node);
 	else
 	{

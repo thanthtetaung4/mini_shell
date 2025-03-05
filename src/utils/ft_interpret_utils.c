@@ -35,6 +35,11 @@ char	*get_value(t_minishell *data, t_list *env, char *found_dollar,
 		*pos += 2;
 		return (ft_itoa(data->status));
 	}
+	if (found_dollar[i] == '_')
+	{
+		*pos += 2;
+		return (get_env_value(env, "_"));
+	}
 	while (ft_isalnum(found_dollar[i]) == 1 && found_dollar[i] != '\0')
 		i++;
 	key = ft_substr(found_dollar + 1, 0, i - 1);

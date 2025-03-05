@@ -12,26 +12,26 @@
 
 #include "../../header/minishell.h"
 
-void	remove_cmd_outer_quote(t_minishell *data)
+void	remove_cmd_outer_quote(t_ast_node *node)
 {
 	int		i;
 	int		str_len;
 	char	*tmp;
 
 	i = 0;
-	while (data->args[i])
+	while (node->command[i])
 	{
-		str_len = ft_strlen(data->args[i]);
-		if (data->args[i][0] == '\"' || data->args[i][str_len] == '\"')
+		str_len = ft_strlen(node->command[i]);
+		if (node->command[i][0] == '\"' || node->command[i][str_len] == '\"')
 		{
-			tmp = data->args[i];
-			data->args[i] = ft_strtrim(data->args[i], "\"");
+			tmp = node->command[i];
+			node->command[i] = ft_strtrim(node->command[i], "\"");
 			free(tmp);
 		}
-		else if (data->args[i][0] == '\'' || data->args[i][str_len] == '\'')
+		else if (node->command[i][0] == '\'' || node->command[i][str_len] == '\'')
 		{
-			tmp = data->args[i];
-			data->args[i] = ft_strtrim(data->args[i], "\'");
+			tmp = node->command[i];
+			node->command[i] = ft_strtrim(node->command[i], "\'");
 			free(tmp);
 		}
 		i++;
@@ -77,22 +77,22 @@ char	*rm_match_char(char *str, char c)
 	return (str);
 }
 
-void	remove_cmd_quote(t_minishell *data)
+void	remove_cmd_quote(t_ast_node *node)
 {
 	int	i;
 	int	s_quote_count;
 	int	d_quote_count;
 
-	remove_cmd_outer_quote(data);
+	remove_cmd_outer_quote(node);
 	i = 0;
-	while (data->args[i])
+	while (node->command[i])
 	{
-		s_quote_count = quote_count(data->args[i], 2);
-		d_quote_count = quote_count(data->args[i], 1);
+		s_quote_count = quote_count(node->command[i], 2);
+		d_quote_count = quote_count(node->command[i], 1);
 		if (s_quote_count > 0 && s_quote_count % 2 == 0)
-			data->args[i] = rm_match_char(data->args[i], '\'');
+			node->command[i] = rm_match_char(node->command[i], '\'');
 		if (d_quote_count > 0 && d_quote_count % 2 == 0)
-			data->args[i] = rm_match_char(data->args[i], '\"');
+			node->command[i] = rm_match_char(node->command[i], '\"');
 		i++;
 	}
 }

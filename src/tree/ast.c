@@ -25,16 +25,18 @@ t_ast_node	*allocate_node(int type)
 	node->right = NULL;
 	node->executed = 0;
 	node->command = NULL;
+	node->cmd_count = 0;
 	return (node);
 }
 
-void	fill_command_data(t_ast_node *node, char **command, int count)
+void	fill_command_data(t_minishell *data,t_ast_node *node, char **command, int count)
 {
 	int	i;
 	int	j;
 
 	i = 0;
 	j = 0;
+	(void)data;
 	node->command = malloc(sizeof(char *) * (count + 1));
 	if (!node->command)
 		return ;
@@ -46,12 +48,13 @@ void	fill_command_data(t_ast_node *node, char **command, int count)
 		{
 			node->command[j] = ft_strdup(command[i]);
 			if (!node->command[j])
-				return ;
+			return ;
 			j++;
 		}
 		i++;
 	}
 	node->command[j] = NULL;
+	node->cmd_count = ft_count_tds(node->command);
 }
 
 t_ast_node	*create_node(int type, char **command, t_minishell *data, int count)
@@ -68,7 +71,10 @@ t_ast_node	*create_node(int type, char **command, t_minishell *data, int count)
 			|| node->redirection->heredoc_count != 0)
 			count -= (2 * node->redirection->redirection_count) + (2
 					* node->redirection->heredoc_count);
-		fill_command_data(node, command, count);
+		fill_command_data(data, node, command, count);
+		ft_interpret(data, node);
+		remove_cmd_quote(node);
+		remove_empty_args(node);
 	}
 	return (node);
 }
