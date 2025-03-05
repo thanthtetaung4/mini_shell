@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:10:44 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/06 00:36:20 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/06 01:31:38 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,19 @@ t_ast_node	*allocate_node(int type)
 	node->cmd_count = 0;
 	return (node);
 }
+int	is_only_quotes (char *input)
+{
+	int	i;
 
+	i = 0;
+	while(input[i])
+	{
+		if(input[i] != '"' && input[i] != '\'')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 void	fill_command_data(t_minishell *data,t_ast_node *node, char **command, int count)
 {
 	int	i;
@@ -46,7 +58,7 @@ void	fill_command_data(t_minishell *data,t_ast_node *node, char **command, int c
 			i++;
 		else if (check_redirection(command[i]) == -1)
 		{
-			if (ft_strcmp(command[i], "\"\"") == 0)
+			if (is_only_quotes(command[i]))
 				node->command[j] = ft_strdup(" ");
 			else
 				node->command[j] = ft_strdup(command[i]);
