@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:10:44 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 06:19:11 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/06 00:36:20 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,10 @@ void	fill_command_data(t_minishell *data,t_ast_node *node, char **command, int c
 			i++;
 		else if (check_redirection(command[i]) == -1)
 		{
-			node->command[j] = ft_strdup(command[i]);
+			if (ft_strcmp(command[i], "\"\"") == 0)
+				node->command[j] = ft_strdup(" ");
+			else
+				node->command[j] = ft_strdup(command[i]);
 			if (!node->command[j])
 			return ;
 			j++;

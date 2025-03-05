@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/03/04 15:05:33 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/06 00:27:54 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,26 @@ void	handle_eof(t_minishell *data)
 	exit(0);
 }
 
+int	is_runable(char *input)
+{
+	int	i;
+
+	i = 0;
+	while(input[i])
+	{
+		if (input[i] != ' ' && input[i] != '\t')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 void	main_loop_helper(t_minishell *data, t_ast_node *node)
 {
 	add_history(data->input);
 	data->input = ft_remove_tabs(data->input);
+	if (!is_runable(data->input))
+		return ;
 	data->input = ft_insert_spaces(data->input);
 	data->args = split_args(data->input);
 	data->args_count = ft_count_tds(data->args);
