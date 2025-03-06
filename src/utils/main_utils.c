@@ -6,81 +6,52 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 14:52:05 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/06 03:05:39 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/06 17:56:21 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/minishell.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-char	*remove_trailing_whitespace(const char* str)
+int	redir_syntax(char *tmp)
 {
 	int	i;
 
-    if (str == NULL)
-	return NULL;
-    size_t len = strlen(str);
-    int lastNonWhitespace = -1;
-	i = len - 1;
-	while (i >= 0)
-	{
-		if (str[i] != ' ' && str[i] != '\t')
-		{
-			lastNonWhitespace = i;
-			break;
-		}
-		i--;
-	}
-	if (lastNonWhitespace == -1)
-	{
-		char* result = malloc(1);
-		if (result == NULL) {
-			return NULL;
-		}
-		result[0] = '\0';
-		return result;
-	}
-	char* result = malloc(lastNonWhitespace + 2);
-	if (result == NULL)
-		return NULL;
-	strncpy(result, str, lastNonWhitespace + 1);
-	result[lastNonWhitespace + 1] = '\0';
-	return result;
-}
-
-int	check_syntax_errors(char *input)
-{
-	int	len;
-	char	*tmp;
-	int i;
-
 	i = 0;
-	tmp = remove_trailing_whitespace(input);
-	len = ft_strlen(tmp);
 	while (tmp[i])
 	{
-		if ((tmp[i] == '>' && tmp[i + 1] == '<') || (tmp[i] == '<' && tmp[i + 1] == '>'))
+		if ((tmp[i] == '>' && tmp[i + 1] == '<') || (tmp[i] == '<' && tmp[i
+					+ 1] == '>'))
 		{
-			ft_putstr_fd("minishell: syntax error near unexpected redir token'\n",
-				2);
+			ft_putstr_fd("minishell: syntax error\n", 2);
 			free(tmp);
 			return (0);
 		}
 		i++;
 	}
+	return (1);
+}
+
+int	check_syntax_errors(char *input)
+{
+	int		len;
+	char	*tmp;
+
+	tmp = remove_trailing_whitespace(input);
+	len = ft_strlen(tmp);
+	if (!redir_syntax(tmp))
+		return (0);
 	if ((tmp[len - 1] == '>' || tmp[len - 1] == '<'))
 	{
-		ft_putstr_fd("minishell: syntax error near unexpected redir token'\n",
-			2);
+		ft_putstr_fd("minishell: syntax error\n", 2);
 		free(tmp);
 		return (0);
 	}
 	if (tmp[0] == '|' || tmp[len - 1] == '|')
 	{
-		ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
+		ft_putstr_fd("minishell: syntax error\n", 2);
 		free(tmp);
 		return (0);
 	}

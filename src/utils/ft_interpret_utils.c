@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_interpret_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 16:02:52 by taung             #+#    #+#             */
-/*   Updated: 2025/03/02 16:11:17 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/06 17:46:47 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,35 @@ char	*get_value_after_variable(char *cmd, char *pos)
 
 	after_dollar = ft_substr(cmd, pos - cmd, ft_strlen(cmd) - (pos - cmd));
 	return (after_dollar);
+}
+
+char	*ft_strcjoin(char *str, char c)
+{
+	char	*result;
+	int		char_len;
+	int		i;
+
+	char_len = 2;
+	if (c == '\0')
+		char_len = 1;
+	result = malloc(sizeof(char) * (ft_strlen(str) + char_len));
+	i = 0;
+	while (str && str[i])
+	{
+		result[i] = str[i];
+		i++;
+	}
+	if (c)
+		result[i++] = c;
+	result[i] = '\0';
+	if (str)
+		free(str);
+	return (result);
+}
+
+char	*result_strcjoin(char **result, char *str)
+{
+	*result = ft_strcjoin(*result, *str++);
+	*result = ft_strcjoin(*result, *str++);
+	return (str);
 }

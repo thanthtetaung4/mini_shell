@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 16:33:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/06 07:32:16 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/06 17:55:09 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -402,5 +402,10 @@ void				init_count_quotes(int *s_quote_count, int *d_quote_count,
 						int *in_d_quotes, int *in_s_quotes);
 int					print_err(int *s_quote_count, int *d_quote_count);
 int					count_quotes(char *input);
-
+void				handle_eof(t_minishell *data);
+void				status_change(t_minishell *data);
+// interpret
+char				*ft_strcjoin(char *str, char c);
+char				*result_strcjoin(char **result, char *str);
+char				*remove_trailing_whitespace(const char *str);
 #endif

@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/03/06 02:10:37 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/06 17:48:45 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ char	*ft_strndup(const char *src, int len)
 {
 	char	*result;
 	int		i;
+
 	i = 0;
 	result = malloc(sizeof(char) * (len + 1));
 	if (!result)
@@ -26,29 +27,6 @@ char	*ft_strndup(const char *src, int len)
 		i++;
 	}
 	result[i] = '\0';
-	return (result);
-}
-
-char	*ft_strcjoin(char *str, char c)
-{
-	char	*result;
-	int		char_len;
-	int		i;
-	char_len = 2;
-	if (c == '\0')
-		char_len = 1;
-	result = malloc(sizeof(char) * (ft_strlen(str) + char_len));
-	i = 0;
-	while (str && str[i])
-	{
-		result[i] = str[i];
-		i++;
-	}
-	if (c)
-		result[i++] = c;
-	result[i] = '\0';
-	if (str)
-		free(str);
 	return (result);
 }
 
@@ -114,63 +92,30 @@ char	*replace_env(char *str, char **result, t_list *envp, int status)
 	return (str);
 }
 
-// char	*handle_env(char *str, t_list *envp, int status)
-// {
-// 	char	*result;
-// 	int     in_quote;
-// 	int		here_doc;
-
-// 	in_quote = 0;
-// 	result = NULL;
-// 	here_doc = 0;
-// 	while (str && *str)
-// 	{
-// 		if (*str == '\\' && *(str + 1) && in_quote != '\'')
-// 		{
-// 			result = ft_strcjoin(result, *str++);
-// 			result = ft_strcjoin(result, *str++);
-// 		}
-// 		is_quote("\'\"", *str, &in_quote);
-// 		if (!in_quote && !ft_strncmp("<<", str, 2))
-// 			here_doc = 1;
-// 		if (here_doc && ft_strchr(" \t", *str))
-// 			here_doc = 0;
-// 		if (!here_doc && *str == '$' && in_quote != '\'')
-// 			str = replace_env(str, &result, envp, status);
-// 		else
-// 			result = ft_strcjoin(result, *str++);
-// 	}
-// 	return (result);
-// }
-char    *handle_env(char *str, t_list *envp, int status)
+char	*handle_env(char *str, t_list *envp, int status)
 {
-    char    *result;
-    int     in_quote;
-    int     here_doc;
-    in_quote = 0;
-    result = NULL;
-    here_doc = 0;
-    while (str && *str)
-    {
-        if (*str == '\\' && *(str + 1) && in_quote != '\'')
-        {
-            result = ft_strcjoin(result, *str++);
-            result = ft_strcjoin(result, *str++);
-        }
-        if (!is_quote("\'\"", *str, &in_quote) && !ft_strncmp("<<", str, 2))
-        {
-            here_doc = 1;
-            result = ft_strcjoin(result, *str++);
-            result = ft_strcjoin(result, *str++);
-            while (*str && ft_strchr(" \t", *str))
-                str++;
-        }
-        if (here_doc && ft_strchr(" \t", *str))
-            here_doc = 0;
-        if (!here_doc && *str == '$' && in_quote != '\'')
-            str = replace_env(str, &result, envp, status);
-        else
-            result = ft_strcjoin(result, *str++);
-    }
-    return (result);
+	char	*result;
+	int		in_quote;
+	int		here_doc;
+
+	in_quote = 0;
+	result = NULL;
+	here_doc = 0;
+	while (str && *str)
+	{
+		if (!is_quote("\'\"", *str, &in_quote) && !ft_strncmp("<<", str, 2))
+		{
+			here_doc = 1;
+			str = result_strcjoin(&result, str);
+			while (*str && ft_strchr(" \t", *str))
+				str++;
+		}
+		if (here_doc && ft_strchr(" \t", *str))
+			here_doc = 0;
+		if (!here_doc && *str == '$' && in_quote != '\'')
+			str = replace_env(str, &result, envp, status);
+		else
+			result = ft_strcjoin(result, *str++);
+	}
+	return (result);
 }
