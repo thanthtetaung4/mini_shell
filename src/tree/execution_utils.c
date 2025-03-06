@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 10:37:58 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/04 22:11:44 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/06 02:20:45 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,25 +38,6 @@ int	execute_external_cmd(t_minishell *data, t_ast_node *node)
 	return (exit_status);
 }
 
-void	open_file_empty_cmd(t_ast_node *node)
-{
-	int	i;
-	int	fd;
-
-	i = 0;
-	while(node->redirection->files[i])
-	{
-		if (node->redirection->types[i] == APPEND || node->redirection->types[i] == OUTPUT)
-		{
-			fd = open(node->redirection->files[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd != -1)
-				close(fd);
-		}
-
-		i++;
-	}
-}
-
 int	execute_single_command(t_minishell *data, t_ast_node *node)
 {
 	int	stdout_fd;
@@ -65,7 +46,6 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 
 	stdout_fd = -1;
 	stdin_fd = -1;
-	exit_status = 0;
 	if (!node->command[0])
 	{
 		if (node->redirection->heredoc_count > 0)
@@ -81,9 +61,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 				stdin_fd);
 	}
 	else
-	{
 		exit_status = execute_external_cmd(data, node);
-	}
 	if (node->redirection->heredoc_count > 0)
 		close(node->redirection->heredoc_fd[0]);
 	return (exit_status);

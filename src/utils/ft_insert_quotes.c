@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_insert_quotes.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 15:51:12 by taung             #+#    #+#             */
-/*   Updated: 2025/03/04 19:12:18 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/06 02:10:09 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ char	*ft_insert_spaces(char *input)
 	j = 0;
 	in_d_quotes = 0;
 	in_s_quotes = 0;
-	// printf("%d",ft_strlen(input) + (count_pnr(input) * 2) + 1);
 	new_input = malloc(ft_strlen(input) + (count_pnr(input) * 2) + 1);
 	if (!new_input)
 		return (NULL);

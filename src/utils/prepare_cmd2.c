@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 15:55:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/04 14:27:28 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/06 02:08:48 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ void	remove_cmd_outer_quote(t_ast_node *node)
 			node->command[i] = ft_strtrim(node->command[i], "\"");
 			free(tmp);
 		}
-		else if (node->command[i][0] == '\'' || node->command[i][str_len] == '\'')
+		else if (node->command[i][0] == '\''
+			|| node->command[i][str_len] == '\'')
 		{
 			tmp = node->command[i];
 			node->command[i] = ft_strtrim(node->command[i], "\'");

@@ -6,48 +6,11 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:09:56 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 06:19:07 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/06 02:18:02 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../header/minishell.h"
-
-int	check_redirection(char *arg)
-{
-	if (!arg)
-		return (-1);
-	if (ft_strcmp(">>", arg) == 0)
-		return (APPEND);
-	else if (ft_strcmp("<<", arg) == 0)
-		return (HEREDOC);
-	else if (ft_strcmp("<", arg) == 0)
-		return (INPUT);
-	else if (ft_strcmp(">", arg) == 0)
-		return (OUTPUT);
-	return (-1);
-}
-
-void	redirection_counter(t_minishell *data, t_ast_node *node, char **command)
-{
-	int	i;
-
-	i = 0;
-	while (command[i])
-	{
-		if (ft_strcmp(command[i], "<<") == 0)
-		{
-			data->forking->heredoc_count++;
-			node->redirection->heredoc_count++;
-		}
-		else if (ft_strcmp(command[i], "<") == 0 || ft_strcmp(command[i],
-				">") == 0 || ft_strcmp(command[i], ">>") == 0)
-		{
-			data->forking->redirection_count++;
-			node->redirection->redirection_count++;
-		}
-		i++;
-	}
-}
 
 void	allocate_redirection_memory(t_ast_node *node)
 {
@@ -66,13 +29,13 @@ int	file_quote_count(char *file)
 
 	i = 0;
 	c = 0;
-	while(file[i])
+	while (file[i])
 	{
 		if (file[i] == '\'' || file[i] == '"')
 			c++;
 		i++;
 	}
-	return c;
+	return (c);
 }
 
 char	*remove_quote(char *file)
@@ -84,13 +47,12 @@ char	*remove_quote(char *file)
 
 	i = 0;
 	j = 0;
-
 	q_c = file_quote_count(file);
 	if (q_c > 0)
 		new_file = malloc(sizeof(char *) * (ft_strlen(file) - q_c + 1));
 	else
-		return ft_strdup(file);
-	while(file[i])
+		return (ft_strdup(file));
+	while (file[i])
 	{
 		if (file[i] != '\'' && file[i] != '"')
 		{
@@ -100,7 +62,7 @@ char	*remove_quote(char *file)
 		i++;
 	}
 	new_file[j] = '\0';
-	return new_file;
+	return (new_file);
 }
 
 void	fill_redirection_data(t_minishell *data, t_ast_node *node,

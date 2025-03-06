@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 16:33:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/04 15:03:37 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/06 02:21:50 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,10 +173,10 @@ void				replace_with_env_value(t_minishell *data, char **value);
 void				replace_with_env_value(t_minishell *data, char **value);
 char				*get_env_value(t_list *env, char *key);
 void				handle_invalid_export(char **key_value);
-int					process_key_value2(t_minishell *data, char **key_value, int *is_print);
+int					process_key_value2(t_minishell *data, char **key_value,
+						int *is_print);
 void				export_add_var2(t_minishell *data, char *key, char *value);
 int					handle_invalid_identifier(char **key_value, int *is_print);
-
 
 // exec functions
 int					ft_exec(t_minishell *data, t_ast_node *node);
@@ -259,7 +259,7 @@ void				fill_redirection_data(t_minishell *data, t_ast_node *node,
 void				init_redirection_data(t_minishell *data, t_ast_node *node,
 						char **command);
 t_ast_node			*allocate_node(int type);
-void				fill_command_data(t_minishell *data,t_ast_node *node, char **command,
+void				fill_command_data(t_ast_node *node, char **command,
 						int count);
 t_ast_node			*create_node(int type, char **command, t_minishell *data,
 						int count);
@@ -381,10 +381,15 @@ void				handle_command_not_found(char **args, char **env_strings,
 char				**prepare_args_no_pipe(t_ast_node *node, t_minishell *data);
 char				**prepare_args_with_pipe(t_ast_node *node,
 						t_minishell *data);
+// utils
+int					is_only_quotes(char *input);
+void				open_file_empty_cmd(t_ast_node *node);
+int					is_runable(char *input);
 // main utils
 int					check_syntax_errors(char *input);
 void				init_count_quotes(int *s_quote_count, int *d_quote_count,
 						int *in_d_quotes, int *in_s_quotes);
 int					print_err(int *s_quote_count, int *d_quote_count);
 int					count_quotes(char *input);
+
 #endif

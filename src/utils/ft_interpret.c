@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/03/04 14:28:38 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/06 02:10:37 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,14 @@ char	*interpret(t_minishell *data, char **cmd, t_list *env,
 	return (*cmd);
 }
 
-void	ft_should_interpret(t_minishell *data, t_ast_node *node,int i, char *found_dollar)
+void	ft_should_interpret(t_minishell *data, t_ast_node *node, int i,
+		char *found_dollar)
 {
 	int	cmd_count;
 
 	cmd_count = ft_count_tds(node->command);
-	if (found_dollar && (ft_strlen(found_dollar) == 1
-			|| (found_dollar[1] != '?' && found_dollar[1] != '_' && ft_isalnum(found_dollar[1]) == 0)))
+	if (found_dollar && (ft_strlen(found_dollar) == 1 || (found_dollar[1] != '?'
+				&& found_dollar[1] != '_' && ft_isalnum(found_dollar[1]) == 0)))
 	{
 		return ;
 	}

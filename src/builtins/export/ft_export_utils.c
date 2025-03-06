@@ -3,13 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.sg>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 21:25:20 by taung             #+#    #+#             */
-/*   Updated: 2025/03/05 21:25:22 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/06 02:07:10 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../../../header/minishell.h"
 
