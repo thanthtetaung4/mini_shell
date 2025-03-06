@@ -74,23 +74,25 @@ void	execute_commands(t_ast_node *lowest_node, t_minishell *data)
 void	wait_for_children(t_minishell *data)
 {
 	int	i;
+	int	j;
 
 	i = 0;
+	j = 0;
 	while (i < data->forking->completed_piping)
 	{
 		waitpid(data->forking->pids[i], &data->status, 0);
-		handle_signal_status(data);
+		handle_signal_status(data, &j);
 		i++;
 	}
 }
 
-void	handle_signal_status(t_minishell *data)
+void	handle_signal_status(t_minishell *data, int *j)
 {
 	int	sig;
 
 	if (data->forking->pipe_count > 0)
 	{
-		if (WIFSIGNALED(data->status))
+		if (WIFSIGNALED(data->status) && *j == 0)
 		{
 			sig = WTERMSIG(data->status);
 			if (sig == SIGINT)
@@ -103,6 +105,7 @@ void	handle_signal_status(t_minishell *data)
 				write(1, "Quit: (Core dumped)\n", 20);
 				data->status = 131;
 			}
+			(*j)++;
 		}
 		else if (WIFEXITED(data->status))
 		{

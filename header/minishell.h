@@ -135,6 +135,7 @@ typedef struct s_heredoc
 	char			**delimiter;
 	int				current_delimiter;
 	char			*line;
+	int				is_expend;
 }					t_heredoc;
 
 typedef struct s_interpret
@@ -344,7 +345,7 @@ void				handle_command_execution(t_minishell *data,
 void				execute_commands(t_ast_node *lowest_node,
 						t_minishell *data);
 void				wait_for_children(t_minishell *data);
-void				handle_signal_status(t_minishell *data);
+void				handle_signal_status(t_minishell *data, int *j);
 // tree_creation_utils
 void				handle_pipe_node(t_ast_node **head, char **cmd,
 						t_minishell *data, int count);
@@ -355,6 +356,8 @@ void				process_pipe_node(t_ast_node **head, t_minishell *data,
 						int *counter, int i);
 void				process_single_command(t_ast_node **head, t_minishell *data,
 						int *counter, int i);
+int						file_quote_count(char *file);
+
 // fd
 void				close_heredoc_fds_c(t_minishell *data);
 void				close_heredoc_fds_p(t_minishell *data);

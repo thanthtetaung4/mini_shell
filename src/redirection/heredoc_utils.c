@@ -26,6 +26,33 @@ void	free_heredoc(char *line, char **delimiters)
 	free(delimiters);
 }
 
+char	*remove_quote_hd(char *file)
+{
+	char	*new_file;
+	int		i;
+	int		j;
+	int		q_c;
+
+	i = 0;
+	j = 0;
+	q_c = file_quote_count(file);
+	if (q_c > 0)
+		new_file = malloc(sizeof(char *) * (ft_strlen(file) - q_c + 1));
+	else
+		return (ft_strdup(file));
+	while (file[i])
+	{
+		if (file[i] != '\'' && file[i] != '"')
+		{
+			new_file[j] = file[i];
+			j++;
+		}
+		i++;
+	}
+	new_file[j] = '\0';
+	return (new_file);
+}
+
 void	init_delimiters(t_ast_node *node, t_heredoc *heredoc)
 {
 	int	i;
@@ -37,8 +64,10 @@ void	init_delimiters(t_ast_node *node, t_heredoc *heredoc)
 			* (node->redirection->heredoc_count + 1));
 	while (node->redirection->types[i] && node->redirection->files[i])
 	{
+		if (j == node->redirection->heredoc_count -1 && (node->redirection->files[i][0] == '\'' || node->redirection->files[i][0] == '"'))
+			heredoc->is_expend = 0;
 		if (node->redirection->types[i] == HEREDOC)
-			heredoc->delimiter[j++] = ft_strdup(node->redirection->files[i]);
+			heredoc->delimiter[j++] = remove_quote_hd(node->redirection->files[i]);
 		i++;
 	}
 	heredoc->delimiter[j] = NULL;
@@ -65,9 +94,12 @@ void	handle_heredoc_input_helper(t_heredoc *heredoc, t_ast_node *node,
 	else if (heredoc->current_delimiter == node->redirection->heredoc_count - 1
 		&& node->command[0])
 	{
-		tmp = heredoc->line;
-		heredoc->line = ft_interpret_str(data, heredoc->line);
-		free(tmp);
+		if (heredoc->is_expend == 1)
+		{
+			tmp = heredoc->line;
+			heredoc->line = ft_interpret_str(data, heredoc->line);
+			free(tmp);
+		}
 		ft_putstr_fd(heredoc->line, node->redirection->heredoc_fd[1]);
 		ft_putstr_fd("\n", node->redirection->heredoc_fd[1]);
 	}
@@ -78,4 +110,5 @@ void	init_heredoc(t_heredoc *heredoc)
 {
 	heredoc->current_delimiter = 0;
 	heredoc->line = NULL;
+	heredoc->is_expend = 1;
 }

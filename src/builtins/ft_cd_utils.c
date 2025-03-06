@@ -21,7 +21,12 @@ int	handle_cd_error(char *pwd, const char *message)
 
 void	update_prev_dir(t_minishell *data, char *prev_dir)
 {
-	export_add_var(data, "OLDPWD", prev_dir);
+	char *val;
+
+	(void)prev_dir;
+	val = get_env_value(data->env, "PWD");
+	export_add_var(data, "OLDPWD", val);
+	free(val);
 }
 
 void	update_env_pwd(t_minishell *data)

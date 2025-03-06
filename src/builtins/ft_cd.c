@@ -72,8 +72,8 @@ int	change_directory(t_minishell *data, char *pwd, const char *path)
 				return (handle_cd_error(pwd, "No such file or directory\n"));
 			else
 			{
-				update_env_pwd(data);
 				update_prev_dir(data, pwd);
+				update_env_pwd(data);
 			}
 		}
 		else

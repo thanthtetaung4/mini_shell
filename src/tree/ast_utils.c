@@ -38,7 +38,7 @@ int	file_quote_count(char *file)
 	return (c);
 }
 
-char	*remove_quote(char *file)
+char	*remove_quote_f(char *file, int type)
 {
 	char	*new_file;
 	int		i;
@@ -48,7 +48,7 @@ char	*remove_quote(char *file)
 	i = 0;
 	j = 0;
 	q_c = file_quote_count(file);
-	if (q_c > 0)
+	if (q_c > 0 && type != HEREDOC)
 		new_file = malloc(sizeof(char *) * (ft_strlen(file) - q_c + 1));
 	else
 		return (ft_strdup(file));
@@ -82,7 +82,7 @@ void	fill_redirection_data(t_minishell *data, t_ast_node *node,
 			node->redirection->types[j] = type;
 			if (data->args[i + 1])
 			{
-				node->redirection->files[j] = remove_quote(command[i + 1]);
+				node->redirection->files[j] = remove_quote_f(command[i + 1], type);
 				i++;
 			}
 			else

@@ -55,6 +55,7 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 {
 	int	exit_status;
 
+	// signal(SIGPIPE, SIG_IGN);
 	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
 		return (0);
 	if (check_cmd(node->command[0]) == 1)
