@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 15:41:25 by taung             #+#    #+#             */
-/*   Updated: 2025/03/02 15:42:12 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/06 07:19:07 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	handle_cd_error(char *pwd, const char *message)
 
 void	update_prev_dir(t_minishell *data, char *prev_dir)
 {
-	char *val;
+	char	*val;
 
 	(void)prev_dir;
 	val = get_env_value(data->env, "PWD");

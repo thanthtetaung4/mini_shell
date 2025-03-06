@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 16:33:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/06 02:21:50 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/06 07:32:16 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,6 +228,8 @@ size_t				ft_word_count(char *s, char c);
 char				*ft_interpret_str(t_minishell *data, char *line);
 char				*get_value_before_dollar_str(char *cmd, char *found_dollar);
 char				*ft_remove_tabs(char *input);
+void				init_delimiters(t_ast_node *node, t_heredoc *heredoc);
+char				*remove_quote_hd(char *file);
 
 // signal functions
 void				handle_sigint(int sig);
@@ -356,7 +358,7 @@ void				process_pipe_node(t_ast_node **head, t_minishell *data,
 						int *counter, int i);
 void				process_single_command(t_ast_node **head, t_minishell *data,
 						int *counter, int i);
-int						file_quote_count(char *file);
+int					file_quote_count(char *file);
 
 // fd
 void				close_heredoc_fds_c(t_minishell *data);

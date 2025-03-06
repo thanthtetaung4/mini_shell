@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:09:56 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/06 02:18:02 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/06 07:32:29 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,8 @@ void	fill_redirection_data(t_minishell *data, t_ast_node *node,
 			node->redirection->types[j] = type;
 			if (data->args[i + 1])
 			{
-				node->redirection->files[j] = remove_quote_f(command[i + 1], type);
-				i++;
+				node->redirection->files[j] = remove_quote_f(command[++i],
+						type);
 			}
 			else
 				node->redirection->files[j] = NULL;
