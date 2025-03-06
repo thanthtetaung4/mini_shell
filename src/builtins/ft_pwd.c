@@ -24,7 +24,8 @@ int	ft_pwd(void)
 		free(buffer);
 		return (1);
 	}
-	printf("%s\n", buffer);
+	ft_putstr_fd(buffer, 1);
+	ft_putstr_fd("\n", 1);
 	free(buffer);
 	return (0);
 }

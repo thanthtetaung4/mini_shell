@@ -42,7 +42,8 @@ SRCS = $(SRCS_PATH)/main.c $(TREE_PATH)/create_tree.c $(REDIRECTION_PATH)/redire
 		$(TREE_PATH)/execute_redirections.c $(TREE_PATH)/execution_utils.c $(TREE_PATH)/execution_utils_2.c $(TREE_PATH)/execution_utils_3.c \
 		$(TREE_PATH)/inits.c $(TREE_PATH)/pipe_utils.c $(TREE_PATH)/redirection_handling.c $(TREE_PATH)/tree_creation_utils.c \
 		$(TREE_PATH)/tree_utils.c $(TREE_PATH)/cmd_utils.c $(SRCS_PATH)/$(SIGNAL_PATH)/sig_utils.c $(SRCS_PATH)/$(UTIL_PATH)/main_utils.c $(TREE_PATH)/arg_utils.c \
-		$(SRCS_PATH)$(UTIL_PATH)/prepare_cmd3.c $(SRCS_PATH)$(BUILTINS_PATH)$(EXPORT_PATH)/ft_export_utils.c $(SRCS_PATH)$(UTIL_PATH)/utils.c $(REDIRECTION_PATH)/heredoc_utils2.c
+		$(SRCS_PATH)$(UTIL_PATH)/prepare_cmd3.c $(SRCS_PATH)$(BUILTINS_PATH)$(EXPORT_PATH)/ft_export_utils.c $(SRCS_PATH)$(UTIL_PATH)/utils.c \
+		$(REDIRECTION_PATH)/heredoc_utils2.c $(TREE_PATH)/ast_utls2.c
 
 
 

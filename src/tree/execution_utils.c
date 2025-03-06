@@ -84,6 +84,7 @@ void	execute_pipe_child(t_minishell *data, t_ast_node *node)
 	{
 		if (execute_redirection(node, data))
 		{
+			close_heredoc_fds_p(data);
 			free_all(data, 1);
 			exit(1);
 		}

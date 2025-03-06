@@ -21,7 +21,9 @@ int	handle_heredoc_if_needed(t_ast_node *node, int i)
 	{
 		result = handle_heredoc_redirection(node);
 		if (!node->redirection->types[i + 1])
+		{
 			return (-1);
+		}
 	}
 	return (result);
 }

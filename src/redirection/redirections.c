@@ -12,8 +12,6 @@
 
 #include "../../header/minishell.h"
 
-extern int	g_sig_status;
-
 void	handle_heredoc_input(t_minishell *data, t_ast_node *node,
 		t_heredoc *heredoc)
 {

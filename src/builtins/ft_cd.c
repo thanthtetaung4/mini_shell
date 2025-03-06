@@ -53,8 +53,8 @@ int	cd_to_prev(t_minishell *data, char *pwd)
 	status = chdir(tmp);
 	if (status != -1)
 	{
-		update_env_pwd(data);
 		update_prev_dir(data, pwd);
+		update_env_pwd(data);
 	}
 	printf("%s\n", tmp);
 	free(tmp);

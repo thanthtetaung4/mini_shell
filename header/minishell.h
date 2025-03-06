@@ -29,6 +29,8 @@
 # include <termios.h>
 # include <unistd.h>
 
+extern int			g_sig_status;
+
 typedef enum s_node_type
 {
 	PIPE,
@@ -230,6 +232,8 @@ char				*get_value_before_dollar_str(char *cmd, char *found_dollar);
 char				*ft_remove_tabs(char *input);
 void				init_delimiters(t_ast_node *node, t_heredoc *heredoc);
 char				*remove_quote_hd(char *file);
+char				*handle_env(char *str, t_list *envp, int status);
+void				status_change(t_minishell *data);
 
 // signal functions
 void				handle_sigint(int sig);
@@ -240,6 +244,7 @@ void				handle_sigquit(int sig);
 void				signal_print_newline(int signal);
 void				handle_heredoc_sigint(int sig);
 void				set_signals_heredoc(void);
+void				set_up_main_sig(void);
 
 // test utils
 void				ft_print_args(char **args);
@@ -257,8 +262,7 @@ int					check_redirection(char *arg);
 void				redirection_counter(t_minishell *data, t_ast_node *node,
 						char **command);
 void				allocate_redirection_memory(t_ast_node *node);
-void				fill_redirection_data(t_minishell *data, t_ast_node *node,
-						char **command);
+void				fill_redirection_data(t_ast_node *node, char **command);
 void				init_redirection_data(t_minishell *data, t_ast_node *node,
 						char **command);
 t_ast_node			*allocate_node(int type);
@@ -268,6 +272,8 @@ t_ast_node			*create_node(int type, char **command, t_minishell *data,
 						int count);
 void				add_right_node(t_ast_node **parent_node, t_ast_node *node);
 void				add_left_node(t_ast_node **parent_node, t_ast_node *node);
+void				fill_cmd_data_helper(t_ast_node *node, char *command,
+						int iter[2], int count);
 
 // redirection_handling
 int					handle_output_redirection(t_ast_node *node,

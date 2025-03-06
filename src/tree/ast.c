@@ -32,31 +32,28 @@ t_ast_node	*allocate_node(int type)
 void	fill_command_data(t_ast_node *node, char **command,
 		int count)
 {
-	int	i;
-	int	j;
+	int	iterator[2];
 
-	i = 0;
-	j = 0;
+	iterator[0] = 0;
+	iterator[1] = 0;
 	node->command = malloc(sizeof(char *) * (count + 1));
 	if (!node->command)
 		return ;
-	while (j < count && command[i])
+	while (iterator[1] < count && command[iterator[0]])
 	{
-		if (check_redirection(command[i]) != -1 && command[i + 1])
-			i++;
-		else if (check_redirection(command[i]) == -1)
+		if (check_redirection(command[iterator[0]]) != -1
+			&& command[iterator[0] + 1])
+			iterator[0]++;
+		else if (check_redirection(command[iterator[0]]) == -1)
 		{
-			if (is_only_quotes(command[i]) && command[i + 1])
-				node->command[j] = ft_strdup(" ");
-			else
-				node->command[j] = ft_strdup(command[i]);
-			if (!node->command[j])
+			fill_cmd_data_helper(node, command[iterator[0]], iterator, count);
+			if (!node->command[iterator[1]])
 				return ;
-			j++;
+			iterator[1]++;
 		}
-		i++;
+		iterator[0]++;
 	}
-	node->command[j] = NULL;
+	node->command[iterator[1]] = NULL;
 }
 
 t_ast_node	*create_node(int type, char **command, t_minishell *data, int count)
@@ -75,9 +72,7 @@ t_ast_node	*create_node(int type, char **command, t_minishell *data, int count)
 					* node->redirection->heredoc_count);
 		fill_command_data(node, command, count);
 		node->cmd_count = ft_count_tds(node->command);
-		ft_interpret(data, node);
 		remove_cmd_quote(node);
-		remove_empty_args(node);
 	}
 	return (node);
 }

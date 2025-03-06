@@ -32,10 +32,11 @@ void	handle_eof(t_minishell *data)
 
 void	main_loop_helper(t_minishell *data, t_ast_node *node)
 {
-	add_history(data->input);
-	data->input = ft_remove_tabs(data->input);
-	if (!is_runable(data->input))
-		return ;
+	char	*tmp;
+
+	tmp = data->input;
+	data->input = handle_env(data->input, data->env, data->status);
+	free(tmp);
 	data->input = ft_insert_spaces(data->input);
 	data->args = split_args(data->input);
 	data->args_count = ft_count_tds(data->args);
@@ -51,19 +52,22 @@ void	main_loop(t_minishell *data, t_ast_node *node)
 {
 	while (1)
 	{
-		g_sig_status = 0;
-		signal(SIGINT, handle_sigint);
-		signal(SIGQUIT, handle_sigquit);
+		set_up_main_sig();
 		data->input = readline("minishell$ ");
-		if (g_sig_status)
-			data->status = 130;
-		if (data->input == NULL)
-			handle_eof(data);
+		status_change(data);
 		if (data->input && *data->input)
 		{
+			add_history(data->input);
+			data->input = ft_remove_tabs(data->input);
+			if (!is_runable(data->input))
+			{
+				data->status = 0;
+				free(data->input);
+				continue ;
+			}
 			if (!is_valid_cmd(data->input))
 			{
-				data->status = 1;
+				data->status = 2;
 				free(data->input);
 				continue ;
 			}

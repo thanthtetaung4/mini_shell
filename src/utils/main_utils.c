@@ -12,29 +12,79 @@
 
 #include "../header/minishell.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char	*remove_trailing_whitespace(const char* str)
+{
+	int	i;
+
+    if (str == NULL)
+	return NULL;
+    size_t len = strlen(str);
+    int lastNonWhitespace = -1;
+	i = len - 1;
+	while (i >= 0)
+	{
+		if (str[i] != ' ' && str[i] != '\t')
+		{
+			lastNonWhitespace = i;
+			break;
+		}
+		i--;
+	}
+	if (lastNonWhitespace == -1)
+	{
+		char* result = malloc(1);
+		if (result == NULL) {
+			return NULL;
+		}
+		result[0] = '\0';
+		return result;
+	}
+	char* result = malloc(lastNonWhitespace + 2);
+	if (result == NULL)
+		return NULL;
+	strncpy(result, str, lastNonWhitespace + 1);
+	result[lastNonWhitespace + 1] = '\0';
+	return result;
+}
+
 int	check_syntax_errors(char *input)
 {
 	int	len;
+	char	*tmp;
+	int i;
 
-	len = ft_strlen(input);
-	if (input[len - 1] == '>' || input[len - 1] == '<')
+	i = 0;
+	tmp = remove_trailing_whitespace(input);
+	len = ft_strlen(tmp);
+	while (tmp[i])
+	{
+		if ((tmp[i] == '>' && tmp[i + 1] == '<') || (tmp[i] == '<' && tmp[i + 1] == '>'))
+		{
+			ft_putstr_fd("minishell: syntax error near unexpected redir token'\n",
+				2);
+			free(tmp);
+			return (0);
+		}
+		i++;
+	}
+	if ((tmp[len - 1] == '>' || tmp[len - 1] == '<'))
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected redir token'\n",
 			2);
+		free(tmp);
 		return (0);
 	}
-	if ((input[len - 1] == '>' || input[len - 1] == '<' || input[len
-				- 1] == '>') && (input[len - 2] == '>' || input[len - 1] == '>')
-		&& input[len - 2] == '>')
-	{
-		ft_putstr_fd("invalid syntax\n", 2);
-		return (0);
-	}
-	if (input[0] == '|' || input[len - 1] == '|')
+	if (tmp[0] == '|' || tmp[len - 1] == '|')
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
+		free(tmp);
 		return (0);
 	}
+	free(tmp);
 	return (1);
 }
 

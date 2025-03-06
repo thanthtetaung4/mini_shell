@@ -54,7 +54,6 @@ int	handle_input_redirection(t_ast_node *node, t_minishell *data, int i)
 int	handle_heredoc_redirection(t_ast_node *node)
 {
 	dup2(node->redirection->heredoc_fd[0], STDIN_FILENO);
-	close(node->redirection->heredoc_fd[0]);
 	return (0);
 }
 
@@ -96,7 +95,9 @@ int	handle_new_file_redirection(t_ast_node *node, t_minishell *data, int i)
 	}
 	else if (node->redirection->types[i] == INPUT)
 	{
-		return (handle_input_redirection(node, data, i));
+		ft_putstr_fd(node->redirection->files[i], 2);
+		ft_putstr_fd(": No such file or directory.\n", 2);
+		return (EXIT_FAILURE);
 	}
 	return (0);
 }

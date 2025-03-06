@@ -56,10 +56,13 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 	int	exit_status;
 
 	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
+	{
 		return (0);
+	}
 	if (check_cmd(node->command[0]) == 1)
 	{
 		exit_status = ft_exec(data, node);
+		close_heredoc_fds_p(data);
 		free_all(data, 1);
 		exit(exit_status);
 	}

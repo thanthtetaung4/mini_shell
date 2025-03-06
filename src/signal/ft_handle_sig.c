@@ -12,8 +12,6 @@
 
 #include "../../header/minishell.h"
 
-extern int			g_sig_status;
-
 static int	check_sig(void)
 {
 	if (g_sig_status)
@@ -22,6 +20,13 @@ static int	check_sig(void)
 		return (1);
 	}
 	return (0);
+}
+
+void	set_up_main_sig(void)
+{
+	g_sig_status = 0;
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
 }
 
 void	set_signals_heredoc(void)
