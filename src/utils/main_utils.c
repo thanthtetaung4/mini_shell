@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 14:52:05 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/05 03:48:09 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/06 03:05:39 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,15 @@ int	check_syntax_errors(char *input)
 	int	len;
 
 	len = ft_strlen(input);
-	if ((input[len - 1] == '>' || input[len - 1] == '<'
-			|| input[len - 1] == '>') && (input[len - 2] == '>'
-			|| input[len - 1] == '>') && input[len - 2] == '>')
+	if (input[len - 1] == '>' || input[len - 1] == '<')
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected redir token'\n",
+			2);
+		return (0);
+	}
+	if ((input[len - 1] == '>' || input[len - 1] == '<' || input[len
+				- 1] == '>') && (input[len - 2] == '>' || input[len - 1] == '>')
+		&& input[len - 2] == '>')
 	{
 		ft_putstr_fd("invalid syntax\n", 2);
 		return (0);
@@ -33,7 +39,7 @@ int	check_syntax_errors(char *input)
 }
 
 void	init_count_quotes(int *s_quote_count, int *d_quote_count,
-	int *in_d_quotes, int *in_s_quotes)
+		int *in_d_quotes, int *in_s_quotes)
 {
 	*s_quote_count = 0;
 	*d_quote_count = 0;
@@ -66,8 +72,8 @@ int	count_quotes(char *input)
 	int	in_s_quotes;
 
 	i = -1;
-	init_count_quotes(&s_quote_count, &d_quote_count,
-		&in_d_quotes, &in_s_quotes);
+	init_count_quotes(&s_quote_count, &d_quote_count, &in_d_quotes,
+		&in_s_quotes);
 	while (input[++i])
 	{
 		if (input[i] == '"' && !in_s_quotes)
