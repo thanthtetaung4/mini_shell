@@ -44,15 +44,18 @@ void	setup_stdout_for_pipe(t_minishell *data, t_ast_node *node)
 {
 	int	null_fd;
 
-	if ((check_for_output(node) && check_for_input(node->parent->right)
+	if ((!check_for_output(node) && check_for_input(node->parent->right)
 			&& check_cmd(node->command[0]))
 		&& (data->forking->completed_piping < data->forking->pipe_count))
 	{
+		// printf("in herer\n");
 		null_fd = open("/dev/null", O_WRONLY);
 		if (null_fd == -1)
 			exit(1);
 		dup2(null_fd, STDOUT_FILENO);
 		close(null_fd);
+		// free_all(data, 1);
+		// exit(1);
 	}
 	else if ((data->forking->completed_piping < data->forking->pipe_count))
 	{
