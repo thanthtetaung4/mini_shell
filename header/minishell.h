@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 16:33:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/06 17:55:09 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/07 07:45:34 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,7 +319,7 @@ int					execute_builtin_with_redirections(t_minishell *data,
 						t_ast_node *node, int stdout_fd, int stdin_fd);
 // pipe_utils
 void				setup_stdin_for_pipe(t_minishell *data, t_ast_node *node);
-void				setup_stdout_for_pipe(t_minishell *data);
+void				setup_stdout_for_pipe(t_minishell *data, t_ast_node *node);
 void				handle_pipe_parent(t_minishell *data, t_ast_node *node,
 						int pid);
 void				handle_pipe_execution(t_minishell *data, t_ast_node *node);
@@ -408,4 +408,7 @@ void				status_change(t_minishell *data);
 char				*ft_strcjoin(char *str, char c);
 char				*result_strcjoin(char **result, char *str);
 char				*remove_trailing_whitespace(const char *str);
+
+int check_for_output(t_ast_node *node);
+int check_for_input(t_ast_node *node);
 #endif

@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 10:37:58 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/06 02:20:45 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/07 07:45:43 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,11 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 		close(node->redirection->heredoc_fd[0]);
 	return (exit_status);
 }
-
+// int check_poss_sigpipe(t_ast_node *node)
+// {
+// 	if (node->command && )
+// 	return (0);
+// }
 void	execute_pipe_child(t_minishell *data, t_ast_node *node)
 {
 	signal(SIGINT, SIG_DFL);
@@ -78,7 +82,7 @@ void	execute_pipe_child(t_minishell *data, t_ast_node *node)
 		handle_empty_command_child(data);
 	}
 	setup_stdin_for_pipe(data, node);
-	setup_stdout_for_pipe(data);
+	setup_stdout_for_pipe(data, node);
 	close_all_pipe_fds(data);
 	if (node->redirection->types[0] != -1)
 	{

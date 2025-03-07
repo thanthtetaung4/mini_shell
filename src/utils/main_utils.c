@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 14:52:05 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/06 17:56:21 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/07 07:06:11 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ int	redir_syntax(char *tmp)
 	int	i;
 
 	i = 0;
+	// while (tmp[i] == ' ')
+	// 	i++;
 	while (tmp[i])
 	{
 		if ((tmp[i] == '>' && tmp[i + 1] == '<') || (tmp[i] == '<' && tmp[i
@@ -38,9 +40,13 @@ int	check_syntax_errors(char *input)
 {
 	int		len;
 	char	*tmp;
+	int i;
 
+	i = 0;
 	tmp = remove_trailing_whitespace(input);
 	len = ft_strlen(tmp);
+	while (tmp[i] == ' ' || tmp[i] == '\t')
+		i++;
 	if (!redir_syntax(tmp))
 		return (0);
 	if ((tmp[len - 1] == '>' || tmp[len - 1] == '<'))
@@ -49,7 +55,7 @@ int	check_syntax_errors(char *input)
 		free(tmp);
 		return (0);
 	}
-	if (tmp[0] == '|' || tmp[len - 1] == '|')
+	if (tmp[i] == '|' || tmp[len - 1] == '|')
 	{
 		ft_putstr_fd("minishell: syntax error\n", 2);
 		free(tmp);
