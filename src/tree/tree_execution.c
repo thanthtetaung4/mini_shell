@@ -6,7 +6,7 @@
 /*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:41:36 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/06 07:20:15 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/07 23:30:06 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,11 @@ int	execute_with_pipe(t_minishell *data, t_ast_node *node)
 	exit(exit_status);
 	return (exit_status);
 }
+void	clean_exit(t_minishell *data, int is_free, int exit_status)
+{
+	free_all(data, is_free);
+	exit(exit_status);
+}
 
 int	execute_command(t_minishell *data, t_ast_node *node)
 {
@@ -57,7 +62,9 @@ int	execute_command(t_minishell *data, t_ast_node *node)
 
 	if (data->args_count == 0 || ft_strlen(node->command[0]) == 0)
 	{
-		return (0);
+		// if (data->forking->pipe_count > 0)
+			clean_exit(data, 1, 0);
+		// return (0);
 	}
 	if (check_cmd(node->command[0]) == 1)
 	{

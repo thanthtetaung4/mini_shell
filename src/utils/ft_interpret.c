@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_interpret.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 10:10:23 by taung             #+#    #+#             */
-/*   Updated: 2025/03/06 17:48:45 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/07 23:04:46 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ char	*handle_env(char *str, t_list *envp, int status)
 			here_doc = 0;
 		if (!here_doc && *str == '$' && in_quote != '\'')
 			str = replace_env(str, &result, envp, status);
-		else
+		else if (*str)
 			result = ft_strcjoin(result, *str++);
 	}
 	return (result);

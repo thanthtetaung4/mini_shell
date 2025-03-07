@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 05:50:46 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/04 14:56:16 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/07 23:31:48 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void	handle_heredoc_input(t_minishell *data, t_ast_node *node,
 		if (heredoc->current_delimiter == node->redirection->heredoc_count)
 			break ;
 	}
+	rl_event_hook = NULL;
 	free_heredoc(NULL, heredoc->delimiter);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
+/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 09:33:07 by taung             #+#    #+#             */
-/*   Updated: 2025/03/06 02:21:34 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/07 23:45:44 by taung            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ void	main_loop_helper(t_minishell *data, t_ast_node *node)
 	tmp = data->input;
 	data->input = handle_env(data->input, data->env, data->status);
 	free(tmp);
+	if (ft_strlen(data->input) < 1)
+		return ;
 	data->input = ft_insert_spaces(data->input);
 	data->args = split_args(data->input);
 	data->args_count = ft_count_tds(data->args);
