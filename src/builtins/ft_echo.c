@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taung <taung@student.42singapore.fr>       +#+  +:+       +#+        */
+/*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/19 05:36:02 by taung             #+#    #+#             */
-/*   Updated: 2025/03/06 00:45:36 by taung            ###   ########.fr       */
+/*   Updated: 2025/03/07 08:03:24 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	ft_echo(t_ast_node *node)
 			print_star();
 		else
 			ft_putstr_fd(node->command[i], 1);
-		if (node->command[i + 1] && ft_strcmp(node->command[i], " ") != 0)
+		if (node->command[i + 1])
 			ft_putstr_fd(" ", 1);
 		i++;
 	}

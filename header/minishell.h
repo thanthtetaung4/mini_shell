@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 16:33:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/07 07:45:34 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/07 08:30:55 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,7 +272,7 @@ t_ast_node			*create_node(int type, char **command, t_minishell *data,
 						int count);
 void				add_right_node(t_ast_node **parent_node, t_ast_node *node);
 void				add_left_node(t_ast_node **parent_node, t_ast_node *node);
-void				fill_cmd_data_helper(t_ast_node *node, char *command,
+void				fill_cmd_data_helper(t_ast_node *node, char **command,
 						int iter[2], int count);
 
 // redirection_handling

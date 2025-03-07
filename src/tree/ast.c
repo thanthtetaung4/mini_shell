@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:10:44 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/06 02:18:45 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/07 08:28:36 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	fill_command_data(t_ast_node *node, char **command,
 			iterator[0]++;
 		else if (check_redirection(command[iterator[0]]) == -1)
 		{
-			fill_cmd_data_helper(node, command[iterator[0]], iterator, count);
+			fill_cmd_data_helper(node, command, iterator, count);
 			if (!node->command[iterator[1]])
 				return ;
 			iterator[1]++;
