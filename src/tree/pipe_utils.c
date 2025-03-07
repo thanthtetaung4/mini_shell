@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 10:59:39 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/07 07:55:59 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/07 08:39:54 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ void	setup_stdout_for_pipe(t_minishell *data, t_ast_node *node)
 	else if ((data->forking->completed_piping < data->forking->pipe_count))
 	{
 		dup2(data->forking->fds[data->forking->i_fd][1], STDOUT_FILENO);
-		// close(data->forking->fds[data->forking->i_fd][1]);
 	}
 }
 

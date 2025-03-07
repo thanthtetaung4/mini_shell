@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 10:37:58 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/07 07:45:43 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/07 08:40:19 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ int	execute_single_command(t_minishell *data, t_ast_node *node)
 // 	if (node->command && )
 // 	return (0);
 // }
+
 void	execute_pipe_child(t_minishell *data, t_ast_node *node)
 {
 	signal(SIGINT, SIG_DFL);

@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 14:52:05 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/07 07:06:11 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/07 08:39:17 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@ int	redir_syntax(char *tmp)
 	int	i;
 
 	i = 0;
-	// while (tmp[i] == ' ')
-	// 	i++;
 	while (tmp[i])
 	{
 		if ((tmp[i] == '>' && tmp[i + 1] == '<') || (tmp[i] == '<' && tmp[i
@@ -40,7 +38,7 @@ int	check_syntax_errors(char *input)
 {
 	int		len;
 	char	*tmp;
-	int i;
+	int		i;
 
 	i = 0;
 	tmp = remove_trailing_whitespace(input);

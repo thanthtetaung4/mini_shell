@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 11:05:08 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/07 07:47:57 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/07 08:40:07 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int	process_heredocs(t_ast_node *lowest_node, t_minishell *data)
 	}
 	return (sig);
 }
+
 void	handle_command_execution(t_minishell *data, t_ast_node *node)
 {
 	if (node->parent && node->parent->type == PIPE)
