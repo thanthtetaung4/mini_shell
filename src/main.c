@@ -32,13 +32,13 @@ void	handle_eof(t_minishell *data)
 
 void	main_loop_helper(t_minishell *data, t_ast_node *node)
 {
-	char	*tmp;
+	// char	*tmp;
 
-	tmp = data->input;
-	data->input = handle_env(data->input, data->env, data->status);
-	free(tmp);
-	if (ft_strlen(data->input) < 1)
-		return ;
+	// tmp = data->input;
+	// data->input = handle_env(data->input, data->env, data->status);
+	// free(tmp);
+	// if (ft_strlen(data->input) < 1)
+	// 	return ;
 	data->input = ft_insert_spaces(data->input);
 	data->args = split_args(data->input);
 	data->args_count = ft_count_tds(data->args);

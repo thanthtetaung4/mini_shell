@@ -57,8 +57,10 @@ int	ft_echo(t_ast_node *node)
 	{
 		if (ft_strcmp(node->command[i], "*") == 0)
 			print_star();
-		else
+		else if (!is_only_quotes(node->command[i]))
 			ft_putstr_fd(node->command[i], 1);
+		else if (node->cmd_count == 1)
+			ft_putstr_fd(" ", 1);
 		if (node->command[i + 1])
 			ft_putstr_fd(" ", 1);
 		i++;

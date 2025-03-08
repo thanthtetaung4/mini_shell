@@ -72,6 +72,8 @@ t_ast_node	*create_node(int type, char **command, t_minishell *data, int count)
 					* node->redirection->heredoc_count);
 		fill_command_data(node, command, count);
 		node->cmd_count = ft_count_tds(node->command);
+		ft_interpret(data, node);
+		remove_empty_args(node);
 		remove_cmd_quote(node);
 	}
 	return (node);

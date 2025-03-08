@@ -84,16 +84,18 @@ void	remove_cmd_quote(t_ast_node *node)
 	int	s_quote_count;
 	int	d_quote_count;
 
-	remove_cmd_outer_quote(node);
 	i = 0;
 	while (node->command[i])
 	{
-		s_quote_count = quote_count(node->command[i], 2);
-		d_quote_count = quote_count(node->command[i], 1);
-		if (s_quote_count > 0 && s_quote_count % 2 == 0)
-			node->command[i] = rm_match_char(node->command[i], '\'');
-		if (d_quote_count > 0 && d_quote_count % 2 == 0)
-			node->command[i] = rm_match_char(node->command[i], '\"');
+		// if (!is_only_quotes(node->command[i]))
+		// {
+			s_quote_count = quote_count(node->command[i], 2);
+			d_quote_count = quote_count(node->command[i], 1);
+			if (s_quote_count > 0 && s_quote_count % 2 == 0)
+				node->command[i] = rm_match_char(node->command[i], '\'');
+			if (d_quote_count > 0 && d_quote_count % 2 == 0)
+				node->command[i] = rm_match_char(node->command[i], '\"');
+		// }
 		i++;
 	}
 }
