@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 15:55:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/06 02:08:48 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/08 06:46:15 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,15 +87,12 @@ void	remove_cmd_quote(t_ast_node *node)
 	i = 0;
 	while (node->command[i])
 	{
-		// if (!is_only_quotes(node->command[i]))
-		// {
-			s_quote_count = quote_count(node->command[i], 2);
-			d_quote_count = quote_count(node->command[i], 1);
-			if (s_quote_count > 0 && s_quote_count % 2 == 0)
-				node->command[i] = rm_match_char(node->command[i], '\'');
-			if (d_quote_count > 0 && d_quote_count % 2 == 0)
-				node->command[i] = rm_match_char(node->command[i], '\"');
-		// }
+		s_quote_count = quote_count(node->command[i], 2);
+		d_quote_count = quote_count(node->command[i], 1);
+		if (s_quote_count > 0 && s_quote_count % 2 == 0)
+			node->command[i] = rm_match_char(node->command[i], '\'');
+		if (d_quote_count > 0 && d_quote_count % 2 == 0)
+			node->command[i] = rm_match_char(node->command[i], '\"');
 		i++;
 	}
 }

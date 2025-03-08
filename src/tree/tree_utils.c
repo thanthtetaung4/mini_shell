@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 06:41:14 by lshein            #+#    #+#             */
-/*   Updated: 2025/03/03 11:39:39 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/08 06:49:33 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,10 @@ void	restore_std_fds(int stdout_fd, int stdin_fd)
 		dup2(stdin_fd, STDIN_FILENO);
 		close(stdin_fd);
 	}
+}
+
+void	clean_exit(t_minishell *data, int is_free, int exit_status)
+{
+	free_all(data, is_free);
+	exit(exit_status);
 }

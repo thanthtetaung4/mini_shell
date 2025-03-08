@@ -6,7 +6,7 @@
 /*   By: lshein <lshein@student.42singapore.sg>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 16:33:51 by taung             #+#    #+#             */
-/*   Updated: 2025/03/07 08:38:07 by lshein           ###   ########.fr       */
+/*   Updated: 2025/03/08 06:49:17 by lshein           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -411,4 +411,5 @@ char				*remove_trailing_whitespace(const char *str);
 
 int					check_for_output(t_ast_node *node);
 int					check_for_input(t_ast_node *node);
+void				clean_exit(t_minishell *data, int is_free, int exit_status);
 #endif
